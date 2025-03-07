@@ -1,0 +1,25 @@
+{
+  "name": "type_cypress",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/cypress": "^0.1.6",
+    "@types/dotenv": "^6.1.1",
+    "@types/node": "^22.13.5",
+    "@types/node-fetch": "^2.6.12",
+    "cypress": "^14.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "node-fetch": "^3.3.2"
+  }
+}
