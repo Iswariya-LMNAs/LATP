@@ -18,7 +18,8 @@ interface ifDataType {
     input(): void
     execute(): void
 }
-/**@type TtestHeaderData - Represents test header data structure. Contains details about the doctype_to_be_tested and relevant test field data. */
+/**@type TtestHeaderData - Represents test header data structure.
+ *  Contains details about the doctype_to_be_tested and relevant test field data. */
 type TtestHeaderData = {
         name: string;
         owner: string;

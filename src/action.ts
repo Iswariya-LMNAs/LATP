@@ -128,10 +128,10 @@ export class clActionFactory {
       }  
     static filterActionData(iaActionsData:TTactionsData, iActionRow: TactionData): TTactionsData  {
         let lposNext = iActionRow.pos + 10
-        const filteredData: TTactionsData = iaActionsData.filter((item) => {
+        const LA_FILTERED_DATA: TTactionsData = iaActionsData.filter((item) => {
             return (item.pos >= iActionRow.pos && item.pos < lposNext);
         });   
-        return filteredData
+        return LA_FILTERED_DATA
     }
 };
 
