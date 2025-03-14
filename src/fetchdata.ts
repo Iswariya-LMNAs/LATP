@@ -16,21 +16,16 @@ const fetchData = async (): Promise<TtestHeaderData> => {
     if (!url || !key) {
       throw new Error("Missing required environment variables");
     }
-
     const myHeaders: Record<string, string> = {
       Authorization: key,
       Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
     };
-
     const requestOptions: RequestInit = {
       method: "GET",
       headers: myHeaders,
       redirect: "follow",
     };
-
     const response = await fetch(url, requestOptions);
-    
-   
     const result = (await response.json()) as ApiResponse;
     delete result.data.json_response 
     // console.log(result.data);

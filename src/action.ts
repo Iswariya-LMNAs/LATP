@@ -36,7 +36,6 @@ abstract class clAction implements ifActionHandler {
         });
     }
 }
-
 /**
  * @class clActionOnLoad Extends `clAction` to handle actions triggered on page load.
  * * Methods:  
@@ -121,11 +120,11 @@ export class clActionFactory {
     "On Tab":clActionOnTab
     };   
     static createAction(iAction: string, iaActionData:TTactionsData): ifActionHandler {
-        const ActionClass = this.actionsMap[iAction];       
-        if (!ActionClass) {
+        const LA_ACTIONCLASS = this.actionsMap[iAction];       
+        if (!LA_ACTIONCLASS) {
           throw new Error(`Invalid action type: ${iAction}`);
         } 
-        return new ActionClass(iAction=iAction,iaActionData=iaActionData);
+        return new LA_ACTIONCLASS(iAction=iAction,iaActionData=iaActionData);
       }  
     static filterActionData(iaActionsData:TTactionsData, iActionRow: TactionData): TTactionsData  {
         let lposNext = iActionRow.pos + 10

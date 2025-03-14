@@ -84,10 +84,10 @@ export class clDataTypeFactory {
         "Currency" :clDataTypeCurrency
     };
     static createDataType(data_type: string, actiondata: ifActionHandler): clDataType {
-        const ActionClass = this.actionsMap[data_type];
-        if (!ActionClass) {
+        const LA_ACTIONCLASS = this.actionsMap[data_type];
+        if (!LA_ACTIONCLASS) {
             throw new Error(`Invalid data type: ${data_type}`);
         }
-        return new ActionClass(data_type, actiondata);
+        return new LA_ACTIONCLASS(data_type, actiondata);
     }
 }
