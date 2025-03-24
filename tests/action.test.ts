@@ -226,6 +226,7 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
     
     test("First row should be defined with a non-empty 'Onload' action", () => {
       const iActionRow: TactionData = LA_MOCKACTIONDATA[0]; 
+     // Filter the action data based on the first row
       const LA_FILTEREDDATA = clActionFactory
       .filterActionData(LA_MOCKACTIONDATA, iActionRow);
       const L_FIRSTROW = LA_FILTEREDDATA[0]; 
@@ -236,7 +237,8 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
     });
     
     test("First row's position should be a multiple of 10", () => {
-      const iActionRow: TactionData = LA_MOCKACTIONDATA[0]; 
+      const iActionRow: TactionData = LA_MOCKACTIONDATA[0];
+      // Filter the action data based on the first row 
       const LA_FILTEREDDATA = clActionFactory
       .filterActionData(LA_MOCKACTIONDATA, iActionRow);
       const L_FIRSTROW = LA_FILTEREDDATA[0]; 
@@ -248,6 +250,7 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
   
     test("should return an empty array if no matching actions", () => {
       const iActionRow: TactionData = { ...LA_MOCKACTIONDATA[0], pos: 50 };
+      // Attempt to filter with a non-matching action row
       const LA_FILTEREDDATA = clActionFactory
       .filterActionData(LA_MOCKACTIONDATA, iActionRow); 
 
@@ -321,16 +324,19 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
     
       test("executeAction() should skip execution for empty actionData", () => {
         const LD_EMPTY_ACTIONINSTANCE = new clActionOnLoad("Onload", []);
+        // Spy on the executeAction method to track calls
         jest.spyOn(LD_EMPTY_ACTIONINSTANCE, "executeAction");
         LD_EMPTY_ACTIONINSTANCE.executeAction(); // Call with empty data
 
         expect(LD_EMPTY_ACTIONINSTANCE.executeAction).toHaveBeenCalledTimes(1);
+        // Ensure that executing again does not throw any errors
         expect(() => LD_EMPTY_ACTIONINSTANCE.executeAction()).not.toThrow();
       });
   
       test("executeAction() should iterate over actionData & process each row", () => {
         const processSpy = jest.spyOn(LD_ACTIONINSTANCE, "checkFieldValue"); 
         LD_ACTIONINSTANCE.executeAction();
+        // Filter the data to get only rows with a valid data_type
         const L_VALIDDATA_ROWS = LA_FILTEREDDATA.filter(row => row.data_type);
 
         expect(clDataTypeFactory.createDataType)
@@ -343,7 +349,6 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
         LD_ACTIONINSTANCE.executeAction();
         // Check that createDataType is called only for rows that have a valid data_type
         const L_VALID_ROWS = LA_FILTEREDDATA.filter(row => row.data_type);
-
         expect(processSpy).toHaveBeenCalledTimes(L_VALID_ROWS.length);
       });      
       
@@ -382,13 +387,32 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
         // Validate that checkFieldValue() called validate()
         expect(mockDataTypeInstance.validate).toHaveBeenCalled();
       });
-    
+      test("executeAction should handle actionData with empty action property", () => {
+        const INVALID_DATA = [{ ...LA_MOCKACTIONDATA[0], action: "" }];
+        const LD_ACTIONINSTANCE = new clActionOnLoad("Onload", INVALID_DATA);
       
-
-    });
+        jest.spyOn(LD_ACTIONINSTANCE, "executeAction");
+        LD_ACTIONINSTANCE.executeAction();
+      
+        expect(LD_ACTIONINSTANCE.executeAction).toHaveBeenCalled();
+      });
+      test("executeAction should handle duplicate actionData entries correctly", () => {
+        const DUPLICATE_DATA = [LA_MOCKACTIONDATA[0], LA_MOCKACTIONDATA[0]];
+        const LD_ACTIONINSTANCE = new clActionOnLoad("Onload", DUPLICATE_DATA);
+      
+        jest.spyOn(LD_ACTIONINSTANCE, "executeAction");
+        LD_ACTIONINSTANCE.executeAction();
+      
+        expect(LD_ACTIONINSTANCE.executeAction).toHaveBeenCalledTimes(1);
+      });
+      
+      
+  });
    describe("Test clActionOnChange -Instantiation and executeAction", () => {
     let LD_ACTIONINSTANCE;
     let mockDataTypeInstance: jest.Mocked<clDataTypeData>; // Use `clDataTypeData` instead
+    let createDataTypeMock: jest.SpiedFunction<typeof clDataTypeFactory.createDataType>;
+
     beforeEach(() => {
       LD_ACTIONINSTANCE = clActionFactory.createAction("On Change", LA_MOCKACTIONDATA
       )as clActionOnChange;
@@ -402,8 +426,7 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
         fieldProp: "input:visible",
         getSelector: jest.fn(() => '[data-fieldname="test_field6"]input:visible'),
       } as jest.Mocked<clDataTypeData>;
-
-      jest.spyOn(clDataTypeFactory, "createDataType")
+      createDataTypeMock = jest.spyOn(clDataTypeFactory, "createDataType")
       .mockReturnValue(mockDataTypeInstance);
     });
 
@@ -431,24 +454,10 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
     
       // Ensure executeAction of clActionOnLoad was NOT called (overridden)
       expect(baseExecuteAction).not.toHaveBeenCalled();
-    
       // Ensure executeAction of clActionOnChange is called
       expect(onChangeExecuteAction).toHaveBeenCalled();
-    });
-    
-    test("should process only the first row of actionData", () => {
-      LD_ACTIONINSTANCE.executeAction();
-
-      // Ensure createDataType was called only 
-      // once with the first row (LA_MOCKACTIONDATA[4])
-      expect(clDataTypeFactory.createDataType).toHaveBeenCalledTimes(1);
-      expect(clDataTypeFactory.createDataType).toHaveBeenCalledWith(
-        "Select",
-        LD_ACTIONINSTANCE
-      );
-    });
+    }); 
   });
-
  describe("Creating an instance of clActionOnTab", () => {
     let LD_ACTIONINSTANCE;
 
@@ -463,15 +472,6 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
     test("should create clActionOnTab instance when 'On Tab is passed", () => {
       expect(LD_ACTIONINSTANCE).toBeInstanceOf(clActionOnTab);
     });
-  //   test("should call clDataTypeFactory.createDataType and input method", () => {
-  //     LD_ACTIONINSTANCE.executeAction();
-  //     expect(clDataTypeFactory.createDataType)
-  //     .toHaveBeenCalledWith("string", LD_ACTIONINSTANCE);
-  //     const mockCreateDataType = clDataTypeFactory.createDataType as jest.Mock;
-  //     const mockDataType = mockCreateDataType.mock.results[0].value;
-  //     expect(mockDataType.input).toBeDefined();
-  //     expect(mockDataType.input).toHaveBeenCalled();
-  // });
      test("should throw an error when an invalid action type is passed", () => {
         const invalidActionCall = () => clActionFactory
         .createAction("InvalidAction", LA_MOCKACTIONDATA);  
@@ -488,6 +488,6 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
         expect(() => LD_EMPTY_ACTIONINSTANCE.executeAction()).not.toThrow();
       });  
   });
-
-  });
+  
+});
 

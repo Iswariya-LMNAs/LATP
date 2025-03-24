@@ -37,7 +37,7 @@ abstract class clAction implements ifActionHandler {
             this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this)
             this.checkFieldValue()
         });
-    }
+    } 
 }
 
 /**
