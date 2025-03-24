@@ -1,5 +1,4 @@
-/** @interface ifActionHandler - Represents a handler for performing various actions with associated data.*/
-interface ifActionHandler {
+export interface ifActionHandler {
     action: string
     actionData: TTactionsData
     actionRow: TactionData
@@ -10,16 +9,17 @@ interface ifActionHandler {
     handleMessages(): void
     dataType: ifDataType
 }
-/**@interface ifDataType - Defines for handling different data types. */
-interface ifDataType {
+
+export interface ifDataType {
     dataType: string
+    
     action: ifActionHandler
     validate(): void
     input(): void
     execute(): void
 }
-/**@type TtestHeaderData - Represents test header data structure. Contains details about the doctype_to_be_tested and relevant test field data. */
-type TtestHeaderData = {
+export type TtestHeaderData = {
+    
         name: string;
         owner: string;
         creation: Date;
@@ -35,11 +35,10 @@ type TtestHeaderData = {
         json_response: string;
         doctype: string;
         test_fields: TTactionsData; 
+
 };
-/**@type TactionData - Represents the action data.
- * Stores information about an action performed on a field, 
- */
-type TactionData = {
+
+export type TactionData = {
     name: string;
     owner: string;
     creation: Date;
@@ -63,8 +62,9 @@ type TactionData = {
     parenttype: string;
     doctype: string;
 };
-/**@type TTactionsData - Represents an array of action data. */
-type TTactionsData = TactionData[]
+
+
+export type TTactionsData = TactionData[]
 
 
   

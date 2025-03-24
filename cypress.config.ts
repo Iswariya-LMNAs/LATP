@@ -1,5 +1,16 @@
+// import { defineConfig } from "cypress";
+
+
+// export default defineConfig({
+//   e2e: {
+//     setupNodeEvents(on, config) {
+      
+//     },
+//   },
+// });
 import { defineConfig } from "cypress";
 import fetchData from "./src/fetchdata";
+import { clActionFactory } from "./src/action";
 import * as dotenv from "dotenv";
 
 dotenv.config(); // Ensure environment variables are loaded

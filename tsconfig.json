@@ -115,7 +115,7 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "lib": ["ES6", "DOM"],
-    "types": ["cypress"]  // Add this line
+    "types": ["jest"]  // Add this line
   },
   "include": [
     "cypress/**/*.ts",

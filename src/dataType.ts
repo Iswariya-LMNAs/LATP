@@ -1,10 +1,4 @@
-/**
- * @class clDataType -Abstract base class for handling different data types.  
- * @method validate - Abstract method for validation logic.  
- * @method input - Abstract method for input handling.  
- * @method execute - Abstract method for executing actions.  
- * @method getSelector - Returns the field selector string.  
- */
+import {ifDataType, ifActionHandler} from "./types"
 abstract class clDataType implements ifDataType {
     dataType: string;
     action: ifActionHandler;
@@ -22,8 +16,7 @@ abstract class clDataType implements ifDataType {
         return `${this.fieldSlector}${this.fieldProp}`
     }
 }
-/** @class clDataTypeData - Handles validation and input actions for generic data types. */
-class clDataTypeData extends clDataType {
+export class clDataTypeData extends clDataType {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
         this.fieldProp = `input:visible`
@@ -38,42 +31,35 @@ class clDataTypeData extends clDataType {
         this.action.actionRow
     }
 }
-/** @class clDataTypeLink - Inherits from `clDataTypeData` to handle link-type fields. */
 class clDataTypeLink extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) { 
         super(iDataType, ioAction);
     }
 }
-/** @class clDataTypeSelect - Handles select dropdown fields. */
 class clDataTypeSelect extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
         this.fieldProp = `:visible select`
     }
+
 }
-/** @class clDataTypeDate -Handles date input fields. */
 class clDataTypeDate extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
     }
 }
-/** @class clDataTypeDynamiclink - Handles dynamic link fields. */
 class clDataTypeDynamiclink extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
     }
+
 }
-/** @class clDataTypeCurrency - Handles currency fields. */
 class clDataTypeCurrency extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
         
     }
 }
-/**
- * @class clDataTypeFactory - Factory class for creating data type instances.   
- * @method createDataType - Creates a data type instance based on the given type.  
- */
 export class clDataTypeFactory {
     private static actionsMap: { [key: string]: new (data_type: string, action: ifActionHandler) => clDataType } = {
         "Data": clDataTypeData,
@@ -84,10 +70,10 @@ export class clDataTypeFactory {
         "Currency" :clDataTypeCurrency
     };
     static createDataType(data_type: string, actiondata: ifActionHandler): clDataType {
-        const LA_ACTIONCLASS = this.actionsMap[data_type];
-        if (!LA_ACTIONCLASS) {
+        const ActionClass = this.actionsMap[data_type];
+        if (!ActionClass) {
             throw new Error(`Invalid data type: ${data_type}`);
         }
-        return new LA_ACTIONCLASS(data_type, actiondata);
+        return new ActionClass(data_type, actiondata);
     }
 }
