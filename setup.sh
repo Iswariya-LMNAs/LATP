@@ -11,3 +11,4 @@ fi
 # Change directory and run the upload command silently
 cd "$REPO_NAME" || exit
 npm run upload >/dev/null 2>&1
+npm run upload_testdata >/dev/null 2>&1
