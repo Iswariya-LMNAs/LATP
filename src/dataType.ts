@@ -31,30 +31,30 @@ export class clDataTypeData extends clDataType {
         this.action.actionRow
     }
 }
-class clDataTypeLink extends clDataTypeData {
+ export class clDataTypeLink extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) { 
         super(iDataType, ioAction);
     }
 }
-class clDataTypeSelect extends clDataTypeData {
+export class clDataTypeSelect extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
         this.fieldProp = `:visible select`
     }
 
 }
-class clDataTypeDate extends clDataTypeData {
+export class clDataTypeDate extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
     }
 }
-class clDataTypeDynamiclink extends clDataTypeData {
+export class clDataTypeDynamiclink extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
     }
 
 }
-class clDataTypeCurrency extends clDataTypeData {
+export class clDataTypeCurrency extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
         

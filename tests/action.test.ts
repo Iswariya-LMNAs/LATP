@@ -274,12 +274,12 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       const LA_FILTEREDDATA = clActionFactory
       .filterActionData(LA_MOCKACTIONDATA, iActionRow);
       // Extract all positions in filtered data
-      const LA_ALLPOSITIONS = new Set(LA_FILTEREDDATA.map(item => (item.pos)));
+      const LA_ALLPOSITIONS = new Set(LA_FILTEREDDATA.map(ldItem => (ldItem.pos)));
     
       // Check that for each decimal position, its corresponding whole number exists
-      LA_FILTEREDDATA.forEach(item => {
-        if (item.pos % 1 !== 0) { // If it is a decimal position
-          const L_WHOLENUMBER_POS = Math.floor(item.pos);
+      LA_FILTEREDDATA.forEach(ldItem => {
+        if (ldItem.pos % 1 !== 0) { // If it is a decimal position
+          const L_WHOLENUMBER_POS = Math.floor(ldItem.pos);
           // This will fail if whole number is missing
           expect(LA_ALLPOSITIONS.has(L_WHOLENUMBER_POS)).toBe(true); 
           }
@@ -334,40 +334,40 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       });
   
       test("executeAction() should iterate over actionData & process each row", () => {
-        const processSpy = jest.spyOn(LD_ACTIONINSTANCE, "checkFieldValue"); 
+        const LA_PROCESS_SPY = jest.spyOn(LD_ACTIONINSTANCE, "checkFieldValue"); 
         LD_ACTIONINSTANCE.executeAction();
         // Filter the data to get only rows with a valid data_type
-        const L_VALIDDATA_ROWS = LA_FILTEREDDATA.filter(row => row.data_type);
+        const L_VALIDDATA_ROWS = LA_FILTEREDDATA.filter(ldRow => ldRow.data_type);
 
         expect(clDataTypeFactory.createDataType)
         .toHaveBeenCalledTimes(L_VALIDDATA_ROWS.length);
-        expect(processSpy).toHaveBeenCalledTimes(L_VALIDDATA_ROWS.length);
+        expect(LA_PROCESS_SPY).toHaveBeenCalledTimes(L_VALIDDATA_ROWS.length);
       }) 
 
       test("executeAction should skip processing rows where data_type is missing", () => {
-        const processSpy = jest.spyOn(clDataTypeFactory, "createDataType");
+        const LA_PROCESS_SPY = jest.spyOn(clDataTypeFactory, "createDataType");
         LD_ACTIONINSTANCE.executeAction();
         // Check that createDataType is called only for rows that have a valid data_type
-        const L_VALID_ROWS = LA_FILTEREDDATA.filter(row => row.data_type);
-        expect(processSpy).toHaveBeenCalledTimes(L_VALID_ROWS.length);
+        const L_VALID_ROWS = LA_FILTEREDDATA.filter(ldRow => ldRow.data_type);
+        expect(LA_PROCESS_SPY).toHaveBeenCalledTimes(L_VALID_ROWS.length);
       });      
       
       test("should call parent methods correctly", () => {
-        const checkFieldValueSpy = jest.spyOn(LD_ACTIONINSTANCE, "checkFieldValue");
-        const checkFieldPropertiesSpy = jest
+        const L_CHECKFIELD_VALUESPY = jest.spyOn(LD_ACTIONINSTANCE, "checkFieldValue");
+        const L_CHECKFIELD_PROPERTIESSPY = jest
         .spyOn(LD_ACTIONINSTANCE, "checkFieldProperties");
-        const handleNavigatorSpy = jest.spyOn(LD_ACTIONINSTANCE, "handleNavigator");
-        const handleMessagesSpy = jest.spyOn(LD_ACTIONINSTANCE, "handleMessages");
+        const L_HANDLE_NAVIGATORSPY = jest.spyOn(LD_ACTIONINSTANCE, "handleNavigator");
+        const L_HANDLE_MESSAGESSPY = jest.spyOn(LD_ACTIONINSTANCE, "handleMessages");
         
         LD_ACTIONINSTANCE.checkFieldValue();
         LD_ACTIONINSTANCE.checkFieldProperties();
         LD_ACTIONINSTANCE.handleNavigator();
         LD_ACTIONINSTANCE.handleMessages();
         
-        expect(checkFieldValueSpy).toHaveBeenCalled();
-        expect(checkFieldPropertiesSpy).toHaveBeenCalled();
-        expect(handleNavigatorSpy).toHaveBeenCalled();
-        expect(handleMessagesSpy).toHaveBeenCalled();
+        expect(L_CHECKFIELD_VALUESPY).toHaveBeenCalled();
+        expect(L_CHECKFIELD_PROPERTIESSPY).toHaveBeenCalled();
+        expect(L_HANDLE_NAVIGATORSPY).toHaveBeenCalled();
+        expect(L_HANDLE_MESSAGESSPY).toHaveBeenCalled();
       });
       test("checkFieldValue() should call validate() on dataType instance", () => {
         // Mock data for actionData
@@ -447,15 +447,14 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       expect(mockDataTypeInstance.input).toHaveBeenCalled();
     }); 
     test("should override executeAction from base class", () => {
-      const baseExecuteAction = jest.spyOn(clActionOnLoad.prototype, "executeAction");
-      const onChangeExecuteAction = jest.spyOn(LD_ACTIONINSTANCE, "executeAction");
-    
+      const L_BASE_EXECUTEACTION = jest.spyOn(clActionOnLoad.prototype, "executeAction");
+      const L_ONCHANGE_EXECUTEACTION = jest.spyOn(LD_ACTIONINSTANCE, "executeAction");    
       LD_ACTIONINSTANCE.executeAction();
     
       // Ensure executeAction of clActionOnLoad was NOT called (overridden)
-      expect(baseExecuteAction).not.toHaveBeenCalled();
+      expect(L_BASE_EXECUTEACTION).not.toHaveBeenCalled();
       // Ensure executeAction of clActionOnChange is called
-      expect(onChangeExecuteAction).toHaveBeenCalled();
+      expect(L_ONCHANGE_EXECUTEACTION).toHaveBeenCalled();
     }); 
   });
  describe("Creating an instance of clActionOnTab", () => {
@@ -473,9 +472,9 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       expect(LD_ACTIONINSTANCE).toBeInstanceOf(clActionOnTab);
     });
      test("should throw an error when an invalid action type is passed", () => {
-        const invalidActionCall = () => clActionFactory
+        const fnInvalidActionCall = () => clActionFactory
         .createAction("InvalidAction", LA_MOCKACTIONDATA);  
-         expect(invalidActionCall).toThrow("Invalid action type: InvalidAction");
+         expect(fnInvalidActionCall).toThrow("Invalid action type: InvalidAction");
 
       });
       test("executeAction() should skip execution for empty actionData", () => {
