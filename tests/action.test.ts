@@ -467,8 +467,6 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       const LD_ACTIONINSTANCE = new clActionOnLoad("Onload", LA_MOCKACTIONDATA);
       // Spy on the handleNavigator method in the parent class (clAction)
       const L_BASE_HANDLENAVIGATOR = jest.spyOn(clAction.prototype, "handleNavigator");
-      // Optionally, spy on other methods if needed, like the executeAction method, 
-      // if you want to ensure the method is triggering the handleNavigator() method.
       jest.spyOn(LD_ACTIONINSTANCE, "executeAction");
       // Call the method you want to test
       LD_ACTIONINSTANCE.handleNavigator();
@@ -485,8 +483,6 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       const LD_ACTIONINSTANCE = new clActionOnLoad("Onload", LA_MOCKACTIONDATA);
       // Spy on the handleMessages method in the parent class (clAction)
       const L_BASE_HANDLEMESSAGES = jest.spyOn(clAction.prototype, "handleMessages");
-      // Optionally, spy on other methods if needed, like the executeAction method, 
-      // if you want to ensure the method is triggering the handleMessages() method.
       jest.spyOn(LD_ACTIONINSTANCE, "executeAction");
       // Call the method you want to test
       LD_ACTIONINSTANCE.handleMessages();
