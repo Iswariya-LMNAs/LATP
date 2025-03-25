@@ -1,7 +1,7 @@
 HOST_URL=https://qsgbcz.docker.localhost
-HOST_KEY=Basic MTFmODIyNTMzOTgyYmEwOmEyMzFiYjc1OGEwZmQ2Mg==
+HOST_KEY=Basic wertyuikjhgfdfghjkjhtyuyghjhgftyuhghgtyy==
 TARGET_URL=https://qsgbcz.docker.localhost
-TARGET_KEY=Basic MTFmODIyNTMzOTgyYmEwOmEyMzFiYjc1OGEwZmQ2Mg==
+TARGET_KEY=Basic wertyuikjhgfdfghjkjhtyuyghjhgftyuhghgtyy==
 DOCTYPE=Test Case Configurator
 NODE_TLS_REJECT_UNAUTHORIZED=0
 LOGIN_EMAIL=wesupport@lmnas.com
