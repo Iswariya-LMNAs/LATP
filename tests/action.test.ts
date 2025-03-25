@@ -1,4 +1,4 @@
-import { clActionFactory ,clActionOnLoad,clActionOnChange,clActionOnTab  } 
+import { clActionFactory ,clActionOnLoad,clActionOnChange,clActionOnTab,clAction  } 
 from "../src/action";
 import { clDataTypeData, clDataTypeFactory } from "../src/dataType";
 import { expect } from "@jest/globals";
@@ -351,24 +351,6 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
         const L_VALID_ROWS = LA_FILTEREDDATA.filter(ldRow => ldRow.data_type);
         expect(LA_PROCESS_SPY).toHaveBeenCalledTimes(L_VALID_ROWS.length);
       });      
-      
-      test("should call parent methods correctly", () => {
-        const L_CHECKFIELD_VALUESPY = jest.spyOn(LD_ACTIONINSTANCE, "checkFieldValue");
-        const L_CHECKFIELD_PROPERTIESSPY = jest
-        .spyOn(LD_ACTIONINSTANCE, "checkFieldProperties");
-        const L_HANDLE_NAVIGATORSPY = jest.spyOn(LD_ACTIONINSTANCE, "handleNavigator");
-        const L_HANDLE_MESSAGESSPY = jest.spyOn(LD_ACTIONINSTANCE, "handleMessages");
-        
-        LD_ACTIONINSTANCE.checkFieldValue();
-        LD_ACTIONINSTANCE.checkFieldProperties();
-        LD_ACTIONINSTANCE.handleNavigator();
-        LD_ACTIONINSTANCE.handleMessages();
-        
-        expect(L_CHECKFIELD_VALUESPY).toHaveBeenCalled();
-        expect(L_CHECKFIELD_PROPERTIESSPY).toHaveBeenCalled();
-        expect(L_HANDLE_NAVIGATORSPY).toHaveBeenCalled();
-        expect(L_HANDLE_MESSAGESSPY).toHaveBeenCalled();
-      });
       test("checkFieldValue() should call validate() on dataType instance", () => {
         // Mock data for actionData
         const LA_MOCKACTIONDATA: TTactionsData = [
@@ -433,7 +415,6 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
     afterEach(() => {
       jest.clearAllMocks();
     });
-
     test("should create clActionOnChange  when 'On Change' is passed", () => {
       expect(LD_ACTIONINSTANCE).toBeInstanceOf(clActionOnChange);
     });
@@ -450,12 +431,65 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       const L_BASE_EXECUTEACTION = jest.spyOn(clActionOnLoad.prototype, "executeAction");
       const L_ONCHANGE_EXECUTEACTION = jest.spyOn(LD_ACTIONINSTANCE, "executeAction");    
       LD_ACTIONINSTANCE.executeAction();
-    
       // Ensure executeAction of clActionOnLoad was NOT called (overridden)
       expect(L_BASE_EXECUTEACTION).not.toHaveBeenCalled();
       // Ensure executeAction of clActionOnChange is called
       expect(L_ONCHANGE_EXECUTEACTION).toHaveBeenCalled();
     }); 
+    test("should call super.checkFieldValue() in checkFieldValue", () => {
+      // Spy on the checkFieldValue method in the parent class (clAction)
+      const L_BASE_CHECKFIELDVALUE = jest.spyOn(clAction.prototype, "checkFieldValue");
+      LD_ACTIONINSTANCE.executeAction();
+      // Call checkFieldValue on the instance
+      LD_ACTIONINSTANCE.checkFieldValue();
+      // Ensure the checkFieldValue method of the parent class is called
+      expect(L_BASE_CHECKFIELDVALUE).toHaveBeenCalled();
+      expect(LD_ACTIONINSTANCE.dataType.validate).toHaveBeenCalled();
+    });
+    test("should call super.checkFieldProperties() in checkFieldProperties", () => {
+      // Spy on the checkFieldProperties method in the parent class (clAction)
+      const LD_ACTIONINSTANCE = new clActionOnLoad("Onload", LA_MOCKACTIONDATA);
+      const L_BASE_CHECKFIELDPROPERTIES = jest.spyOn(clAction.prototype, "checkFieldProperties");
+      jest.spyOn(LD_ACTIONINSTANCE, "executeAction");
+      // LD_ACTIONINSTANCE.executeAction();
+      LD_ACTIONINSTANCE.checkFieldProperties();
+      // Ensure both parent method and dataType.validate() are called
+      expect(L_BASE_CHECKFIELDPROPERTIES).toHaveBeenCalled();
+      LD_ACTIONINSTANCE.executeAction();
+      expect(L_BASE_CHECKFIELDPROPERTIES).toHaveBeenCalledTimes(1);
+    });
+    test("should call super.handleNavigator() in handleNavigator", () => {
+      // Create an instance of the action class (LD_ACTIONINSTANCE) that should call `super.handleNavigator()`
+      const LD_ACTIONINSTANCE = new clActionOnLoad("Onload", LA_MOCKACTIONDATA);
+      // Spy on the handleNavigator method in the parent class (clAction)
+      const L_BASE_HANDLENAVIGATOR = jest.spyOn(clAction.prototype, "handleNavigator");
+      // Optionally, spy on other methods if needed, like the executeAction method, 
+      // if you want to ensure the method is triggering the handleNavigator() method.
+      jest.spyOn(LD_ACTIONINSTANCE, "executeAction");
+      // Call the method you want to test
+      LD_ACTIONINSTANCE.handleNavigator();
+      // Ensure the parent method is called
+      expect(L_BASE_HANDLENAVIGATOR).toHaveBeenCalled();
+      // If executeAction() triggers handleNavigator(), ensure it's been called
+      LD_ACTIONINSTANCE.executeAction();
+      expect(L_BASE_HANDLENAVIGATOR).toHaveBeenCalledTimes(1); // Adjust based on your expectation
+    });
+    test("should call super.handleMessages() in handleMessages", () => {
+      // Create an instance of the action class (LD_ACTIONINSTANCE) that should call `super.handleMessages()`
+      const LD_ACTIONINSTANCE = new clActionOnLoad("Onload", LA_MOCKACTIONDATA);
+      // Spy on the handleMessages method in the parent class (clAction)
+      const L_BASE_HANDLEMESSAGES = jest.spyOn(clAction.prototype, "handleMessages");
+      // Optionally, spy on other methods if needed, like the executeAction method, 
+      // if you want to ensure the method is triggering the handleMessages() method.
+      jest.spyOn(LD_ACTIONINSTANCE, "executeAction");
+      // Call the method you want to test
+      LD_ACTIONINSTANCE.handleMessages();
+      // Ensure the parent method is called
+      expect(L_BASE_HANDLEMESSAGES).toHaveBeenCalled();
+      // If executeAction() triggers handleMessages(), ensure it's been called
+      LD_ACTIONINSTANCE.executeAction();
+      expect(L_BASE_HANDLEMESSAGES).toHaveBeenCalledTimes(1); // Adjust based on your expectation
+    });
   });
  describe("Creating an instance of clActionOnTab", () => {
     let LD_ACTIONINSTANCE;

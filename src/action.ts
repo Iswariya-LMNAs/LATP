@@ -7,7 +7,7 @@ import { ifActionHandler, TTactionsData, ifDataType, TactionData } from "./types
  * @param iaActionData - The array containing action data.
  */
 
-abstract class clAction implements ifActionHandler {
+export abstract class clAction implements ifActionHandler {
     action : string
     actionData: TTactionsData  //Array type for TactionData
     dataType: ifDataType
