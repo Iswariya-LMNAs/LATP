@@ -9,9 +9,8 @@ interface ApiResponse {
 
 const fetchData = async (): Promise<TtestHeaderData> => {
   try {
-    // const url = `${process.env.URL}/api/resource/${process.env.DOCTYPE}/Quotation Workflow`;
-    const url = `${process.env.URL}/api/resource/${process.env.DOCTYPE}/ertyu`;
-    const key = process.env.KEY;
+    const url = `${process.env.HOST_URL}/api/resource/${process.env.DOCTYPE}/Sample Test`;
+    const key = process.env.HOST_KEY;
 
     if (!url || !key) {
       throw new Error("Missing required environment variables");
@@ -28,7 +27,7 @@ const fetchData = async (): Promise<TtestHeaderData> => {
     const response = await fetch(url, requestOptions);
     const result = (await response.json()) as ApiResponse;
     delete result.data.json_response 
-    // console.log(result.data);
+    // console.log("Logged result",result.data)
     const ltestHeader:TtestHeaderData = result.data 
     return ltestHeader; 
 
@@ -37,5 +36,5 @@ const fetchData = async (): Promise<TtestHeaderData> => {
     return null; 
   }
 };
-
 export default fetchData;
+

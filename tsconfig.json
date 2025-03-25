@@ -112,7 +112,7 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "module": "CommonJS",
+    "module": "ESNext",
     "moduleResolution": "node",
     "lib": ["ES6", "DOM"],
     "types": ["cypress"]  // Add this line
@@ -123,3 +123,5 @@
     "cypress.config.ts"
   ]
 }
+
+

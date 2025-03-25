@@ -1,5 +1,6 @@
 import  { clActionFactory } from "../../src/action"; 
 import fetchData from "../../src/fetchdata";
+
 /// <reference types="cypress" />
 
 /**
@@ -14,15 +15,19 @@ import fetchData from "../../src/fetchdata";
 describe("Testing API Data", () => {
   before(() => {
     cy.task("fetchData").then((TtestHeader :TtestHeaderData) => {
+      cy.wrap(TtestHeader).as('TtestHeader'); 
     });
   });
 
-  it("login to the url and should log full API test data", () => {
-    cy.visit('https://qsgbcz.docker.localhost/login#login')
-    cy.get('#login_email').type('Wesupport@lmnas.com')
-    cy.get('#login_password').type('supportConfig@03{enter}').wait(4000)
-    cy.visit('https://qsgbcz.docker.localhost/app/quotation').wait(2000)
-    cy.get('.primary-action').click()
+  it("login to the url and should log full API test data", () => {   
+    const targetUrl = Cypress.env("TARGET_URL");
+    const loginEmail = Cypress.env("LOGIN_EMAIL");
+    const loginPassword = Cypress.env("LOGIN_PASSWORD");
+    cy.visit(`${targetUrl}/login#login`);
+    cy.get("#login_email").type(`${loginEmail}`);
+    cy.get("#login_password").type(`${loginPassword}{enter}`).wait(4000);
+    cy.visit(`${targetUrl}/app/quotation`).wait(2000);
+    cy.get(".primary-action").click();
     cy.task("fetchData").then((TtestHeader : TtestHeaderData) => {
       //Filter all header actions (Onload,On change ,OnTab...) from TtestHeaderData 
       const CaFilteredActions :TTactionsData = TtestHeader.test_fields.filter(lActionRow => lActionRow.action); 
@@ -34,5 +39,4 @@ describe("Testing API Data", () => {
     });
   });
 });
-
  

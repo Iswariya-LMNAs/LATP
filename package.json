@@ -1,11 +1,13 @@
 {
   "name": "type_cypress",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "setup": "./setup.sh",
-    "upload_testdata": "./setup.sh"
+    "upload_testdata": "./setup.sh",
+    "start": "ts-node src/fetchdata.ts"
   },
   "keywords": [],
   "author": "",
@@ -25,3 +27,5 @@
     "node-fetch": "^3.3.2"
   }
 }
+
+

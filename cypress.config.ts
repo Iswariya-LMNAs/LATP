@@ -8,17 +8,19 @@ export default defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
       // Pass environment variables to Cypress
-      config.env.URL = process.env.URL;
-      config.env.KEY = process.env.KEY;
-      config.env.DOCTYPE = process.env.DOCTYPE;
+      config.env.TARGET_URL = process.env.TARGET_URL;
+      config.env.LOGIN_EMAIL = process.env.LOGIN_EMAIL;
+      config.env.LOGIN_PASSWORD = process.env.LOGIN_PASSWORD;
+      // config.env.TARGET_KEY = process.env.TARGET_KEY;
+      // config.env.DOCTYPE = process.env.DOCTYPE;
 
+      
       // Define Cypress tasks
       on("task", {
         async fetchData() {
-          return await fetchData();
+        return await fetchData();
         },
-      });
-
+      });      
       return config; // Ensure modified config is returned
     },
   },
