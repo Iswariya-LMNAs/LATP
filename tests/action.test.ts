@@ -378,14 +378,14 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
         const LD_ACTIONINSTANCE: ifActionHandler = new 
         clActionOnLoad("Onload", LA_MOCKACTIONDATA);
         // Mock the dataType instance with a spy on validate()
-        const mockDataTypeInstance = { validate: jest.fn() };
+        const LD_MOCKDATATYPE_INSTACE = { validate: jest.fn() };
         // Spy on createDataType to return the mock instance
         jest.spyOn(clDataTypeFactory, "createDataType")
-        .mockReturnValue(mockDataTypeInstance as any);
+        .mockReturnValue(LD_MOCKDATATYPE_INSTACE as any);
         // Call executeAction, which will trigger checkFieldValue()
         LD_ACTIONINSTANCE.executeAction();
         // Validate that checkFieldValue() called validate()
-        expect(mockDataTypeInstance.validate).toHaveBeenCalled();
+        expect(LD_MOCKDATATYPE_INSTACE.validate).toHaveBeenCalled();
       });
       test("executeAction should handle actionData with empty action property", () => {
         const INVALID_DATA = [{ ...LA_MOCKACTIONDATA[0], action: "" }];
@@ -410,13 +410,13 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
   });
    describe("Test clActionOnChange -Instantiation and executeAction", () => {
     let LD_ACTIONINSTANCE;
-    let mockDataTypeInstance: jest.Mocked<clDataTypeData>; // Use `clDataTypeData` instead
-    let createDataTypeMock: jest.SpiedFunction<typeof clDataTypeFactory.createDataType>;
+    let ldMockDataTypeInstance: jest.Mocked<clDataTypeData>; // Use `clDataTypeData` instead
+    let ldCreateDataTypeMock: jest.SpiedFunction<typeof clDataTypeFactory.createDataType>;
 
     beforeEach(() => {
       LD_ACTIONINSTANCE = clActionFactory.createAction("On Change", LA_MOCKACTIONDATA
       )as clActionOnChange;
-      mockDataTypeInstance = {
+      ldMockDataTypeInstance = {
         input: jest.fn(),
         validate: jest.fn(),
         execute: jest.fn(),
@@ -426,8 +426,8 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
         fieldProp: "input:visible",
         getSelector: jest.fn(() => '[data-fieldname="test_field6"]input:visible'),
       } as jest.Mocked<clDataTypeData>;
-      createDataTypeMock = jest.spyOn(clDataTypeFactory, "createDataType")
-      .mockReturnValue(mockDataTypeInstance);
+      ldCreateDataTypeMock = jest.spyOn(clDataTypeFactory, "createDataType")
+      .mockReturnValue(ldMockDataTypeInstance);
     });
 
     afterEach(() => {
@@ -444,7 +444,7 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       expect(clDataTypeFactory.createDataType)
       .toHaveBeenCalledWith("Select", LD_ACTIONINSTANCE);
       // Ensure input() was called
-      expect(mockDataTypeInstance.input).toHaveBeenCalled();
+      expect(ldMockDataTypeInstance.input).toHaveBeenCalled();
     }); 
     test("should override executeAction from base class", () => {
       const L_BASE_EXECUTEACTION = jest.spyOn(clActionOnLoad.prototype, "executeAction");
