@@ -392,7 +392,8 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
   });
    describe("Test clActionOnChange -Instantiation and executeAction", () => {
     let LD_ACTIONINSTANCE;
-    let ldMockDataTypeInstance: jest.Mocked<clDataTypeData>; // Use `clDataTypeData` instead
+    // Use `clDataTypeData` instead
+    let ldMockDataTypeInstance: jest.Mocked<clDataTypeData>; 
     let ldCreateDataTypeMock: jest.SpiedFunction<typeof clDataTypeFactory.createDataType>;
 
     beforeEach(() => {
@@ -404,7 +405,8 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
         execute: jest.fn(),
         dataType: "Select",
         action: LD_ACTIONINSTANCE,
-        fieldSlector: '[data-fieldname="test_field6"]', // Simulated field selector
+        // Simulated field selector
+        fieldSlector: '[data-fieldname="test_field6"]', 
         fieldProp: "input:visible",
         getSelector: jest.fn(() => '[data-fieldname="test_field6"]input:visible'),
       } as jest.Mocked<clDataTypeData>;
@@ -449,7 +451,8 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
     test("should call super.checkFieldProperties() in checkFieldProperties", () => {
       // Spy on the checkFieldProperties method in the parent class (clAction)
       const LD_ACTIONINSTANCE = new clActionOnLoad("Onload", LA_MOCKACTIONDATA);
-      const L_BASE_CHECKFIELDPROPERTIES = jest.spyOn(clAction.prototype, "checkFieldProperties");
+      const L_BASE_CHECKFIELDPROPERTIES = jest
+      .spyOn(clAction.prototype, "checkFieldProperties");
       jest.spyOn(LD_ACTIONINSTANCE, "executeAction");
       // LD_ACTIONINSTANCE.executeAction();
       LD_ACTIONINSTANCE.checkFieldProperties();
@@ -459,7 +462,8 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       expect(L_BASE_CHECKFIELDPROPERTIES).toHaveBeenCalledTimes(1);
     });
     test("should call super.handleNavigator() in handleNavigator", () => {
-      // Create an instance of the action class (LD_ACTIONINSTANCE) that should call `super.handleNavigator()`
+      // Create an instance of the action class (LD_ACTIONINSTANCE)
+      //  that should call `super.handleNavigator()`
       const LD_ACTIONINSTANCE = new clActionOnLoad("Onload", LA_MOCKACTIONDATA);
       // Spy on the handleNavigator method in the parent class (clAction)
       const L_BASE_HANDLENAVIGATOR = jest.spyOn(clAction.prototype, "handleNavigator");
@@ -472,10 +476,12 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       expect(L_BASE_HANDLENAVIGATOR).toHaveBeenCalled();
       // If executeAction() triggers handleNavigator(), ensure it's been called
       LD_ACTIONINSTANCE.executeAction();
-      expect(L_BASE_HANDLENAVIGATOR).toHaveBeenCalledTimes(1); // Adjust based on your expectation
+      // Adjust based on your expectation
+      expect(L_BASE_HANDLENAVIGATOR).toHaveBeenCalledTimes(1); 
     });
     test("should call super.handleMessages() in handleMessages", () => {
-      // Create an instance of the action class (LD_ACTIONINSTANCE) that should call `super.handleMessages()`
+      // Create an instance of the action class (LD_ACTIONINSTANCE) 
+      // that should call `super.handleMessages()`
       const LD_ACTIONINSTANCE = new clActionOnLoad("Onload", LA_MOCKACTIONDATA);
       // Spy on the handleMessages method in the parent class (clAction)
       const L_BASE_HANDLEMESSAGES = jest.spyOn(clAction.prototype, "handleMessages");
@@ -488,7 +494,8 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       expect(L_BASE_HANDLEMESSAGES).toHaveBeenCalled();
       // If executeAction() triggers handleMessages(), ensure it's been called
       LD_ACTIONINSTANCE.executeAction();
-      expect(L_BASE_HANDLEMESSAGES).toHaveBeenCalledTimes(1); // Adjust based on your expectation
+      // Adjust based on your expectation
+      expect(L_BASE_HANDLEMESSAGES).toHaveBeenCalledTimes(1); 
     });
   });
  describe("Creating an instance of clActionOnTab", () => {
