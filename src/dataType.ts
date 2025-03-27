@@ -1,5 +1,5 @@
 import {ifDataType, ifActionHandler} from "./types"
-export abstract class clDataType implements ifDataType {
+abstract class clDataType implements ifDataType {
     dataType: string;
     action: ifActionHandler;
     fieldSlector: string
