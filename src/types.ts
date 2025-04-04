@@ -63,6 +63,7 @@ type TactionData = {
     parentfield: string;
     parenttype: string;
     doctype: string;
+    section: string;
 };
 /**@type TTactionsData - Represents an array of action data. */
 type TTactionsData = TactionData[]

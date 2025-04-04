@@ -28,7 +28,7 @@ class clDataTypeData extends clDataType {
         super(iDataType, ioAction);
         this.fieldProp = `input:visible`
     }
-    validate(): void {   
+    validate(): void {      
         cy.get(this.getSelector()).should('exist').and('be.visible');
     }
     input(): void {

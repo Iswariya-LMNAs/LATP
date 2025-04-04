@@ -24,6 +24,37 @@ abstract class clAction implements ifActionHandler {
     /**@method handleMessages Processes messages related to the action.*/
     handleMessages(): void{
     }
+      /** @method expandSection - Placeholder for expanding a form section. */
+    expandSection(): void {
+        // cy.log("Expanding section for action: ", "Section:", this.actionRow.section);
+        if (!this.actionData || this.actionData.length === 0) {
+            cy.log("No action data available to process.");
+            return;
+        }
+    
+        const sections: string[] = [];
+    
+        this.actionData.forEach(row => {
+            if (row.section && !sections.includes(row.section)) {
+                sections.push(row.section);
+            }
+        });
+    
+        if (sections.length === 0) {
+            cy.log("No valid sections found to expand.");
+            return;
+        }
+    
+        cy.log("Expanding sections:", sections.join(", "));
+    
+        sections.forEach(section => {
+            cy.get(`[data-fieldname="${section}"] > .section-head`)
+              .should('exist')
+              .wait(4000)
+              .click({force:true});
+        });
+    
+    }
     /**@method executeAction Executes the action by processing each action data row.*/
     executeAction(): void {   
         this.actionData.forEach((actionDataRow) => {
@@ -50,7 +81,9 @@ class clActionOnLoad extends clAction {
     actionData: TTactionsData
     actionRow: TactionData
     dataType: ifDataType
-    executeAction(): void {super.executeAction()}
+    executeAction(): void {
+        this.expandSection()
+        super.executeAction()}
     checkFieldValue(): void {super.checkFieldValue()}
     checkFieldProperties(): void { super.checkFieldProperties()}
     handleNavigator(): void {super.handleNavigator()}
@@ -72,6 +105,7 @@ class clActionOnChange extends clAction {
     action: string
     actionData: TactionData[]
     executeAction(): void { 
+        this.expandSection()
         this.actionRow = this.actionData[0]
         this.dataType = clDataTypeFactory.createDataType(this.actionData[0].data_type, this) // take only the header datatype
         this.dataType.input()
@@ -98,7 +132,9 @@ class clActionOnChange extends clAction {
 class clActionOnTab extends clAction {
     action: string
     actionData: TactionData[]
-    executeAction(): void { super.executeAction()}
+    executeAction(): void { 
+        this.expandSection()
+        super.executeAction()}
     checkFieldValue(): void {super.checkFieldValue}
     checkFieldProperties(): void {super.checkFieldProperties()}
     handleNavigator(): void {super.handleNavigator()}

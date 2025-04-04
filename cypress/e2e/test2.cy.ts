@@ -16,6 +16,8 @@ describe("Testing API Data", () => {
   before(() => {
     cy.task("fetchData").then((TtestHeader :TtestHeaderData) => {
       cy.wrap(TtestHeader).as('TtestHeader'); 
+      cy.log("Log full data",JSON.stringify(TtestHeader))
+  
     });
   });
 
@@ -23,10 +25,11 @@ describe("Testing API Data", () => {
     const targetUrl = Cypress.env("TARGET_URL");
     const loginEmail = Cypress.env("LOGIN_EMAIL");
     const loginPassword = Cypress.env("LOGIN_PASSWORD");
+    const targetPath = Cypress.env("TARGET_PATH")
     cy.visit(`${targetUrl}/login#login`);
     cy.get("#login_email").type(`${loginEmail}`);
     cy.get("#login_password").type(`${loginPassword}{enter}`).wait(4000);
-    cy.visit(`${targetUrl}/app/quotation`).wait(2000);
+    cy.visit(`${targetUrl}/app/${targetPath}`).wait(2000);
     cy.get(".primary-action").click();
     cy.task("fetchData").then((TtestHeader : TtestHeaderData) => {
       //Filter all header actions (Onload,On change ,OnTab...) from TtestHeaderData 

@@ -11,7 +11,7 @@ export default defineConfig({
       config.env.TARGET_URL = process.env.TARGET_URL;
       config.env.LOGIN_EMAIL = process.env.LOGIN_EMAIL;
       config.env.LOGIN_PASSWORD = process.env.LOGIN_PASSWORD;
-      // config.env.TARGET_KEY = process.env.TARGET_KEY;
+      config.env.TARGET_PATH = process.env.TARGET_PATH;
       // config.env.DOCTYPE = process.env.DOCTYPE;
 
       
