@@ -9,7 +9,7 @@ interface ApiResponse {
 
 const fetchData = async (): Promise<TtestHeaderData> => {
   try {
-    const url = `${process.env.HOST_URL}/api/resource/${process.env.DOCTYPE}/${process.env.CONFIGURATOR_DOCTYPE}`;
+    const url = `${process.env.HOST_URL}/api/resource/${process.env.DOCTYPE}/${process.env.TESTCASE_TITLE}`;
     const key = process.env.HOST_KEY;
 
     if (!url || !key) {

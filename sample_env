@@ -1,8 +1,10 @@
-HOST_URL=https://qsgbcz.docker.localhost
-HOST_KEY=Basic wertyuikjhgfdfghjkjhtyuyghjhgftyuhghgtyy==
-TARGET_URL=https://qsgbcz.docker.localhost
-TARGET_KEY=Basic wertyuikjhgfdfghjkjhtyuyghjhgftyuhghgtyy==
+HOST_URL=https://example.docker.localhost
+HOST_KEY=Basic YWNmODhmOWIzOGZmZGFkOmRhODI3YmI2bdgs5MjVmOA==
+TARGET_URL=https://test.docker.localhost
+TARGET_PATH=<Doctype-Endpoint>
+TARGET_KEY=Basic YWNmODhmOWIzOGZmZGghadnjhODI3YmI2NGY5MjVmOA==
 DOCTYPE=Test Case Configurator
 NODE_TLS_REJECT_UNAUTHORIZED=0
 LOGIN_EMAIL=wesupport@lmnas.com
-LOGIN_PASSWORD=***************
+LOGIN_PASSWORD=*************
+TESTCASE_TITLE=<Title-of-test-case>

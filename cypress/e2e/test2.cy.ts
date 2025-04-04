@@ -15,8 +15,7 @@ import fetchData from "../../src/fetchdata";
 describe("Testing API Data", () => {
   before(() => {
     cy.task("fetchData").then((TtestHeader :TtestHeaderData) => {
-      cy.wrap(TtestHeader).as('TtestHeader'); 
-      cy.log("Log full data",JSON.stringify(TtestHeader))
+      cy.wrap(TtestHeader).as('TtestHeader');
   
     });
   });
