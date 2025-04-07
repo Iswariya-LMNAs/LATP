@@ -29,11 +29,24 @@ class clDataTypeData extends clDataType {
         this.fieldProp = `input:visible`
     }
     validate(): void {
-        if (this.action.actionRow.is_read_only){this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value'}
-        cy.get(this.getSelector()).should('exist').and('be.visible');
+        // if (this.action.actionRow.is_read_only){this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value'}
+        // cy.get(this.getSelector()).should('exist').and('be.visible').wait(3000).and('have.value',this.action.actionRow.value);
+        if (this.action.actionRow.is_read_only) {
+            this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value';
+            cy.get(this.getSelector())
+                .should('exist')
+                .and('be.visible')
+                .and('have.text', this.action.actionRow.value);  // use have.text for read-only fields
+        } else {
+            // For editable fields, check the input value
+            cy.get(this.getSelector())
+                .should('exist')
+                .and('be.visible')
+                .and('have.value', this.action.actionRow.value);
+        }
     }
     input(): void {
-        cy.get(this.getSelector()).wait(2000).type(this.action.actionRow.value);
+        cy.get(this.getSelector()).wait(2000).type(this.action.actionRow.value).type('{enter}',{force:true});
     }
     execute(): void {
         this.action.actionRow
