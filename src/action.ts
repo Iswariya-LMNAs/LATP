@@ -29,29 +29,28 @@ abstract class clAction implements ifActionHandler {
         if (!this.actionData || this.actionData.length === 0) {
             cy.log("No action data available to process.");
             return;
-        }
-        
-        cy.log("Expanding sections:");
-        
-        // Wait for all sections to be visible before clicking
-        cy.get('.section-head') // Use a generic class for section headers
-            .each(($sectionHeader) => {
-                cy.wrap($sectionHeader) // Wrap each section header
-                    .parent() // Get the parent of the section header
-                    .then(($parent) => {
-                        // Type assertion to indicate $parent is a JQuery object
-                        const parent = $parent as JQuery<HTMLElement>;  // Type assertion here
-        
-                        // Check if the parent is not hidden (i.e., display is not 'none')
-                        if (parent.css('display') !== 'none') {
-                            cy.wrap($sectionHeader) // If parent is visible, proceed to interact with the section header
-                                .wait(1000) // Add a short delay (adjust timing as needed)
-                                .click({ force: true }); // Force click to ensure interaction
-                        } else {
-                            cy.log("Skipping hidden section."); // Log the skipped section
+        }    
+        cy.get('.section-head').each(($sectionHeader) => {
+            cy.wrap($sectionHeader)
+                .parent()
+                .then(($parent) => {
+                    const parent = $parent as JQuery<HTMLElement>;
+    
+                    if (parent.css('display') !== 'none') {
+                        // Check if the section is already expanded
+                        // Option 1: Check for a class like 'collapsed' (adjust based on your UI)
+                        if (!$sectionHeader.hasClass('collapsed')) {
+                            return;
                         }
-                    });
-            });
+                        // If collapsed, expand it
+                        cy.wrap($sectionHeader)
+                            .wait(1000)
+                            .click({ force: true });
+                    } else {
+                    }
+                });
+        });  
+        
     }
     /**@method executeAction Executes the action by processing each action data row.*/
     executeAction(): void {   

@@ -46,7 +46,7 @@ class clDataTypeData extends clDataType {
         }
     }
     input(): void {
-        cy.get(this.getSelector()).wait(2000).type(this.action.actionRow.value).type('{enter}',{force:true});
+        cy.get(this.getSelector()).wait(2000).type(this.action.actionRow.value).wait(500).type('{enter}',{force:true});
     }
     execute(): void {
         this.action.actionRow
