@@ -4,7 +4,6 @@
 
 It simplifies the testing process by automating repetitive tasks, allowing both developers and testers to focus on building the software, not on repetitive testing.
 
----
 
 ##  Key Features
 
@@ -12,15 +11,12 @@ It simplifies the testing process by automating repetitive tasks, allowing both 
 - **Test Case Configurator:** A simple interface that lets users create test cases without writing any code. The tool will automatically generate test scripts for you.
 - **Automated Test Script Generation:** Once you define a test scenario, LENS AI Test Pilot automatically creates the necessary test scripts, saving time and reducing errors.
 - **Centralized Test Management:** Store all your test data in one place, making it easy to manage and update tests for your application.
-- **Efficient Test Data Handling:** LENS AI Test Pilot uses TypeScript to store and organize test values, making it easier to scale and maintain as your project grows.
 
 ---
 
 # Lens AI Test Pilot - Setup and Testing Guide
 
 This document provides step-by-step instructions to set up and test the **Lens AI Test Pilot** repository. Follow these steps carefully to ensure a smooth configuration and execution of test cases.
-
----
 
 ## Setup Instructions
 
@@ -32,10 +28,11 @@ Open your terminal and run the following command to clone the repository:
 git clone https://github.com/your-org/lens-ai-test-pilot.git
 ```
 
-Navigate to the cloned repository:
+Navigate to the cloned repository and open it in any text editors like VS Code:
 
 ```bash
 cd lens-ai-test-pilot
+code .
 ```
 
 ### Step 2: Checkout to the Develop Branch
@@ -64,6 +61,14 @@ nvm use v20
 
 1. Locate the `sample_env` file in the project directory. Copy it and create a new `.env` file in the root directory:
 2. Edit the `.env` file and update the following variables:
+3. Generate Encoded Authentication Key
+   To generate your encoded authentication key:
+    - Go to the site (Host or Target). Navigate to **Settings → API Access → Generate Keys**. Copy the **API Key** and **API Secret**.
+    - Then, generate the secret key by running the following command in your terminal:
+
+```bash
+echo -n "YOUR_API_KEY:YOUR_API_SECRET" | base64
+```
 
 **Example Environment Variables:**
 
@@ -74,18 +79,9 @@ TARGET_URL=https://targetsite.docker.localhost
 TARGET_KEY=Basic wertyuiohgfghjkjhcghjghjfdfghityuyuytyuyuu==
 DOCTYPE=Test Case Configurator
 NODE_TLS_REJECT_UNAUTHORIZED=0
-LOGIN_EMAIL=abc@lmnas.com
+LOGIN_EMAIL=abc@gmail.com
 LOGIN_PASSWORD=***********************
 ```
-
-**Description of Environment Variables:**
-
-- `HOST_URL` → URL where you want to configure the Test Case Configurator.
-- `HOST_KEY` → Basic authentication key for the host URL.
-- `TARGET_URL` → URL where tests will be executed.
-- `TARGET_KEY` → Basic authentication key for the target URL.
-- `LOGIN_EMAIL` → Email address to log into the target URL.
-- `LOGIN_PASSWORD` → Password to log into the target URL.
 
 ### Step 5: Upload Scripts
 
@@ -109,17 +105,12 @@ npm run setup
 1. Navigate to **Site Details** on the host site.
 2. Add the following details:
    - **Site Name:** Target site name
-   - **Key:** Unique site key
+   - **Key:** Authentication key
    - **Client:** Client name
-   - **Doctype List:**
-
-```json
-["Customer", "Customer Group", "Lead", "Quotation", "Sales Order", "Design"]
-```
-
+   - **Doctype List:** ["Customer", "Customer Group", "Lead", "Quotation", "Sales Order", "Design"]
 3. Save the details.
 
-### Step 8: Upload Test Data
+### Step 8:  Upload Test Data
 
 Run the following command to upload the test data:
 
