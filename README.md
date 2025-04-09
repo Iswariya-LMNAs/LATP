@@ -51,24 +51,17 @@ nvm use v20
 **Example Environment Variables:**
 
 ```env
-HOST_URL=https://demolens.docker.localhost
-HOST_KEY=Basic wertyuiohgfghjkjhcghjghjfdfghityuyuytyuyuu==
-TARGET_URL=https://qsgbcz.docker.localhost
-TARGET_KEY=Basic wertyuiohgfghjkjhcghjghjfdfghityuyuytyuyuu==
+HOST_URL=https://example.docker.localhost
+HOST_KEY=Basic YWNmODhmOWIzOGZmZGFkOmRhODI3YmI2bdgs5MjVmOA==
+TARGET_URL=https://test.docker.localhost
+TARGET_PATH=<Doctype-Endpoint>
+TARGET_KEY=Basic YWNmODhmOWIzOGZmZGghadnjhODI3YmI2NGY5MjVmOA==
 DOCTYPE=Test Case Configurator
 NODE_TLS_REJECT_UNAUTHORIZED=0
 LOGIN_EMAIL=wesupport@lmnas.com
-LOGIN_PASSWORD=***********************
+LOGIN_PASSWORD=*************
+TESTCASE_TITLE=<Title-of-test-case>
 ```
-
-**Description of Environment Variables:**
-
-- `HOST_URL` → URL where you want to configure the Test Case Configurator.
-- `HOST_KEY` → Basic authentication key for the host URL.
-- `TARGET_URL` → URL where tests will be executed.
-- `TARGET_KEY` → Basic authentication key for the target URL.
-- `LOGIN_EMAIL` → Email address to log into the target URL.
-- `LOGIN_PASSWORD` → Password to log into the target URL.
 
 ### Step 5: Upload Scripts
 
