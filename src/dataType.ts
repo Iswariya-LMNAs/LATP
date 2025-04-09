@@ -1,3 +1,4 @@
+import { getDelay } from "../src/action";
 /**
  * @class clDataType -Abstract base class for handling different data types.  
  * @method validate - Abstract method for validation logic.  
@@ -46,7 +47,7 @@ class clDataTypeData extends clDataType {
         }
     }
     input(): void {
-        cy.get(this.getSelector()).wait(2000).type(this.action.actionRow.value).wait(500).type('{enter}',{force:true});
+        cy.get(this.getSelector()).wait(getDelay("medium")).type(this.action.actionRow.value).wait(getDelay("short")).type('{enter}',{force:true});
     }
     execute(): void {
         this.action.actionRow
