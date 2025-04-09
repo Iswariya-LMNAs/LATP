@@ -1,3 +1,20 @@
+# LENS AI Test Pilot
+
+**LENS AI Test Pilot** is a tool that automates the testing of web applications using Cypress. Traditionally, testing was done after development, which caused delays and issues. Now, with LENS AI Test Pilot, you can create automated test scripts before development even begins. This allows testing and development to happen at the same time, speeding up the process and improving product quality.
+
+It simplifies the testing process by automating repetitive tasks, allowing both developers and testers to focus on building the software, not on repetitive testing.
+
+---
+
+##  Key Features
+
+- **Parallel Testing and Development:** Create test cases first and begin development immediately after. This saves time and speeds up the overall process.
+- **Test Case Configurator:** A simple interface that lets users create test cases without writing any code. The tool will automatically generate test scripts for you.
+- **Automated Test Script Generation:** Once you define a test scenario, LENS AI Test Pilot automatically creates the necessary test scripts, saving time and reducing errors.
+- **Centralized Test Management:** Store all your test data in one place, making it easy to manage and update tests for your application.
+- **Efficient Test Data Handling:** LENS AI Test Pilot uses TypeScript to store and organize test values, making it easier to scale and maintain as your project grows.
+
+---
 
 # Lens AI Test Pilot - Setup and Testing Guide
 
@@ -51,17 +68,24 @@ nvm use v20
 **Example Environment Variables:**
 
 ```env
-HOST_URL=https://example.docker.localhost
-HOST_KEY=Basic YWNmODhmOWIzOGZmZGFkOmRhODI3YmI2bdgs5MjVmOA==
-TARGET_URL=https://test.docker.localhost
-TARGET_PATH=<Doctype-Endpoint>
-TARGET_KEY=Basic YWNmODhmOWIzOGZmZGghadnjhODI3YmI2NGY5MjVmOA==
+HOST_URL=https://hostsite.docker.localhost
+HOST_KEY=Basic wertyuiohgfghjkjhcghjghjfdfghityuyuytyuyuu==
+TARGET_URL=https://targetsite.docker.localhost
+TARGET_KEY=Basic wertyuiohgfghjkjhcghjghjfdfghityuyuytyuyuu==
 DOCTYPE=Test Case Configurator
 NODE_TLS_REJECT_UNAUTHORIZED=0
-LOGIN_EMAIL=wesupport@lmnas.com
-LOGIN_PASSWORD=*************
-TESTCASE_TITLE=<Title-of-test-case>
+LOGIN_EMAIL=abc@lmnas.com
+LOGIN_PASSWORD=***********************
 ```
+
+**Description of Environment Variables:**
+
+- `HOST_URL` → URL where you want to configure the Test Case Configurator.
+- `HOST_KEY` → Basic authentication key for the host URL.
+- `TARGET_URL` → URL where tests will be executed.
+- `TARGET_KEY` → Basic authentication key for the target URL.
+- `LOGIN_EMAIL` → Email address to log into the target URL.
+- `LOGIN_PASSWORD` → Password to log into the target URL.
 
 ### Step 5: Upload Scripts
 
@@ -128,3 +152,11 @@ This will execute the base test for the Quotation module.
 Following the above steps will ensure a successful setup and execution of tests in the Lens AI Test Pilot repository. For troubleshooting or further information, refer to the official documentation.
 
 **Happy Testing!**
+
+---
+
+##  Explore & Engage
+
+Looking to dive deeper or need help getting started? Check out our full documentation for detailed insights, tips, and support.
+
+###  [Documentation](https://lmnaslimited.github.io/lens_ai_test_pilot_docs/ai-test-pilot/introduction/lens_ai_test_pilot/)
