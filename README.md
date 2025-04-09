@@ -35,15 +35,8 @@ cd lens-ai-test-pilot
 code .
 ```
 
-### Step 2: Checkout to the Develop Branch
 
-Ensure you are on the correct branch by checking out the develop branch:
-
-```bash
-git checkout develop
-```
-
-### Step 3: Install Dependencies
+### Step 2: Install Dependencies
 
 Run the following command to install project dependencies:
 
@@ -56,6 +49,51 @@ Ensure you are using Node.js v20 by executing:
 ```bash
 nvm use v20
 ```
+
+
+### Step 3: Set Up Local LENS Sites
+
+To run the **Lens AI Test Pilot**, you need two LENS sites:
+
+- The **Host site** is used for configuration.  
+- The **Target site** is where tests will be executed.
+   - If you already have two LENS sites, just identify which one will act as the host and which as the target.
+   - If you don’t have the sites set up, follow the instructions below to spin up local instances.
+
+Install Docker: [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
+
+Then run the following command to start two local LENS sites:
+
+```bash
+docker compose -f pwd.yml up -d
+```
+
+Once the containers are up, open the `/etc/hosts` file:
+
+```bash
+sudo vi /etc/hosts
+```
+
+Add the following line to map the local domains:
+
+```
+127.0.0.1   lenshost.localhost  lenstarget.localhost
+```
+
+Save and close the file.
+
+Wait for a couple of minutes, then open your browser and visit:
+
+- [http://lenshost.localhost:8080](http://lenshost.localhost:8080)
+- [http://lenstarget.localhost:8080](http://lenstarget.localhost:8080)
+
+Use the following credentials to log in:
+
+- **Username:** `administrator`
+- **Password:** `admin`
+
+Proceed with the Frappe setup process on both sites. Once completed, your local Host and Target LENS sites will be ready.
+
 
 ### Step 4: Configure Environment Variables
 
