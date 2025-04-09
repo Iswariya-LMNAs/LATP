@@ -25,7 +25,7 @@ This document provides step-by-step instructions to set up and test the **Lens A
 Open your terminal and run the following command to clone the repository:
 
 ```bash
-git clone https://github.com/your-org/lens-ai-test-pilot.git
+git clone https://github.com/lmnaslimited/lens_ai_test_pilot.git
 ```
 
 Navigate to the cloned repository and open it in any text editors like VS Code:
