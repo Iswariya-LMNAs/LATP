@@ -11,7 +11,7 @@ export const LD_DELAYS = {
       long: 1500,
     },
   };
-  
+
   /** Helper to get delay based on running mode and delay type */
  export function getDelay(type: keyof typeof LD_DELAYS['UI'] = 'medium'): number {
     // const mode = (process.env.RUNNING_MODE || 'UI') as keyof typeof LD_DELAYS;
