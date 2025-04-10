@@ -31,7 +31,7 @@ git clone https://github.com/lmnaslimited/lens_ai_test_pilot.git
 Navigate to the cloned repository and open it in any text editors like VS Code:
 
 ```bash
-cd lens-ai-test-pilot
+cd lens_ai_test_pilot
 code .
 ```
 
@@ -68,19 +68,19 @@ Then run the following command to start two local LENS sites:
 docker compose -f pwd.yml up -d
 ```
 
-Once the containers are up, open the `/etc/hosts` file:
+open the `/etc/hosts` file:
 
 ```bash
 sudo vi /etc/hosts
 ```
 
-Add the following line to map the local domains:
+Insert the following line, then save and exit the vi.
 
 ```
 127.0.0.1   lenshost.localhost  lenstarget.localhost
 ```
 
-Save and close the file.
+
 
 Wait for a couple of minutes, then open your browser and visit:
 
@@ -92,8 +92,7 @@ Use the following credentials to log in:
 - **Username:** `administrator`
 - **Password:** `admin`
 
-Proceed with the Frappe setup process on both sites. Once completed, your local Host and Target LENS sites will be ready.
-
+Proceed with the Frappe setup wizard on both sites. Once completed, your local Host and Target LENS sites will be ready to use.
 
 ### Step 4: Configure Environment Variables
 
@@ -101,7 +100,7 @@ Proceed with the Frappe setup process on both sites. Once completed, your local 
 2. Edit the `.env` file and update the following variables:
 3. Generate Encoded Authentication Key
    To generate your encoded authentication key:
-    - Go to the site (Host or Target). Navigate to **Settings → API Access → Generate Keys**. Copy the **API Key** and **API Secret**.
+    - Go to the site (Host or Target), navigate to **Profile → My Settings → API Access → Generate Keys**, and copy the **API Key** and **API Secret**.
     - Then, generate the secret key by running the following command in your terminal:
 
 ```bash
@@ -119,6 +118,8 @@ DOCTYPE=Test Case Configurator
 NODE_TLS_REJECT_UNAUTHORIZED=0
 LOGIN_EMAIL=abc@gmail.com
 LOGIN_PASSWORD=***********************
+TESTCASE_TITLE=<Title-of-test-case>
+TARGET_PATH=<Doctype-Endpoint>
 ```
 
 ### Step 5: Upload Scripts
@@ -142,8 +143,8 @@ npm run setup
 
 1. Navigate to **Site Details** on the host site.
 2. Add the following details:
-   - **Site Name:** Target site name
-   - **Key:** Authentication key
+   - **Site Name:** Target site url
+   - **Key:** Authentication key (basic key)
    - **Client:** Client name
    - **Doctype List:** ["Customer", "Customer Group", "Lead", "Quotation", "Sales Order", "Design"]
 3. Save the details.
@@ -178,7 +179,7 @@ This will execute the base test for the Quotation module.
 
 ---
 
-Following the above steps will ensure a successful setup and execution of tests in the Lens AI Test Pilot repository. For troubleshooting or further information, refer to the official documentation.
+Following the above steps will ensure a successful setup and execution of tests in the Lens AI Test Pilot repository. For troubleshooting or further information, refer to the [official documentation](https://lmnaslimited.github.io/lens_ai_test_pilot_docs/ai-test-pilot/introduction/lens_ai_test_pilot/).
 
 **Happy Testing!**
 
