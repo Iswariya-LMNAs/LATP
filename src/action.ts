@@ -1,25 +1,5 @@
 import { clDataTypeFactory } from "./dataType"
-export const LD_DELAYS = {
-    CLI: {
-      short: 500,
-      medium: 500,
-      long: 750,
-    },
-    UI: {
-      short: 500,
-      medium: 900,
-      long: 1500,
-    },
-  };
-
-  /** Helper to get delay based on running mode and delay type */
- export function getDelay(type: keyof typeof LD_DELAYS['UI'] = 'medium'): number {
-    // const mode = (process.env.RUNNING_MODE || 'UI') as keyof typeof LD_DELAYS;
-    const mode = typeof Cypress !== "undefined" && Cypress.env
-    ? (Cypress.env("RUNNING_MODE") || "UI") as keyof typeof LD_DELAYS
-    : (process.env.RUNNING_MODE || "UI") as keyof typeof LD_DELAYS;
-    return LD_DELAYS[mode][type];
-  }
+import { fnGetDelay } from "../src/delay";
 
 /** @class clAction - provides a framework for executing actions on data fields,like ensuring proper validation,.*/
 abstract class clAction implements ifActionHandler {
@@ -64,7 +44,7 @@ abstract class clAction implements ifActionHandler {
                         // Check if the parent is not hidden (i.e., display is not 'none')
                         if (parent.css('display') !== 'none') {
                             cy.wrap($sectionHeader) // If parent is visible, proceed to interact with the section header
-                              .wait(getDelay("medium")) // Add a short delay (adjust timing as needed)
+                              .wait(fnGetDelay("medium")) // Add a short delay (adjust timing as needed)
                                 .click({ force: true }); // Force click to ensure interaction
                         } else {
                         }

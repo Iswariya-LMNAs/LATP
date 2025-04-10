@@ -1,5 +1,5 @@
 import  { clActionFactory } from "../../src/action"; 
-import fetchData from "../../src/fetchdata";
+import { fnGetDelay } from "../../src/delay";
 
 /// <reference types="cypress" />
 
@@ -26,8 +26,8 @@ describe("Testing API Data", () => {
     const targetPath = Cypress.env("TARGET_PATH")
     cy.visit(`${targetUrl}/login#login`);
     cy.get("#login_email").type(`${loginEmail}`);
-    cy.get("#login_password").type(`${loginPassword}{enter}`).wait(4000);
-    cy.visit(`${targetUrl}/app/${targetPath}`).wait(2000);
+    cy.get("#login_password").type(`${loginPassword}{enter}`).wait(fnGetDelay("medium"));
+    cy.visit(`${targetUrl}/app/${targetPath}`);
     cy.get(".primary-action").click();
     cy.task("fetchData").then((TtestHeader : TtestHeaderData) => {
       //Filter all header actions (Onload,On change ,OnTab...) from TtestHeaderData 
