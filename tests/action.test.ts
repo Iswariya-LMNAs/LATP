@@ -392,11 +392,11 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
      // Filter the action data based on the first row
       const LaFilteredData = clActionFactory
       .filterActionData(LaMockActionData, iActionRow);
-      const FirstRow = LaFilteredData[0]; 
+      const LFirstRow = LaFilteredData[0]; 
     
-      expect(FirstRow).toBeDefined();
-      expect(FirstRow!.action).not.toBe("");
-      expect(FirstRow!.action).toBe("Onload");
+      expect(LFirstRow).toBeDefined();
+      expect(LFirstRow!.action).not.toBe("");
+      expect(LFirstRow!.action).toBe("Onload");
     });
     
     test("First row's position should be a multiple of 10", () => {
@@ -404,10 +404,10 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       // Filter the action data based on the first row 
       const LaFilteredData = clActionFactory
       .filterActionData(LaMockActionData, iActionRow);
-      const FirstRow = LaFilteredData[0]; 
+      const LFirstRow = LaFilteredData[0]; 
 
-      expect(FirstRow!.pos).toBe(10);
-      expect(FirstRow!.pos % 10).toBe(0);
+      expect(LFirstRow!.pos).toBe(10);
+      expect(LFirstRow!.pos % 10).toBe(0);
     });
     
   
@@ -441,17 +441,17 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       // Check that for each decimal position, its corresponding whole number exists
       LaFilteredData.forEach(ldItem => {
         if (ldItem.pos % 1 !== 0) { // If it is a decimal position
-          const WholeNumberPos = Math.floor(ldItem.pos);
+          const LWholeNumberPos = Math.floor(ldItem.pos);
           // This will fail if whole number is missing
-          expect(LaAllPositions.has(WholeNumberPos)).toBe(true); 
+          expect(LaAllPositions.has(LWholeNumberPos)).toBe(true); 
           }
       });
     });
       test("Position 20 in filtered data should have 'On Change' action", () => {
-        const TargetRow = LaMockActionData[4];
+        const LTargetRow = LaMockActionData[4];
 
-        expect(TargetRow).toBeDefined();
-        expect(TargetRow!.action).toBe("On Change");
+        expect(LTargetRow).toBeDefined();
+        expect(LTargetRow!.action).toBe("On Change");
       });
   });
  
@@ -484,27 +484,27 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       test("executeAction() should not be called when actionData is empty", () => {
         const LdEmptyActionInstance = new clActionOnLoad("Onload", []);
         // Spy on the executeAction method to track calls
-        const spy = jest.spyOn(LdEmptyActionInstance, "executeAction");
+        const LSpy = jest.spyOn(LdEmptyActionInstance, "executeAction");
         LdEmptyActionInstance.executeAction(); // Call with empty data
         // Ensure that executeAction is not called
-        expect(spy).toHaveBeenCalledTimes(1);
+        expect(LSpy).toHaveBeenCalledTimes(1);
     });
       test("executeAction() should iterate over actionData & process each row", () => {
         const LaProcessSpy = jest.spyOn(ldActionInstance, "checkFieldValue"); 
         ldActionInstance.executeAction();
         // Filter the data to get only rows with a valid data_type
-        const ValidDataRows = laFilteredData.filter(ldRow => ldRow.data_type);
+        const LValidDataRows = laFilteredData.filter(ldRow => ldRow.data_type);
 
         expect(clDataTypeFactory.createDataType)
-        .toHaveBeenCalledTimes(ValidDataRows.length);
-        expect(LaProcessSpy).toHaveBeenCalledTimes(ValidDataRows.length);
+        .toHaveBeenCalledTimes(LValidDataRows.length);
+        expect(LaProcessSpy).toHaveBeenCalledTimes(LValidDataRows.length);
       });
       test("executeAction should skip processing rows where data_type is missing", () => {
         const LaProcessSpy = jest.spyOn(clDataTypeFactory, "createDataType");
         ldActionInstance.executeAction();
         // Check that createDataType is called only for rows that have a valid data_type
-        const ValidRows = laFilteredData.filter(ldRow => ldRow.data_type);
-        expect(LaProcessSpy).toHaveBeenCalledTimes(ValidRows.length);
+        const LValidRows = laFilteredData.filter(ldRow => ldRow.data_type);
+        expect(LaProcessSpy).toHaveBeenCalledTimes(LValidRows.length);
       });      
       test("checkFieldValue() should call validate() on dataType instance", () => {
         // Mock data for actionData
@@ -525,16 +525,16 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
         expect(LdMockDataType.validate).toHaveBeenCalled();
       });
       test("executeAction should handle actionData with empty action property", () => {
-        const InvalidData = [LaMockActionData[1]];
-        const LdActionInstance = new clActionOnLoad("Onload", InvalidData);
+        const LInvalidData = [LaMockActionData[1]];
+        const LdActionInstance = new clActionOnLoad("Onload", LInvalidData);
         jest.spyOn(LdActionInstance, "executeAction");
         LdActionInstance.executeAction();
       
         expect(LdActionInstance.executeAction).toHaveBeenCalled();
       });
       test("executeAction should handle duplicate actionData entries correctly", () => {
-        const DuplicateData = [LaMockActionData[0], LaMockActionData[0]];
-        const LdActionInstance = new clActionOnLoad("Onload", DuplicateData);
+        const LDuplicateData = [LaMockActionData[0], LaMockActionData[0]];
+        const LdActionInstance = new clActionOnLoad("Onload", LDuplicateData);
       
         jest.spyOn(LdActionInstance, "executeAction");
         LdActionInstance.executeAction();
@@ -582,66 +582,66 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       expect(ldMockDataTypeInstance.input).toHaveBeenCalled();
     }); 
     test("should override executeAction from base class", () => {
-      const BaseExecuteAction = jest.spyOn(clActionOnLoad.prototype, "executeAction");
-      const OnchangeExecuteAction = jest.spyOn(ldActionInstance, "executeAction");    
+      const LBaseExecuteAction = jest.spyOn(clActionOnLoad.prototype, "executeAction");
+      const LOnchangeExecuteAction = jest.spyOn(ldActionInstance, "executeAction");    
       ldActionInstance.executeAction();
       // Ensure executeAction of clActionOnLoad was NOT called (overridden)
-      expect(BaseExecuteAction).not.toHaveBeenCalled();
+      expect(LBaseExecuteAction).not.toHaveBeenCalled();
       // Ensure executeAction of clActionOnChange is called
-      expect(OnchangeExecuteAction).toHaveBeenCalled();
+      expect(LOnchangeExecuteAction).toHaveBeenCalled();
     }); 
     test("should call super.checkFieldValue() in checkFieldValue", () => {
       // Spy on the checkFieldValue method in the parent class (clAction)
-      const BaseCheckFieldValue = jest.spyOn(clAction.prototype, "checkFieldValue");
+      const LBaseCheckFieldValue = jest.spyOn(clAction.prototype, "checkFieldValue");
       ldActionInstance.executeAction();
       // Call checkFieldValue on the instance
       ldActionInstance.checkFieldValue();
       // Ensure the checkFieldValue method of the parent class is called
-      expect(BaseCheckFieldValue).toHaveBeenCalled();
+      expect(LBaseCheckFieldValue).toHaveBeenCalled();
       expect(ldActionInstance.dataType.validate).toHaveBeenCalled();
     });
     test("should call super.checkFieldProperties() in checkFieldProperties", () => {
       // Spy on the checkFieldProperties method in the parent class (clAction)
       const LdActionInstance = new clActionOnLoad("Onload", LaMockActionData);
-      const BaseCheckFieldProperties = jest
+      const LBaseCheckFieldProperties = jest
       .spyOn(clAction.prototype, "checkFieldProperties");
       jest.spyOn(LdActionInstance, "executeAction");
       // LdActionInstance.executeAction();
       LdActionInstance.checkFieldProperties();
       // Ensure both parent method and dataType.validate() are called
-      expect(BaseCheckFieldProperties).toHaveBeenCalled();
+      expect(LBaseCheckFieldProperties).toHaveBeenCalled();
       LdActionInstance.executeAction();
-      expect(BaseCheckFieldProperties).toHaveBeenCalledTimes(1);
+      expect(LBaseCheckFieldProperties).toHaveBeenCalledTimes(1);
     });
     test("should call super.handleNavigator() in handleNavigator", () => {
       // Create an instance of the action class (LdActionInstance)
       //  that should call `super.handleNavigator()`
       const LdActionInstance = new clActionOnLoad("Onload", LaMockActionData);
       // Spy on the handleNavigator method in the parent class (clAction)
-      const BaseHandleNavigator = jest.spyOn(clAction.prototype, "handleNavigator");
+      const LBaseHandleNavigator = jest.spyOn(clAction.prototype, "handleNavigator");
       jest.spyOn(LdActionInstance, "executeAction");
       // Call the method need to test
       LdActionInstance.handleNavigator();
       // Ensure the parent method is called
-      expect(BaseHandleNavigator).toHaveBeenCalled();
+      expect(LBaseHandleNavigator).toHaveBeenCalled();
       // If executeAction() triggers handleNavigator(), ensure it's been called
       LdActionInstance.executeAction();
-      expect(BaseHandleNavigator).toHaveBeenCalledTimes(1); 
+      expect(LBaseHandleNavigator).toHaveBeenCalledTimes(1); 
     });
     test("should call super.handleMessages() in handleMessages", () => {
       // Create an instance of the action class (LdActionInstance) 
       // that should call `super.handleMessages()`
       const LdActionInstance = new clActionOnLoad("Onload", LaMockActionData);
       // Spy on the handleMessages method in the parent class (clAction)
-      const BaseHandleMessages = jest.spyOn(clAction.prototype, "handleMessages");
+      const LBaseHandleMessages = jest.spyOn(clAction.prototype, "handleMessages");
       jest.spyOn(LdActionInstance, "executeAction");
       // Call the method need to test
       LdActionInstance.handleMessages();
       // Ensure the parent method is called
-      expect(BaseHandleMessages).toHaveBeenCalled();
+      expect(LBaseHandleMessages).toHaveBeenCalled();
       // If executeAction() triggers handleMessages(), ensure it's been called
       LdActionInstance.executeAction();
-      expect(BaseHandleMessages).toHaveBeenCalledTimes(1); 
+      expect(LBaseHandleMessages).toHaveBeenCalledTimes(1); 
     });
   });
  describe("Creating an instance of clActionOnTab", () => {
