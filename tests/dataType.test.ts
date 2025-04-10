@@ -37,7 +37,7 @@ type TactionData = {
  };
 type TTactionsData = TactionData[];
 
-const LA_MOCKACTIONDATA: TTactionsData = [
+const LaMockActionData: TTactionsData = [
     {
         name: "field_001",
         owner: "test.user@example.com",
@@ -88,85 +88,85 @@ const LA_MOCKACTIONDATA: TTactionsData = [
     }
 ];
 
-const LD_ACTIONDATA = {} as ifActionHandler;
+const LdActionData = {} as ifActionHandler;
 
 // Now assign properties safely
-LD_ACTIONDATA.action = "testAction";
-LD_ACTIONDATA.actionData = LA_MOCKACTIONDATA; 
-LD_ACTIONDATA.executeAction = jest.fn();
-LD_ACTIONDATA.checkFieldValue = jest.fn();
-LD_ACTIONDATA.actionRow = LA_MOCKACTIONDATA[0]; // Assign valid TactionData object
-LD_ACTIONDATA.checkFieldProperties = jest.fn();
-LD_ACTIONDATA.handleNavigator = jest.fn();
-LD_ACTIONDATA.handleMessages = jest.fn();
+LdActionData.action = "testAction";
+LdActionData.actionData = LaMockActionData; 
+LdActionData.executeAction = jest.fn();
+LdActionData.checkFieldValue = jest.fn();
+LdActionData.actionRow = LaMockActionData[0]; // Assign valid TactionData object
+LdActionData.checkFieldProperties = jest.fn();
+LdActionData.handleNavigator = jest.fn();
+LdActionData.handleMessages = jest.fn();
 
 // Assign `dataType` only after `actionData` is fully initialized
-LD_ACTIONDATA.dataType = new clDataTypeData("Data", LD_ACTIONDATA);
+LdActionData.dataType = new clDataTypeData("Data", LdActionData);
 
 // Jest Test Suite
 describe("Unit Test for dataType.ts", () => {
 
 describe("clDataTypeFactory.createDataType", () => {
     test("Creates clDataTypeData instance for 'Data'", () => {
-        expect(clDataTypeFactory.createDataType("Data", LD_ACTIONDATA))
+        expect(clDataTypeFactory.createDataType("Data", LdActionData))
         .toBeInstanceOf(clDataTypeData);
     });
     test("Creates clDataTypeLink instance for 'Link'", () => {
-        expect(clDataTypeFactory.createDataType("Link", LD_ACTIONDATA))
+        expect(clDataTypeFactory.createDataType("Link", LdActionData))
         .toBeInstanceOf(clDataTypeLink);
     });
     test("Creates clDataTypeSelect instance for 'Select'", () => {
-        expect(clDataTypeFactory.createDataType("Select", LD_ACTIONDATA))
+        expect(clDataTypeFactory.createDataType("Select", LdActionData))
         .toBeInstanceOf(clDataTypeSelect);
     });
     test("Creates clDataTypeCurrency instance for 'Currency'", () => {
-        expect(clDataTypeFactory.createDataType("Currency", LD_ACTIONDATA))
+        expect(clDataTypeFactory.createDataType("Currency", LdActionData))
         .toBeInstanceOf(clDataTypeCurrency);
     });
     test("Creates clDataTypeDate instance for 'Date'", () => {
-        expect(clDataTypeFactory.createDataType("Date", LD_ACTIONDATA))
+        expect(clDataTypeFactory.createDataType("Date", LdActionData))
         .toBeInstanceOf(clDataTypeDate);
     });
     test("Creates clDataTypeDynamiclink instance for 'Dynamic Link'", () => {
-        expect(clDataTypeFactory.createDataType("Dynamic Link", LD_ACTIONDATA))
+        expect(clDataTypeFactory.createDataType("Dynamic Link", LdActionData))
         .toBeInstanceOf(clDataTypeDynamiclink);
     });
 
     //  Error Cases
     test("Throws error for an empty string as data_type", () => {
-        expect(() => clDataTypeFactory.createDataType("", LD_ACTIONDATA))
+        expect(() => clDataTypeFactory.createDataType("", LdActionData))
         .toThrow("Invalid data type");
     });
     test("Throws error for null as data_type", () => {
-        expect(() => clDataTypeFactory.createDataType(null as any, LD_ACTIONDATA))
+        expect(() => clDataTypeFactory.createDataType(null as any, LdActionData))
         .toThrow("Invalid data type");
     });
     test("Throws error for undefined as data_type", () => {
-        expect(() => clDataTypeFactory.createDataType(undefined as any, LD_ACTIONDATA))
+        expect(() => clDataTypeFactory.createDataType(undefined as any, LdActionData))
         .toThrow("Invalid data type");
     });
     test("Throws error for non-existent data_type", () => {
-        expect(() => clDataTypeFactory.createDataType("InvalidType", LD_ACTIONDATA))
+        expect(() => clDataTypeFactory.createDataType("InvalidType", LdActionData))
         .toThrow("Invalid data type");
     });
     test("Throws error for case-sensitive mismatch", () => {
-        expect(() => clDataTypeFactory.createDataType("data", LD_ACTIONDATA))
+        expect(() => clDataTypeFactory.createDataType("data", LdActionData))
         .toThrow("Invalid data type");
     });
     test("Throws error for extra spaces in data_type", () => {
-        expect(() => clDataTypeFactory.createDataType(" Data ", LD_ACTIONDATA))
+        expect(() => clDataTypeFactory.createDataType(" Data ", LdActionData))
         .toThrow("Invalid data type");
     });
     test("Throws error for numeric data_type", () => {
-        expect(() => clDataTypeFactory.createDataType(123 as any, LD_ACTIONDATA))
+        expect(() => clDataTypeFactory.createDataType(123 as any, LdActionData))
         .toThrow("Invalid data type");
     });
     test("Throws error for object as data_type", () => {
-        expect(() => clDataTypeFactory.createDataType({} as any, LD_ACTIONDATA))
+        expect(() => clDataTypeFactory.createDataType({} as any, LdActionData))
         .toThrow("Invalid data type");
     });
     test("Throws error for array as data_type", () => {
-        expect(() => clDataTypeFactory.createDataType([] as any, LD_ACTIONDATA))
+        expect(() => clDataTypeFactory.createDataType([] as any, LdActionData))
         .toThrow("Invalid data type");
     });
     test("Throws error for null actionData", () => {
@@ -191,10 +191,10 @@ describe("clDataTypeData Unit Tests", () => {
     beforeEach(() => {
         ldMockAction = {
             action: "testAction",
-            actionData: LA_MOCKACTIONDATA, 
+            actionData: LaMockActionData, 
             executeAction: jest.fn(),
             checkFieldValue: jest.fn(),
-            actionRow: LA_MOCKACTIONDATA[0], // Assign a valid object
+            actionRow: LaMockActionData[0], // Assign a valid object
             checkFieldProperties: jest.fn(),
             handleNavigator: jest.fn(),
             handleMessages: jest.fn(),
@@ -214,9 +214,9 @@ describe("clDataTypeData Unit Tests", () => {
         expect(ldDatatypeInstance.getSelector()).toBe(`[data-fieldname=""]input:visible`);
     });
     test("should throw error if actionRow is missing", () => {
-        const LD_INVALIDACTION = { ...ldMockAction, actionRow: undefined 
+        const LdInvalidAction = { ...ldMockAction, actionRow: undefined 
          } as unknown as ifActionHandler;
-        expect(() => new clDataTypeData("Data", LD_INVALIDACTION)).toThrowError();
+        expect(() => new clDataTypeData("Data", LdInvalidAction)).toThrowError();
     }); 
   });
   describe("validate() Tests", () => {
@@ -225,25 +225,25 @@ describe("clDataTypeData Unit Tests", () => {
 
     });
     test("validate() should use the correct selector", () => {
-        const LA_EXPECTED_SELECTORS = [
+        const LaExpectedSelector = [
             `[data-fieldname="customer_name"]input:visible`,
             `[data-fieldname="factory"]input:visible`
         ];
         //set field_name to a fixed value before testing
         ldMockAction.actionRow.field_name = "customer_name";
         ldDatatypeInstance = new clDataTypeData("Data", ldMockAction); 
-        expect(ldDatatypeInstance.getSelector()).toBe(LA_EXPECTED_SELECTORS[0]);
+        expect(ldDatatypeInstance.getSelector()).toBe(LaExpectedSelector[0]);
 
         ldMockAction.actionRow.field_name = "factory";
         // Recreate instance
         ldDatatypeInstance = new clDataTypeData("Data", ldMockAction); 
-        expect(ldDatatypeInstance.getSelector()).toBe(LA_EXPECTED_SELECTORS[1]);
+        expect(ldDatatypeInstance.getSelector()).toBe(LaExpectedSelector[1]);
     });
     test("should return an invalid selector if field_name is missing", () => {
-        const LD_INVALIDACTION = { ...ldMockAction, actionRow: 
+        const LdInvalidAction = { ...ldMockAction, actionRow: 
             { ...ldMockAction.actionRow, field_name: "" } };
-        const LD_INSTANCE = new clDataTypeData("Data", LD_INVALIDACTION);
-        expect(LD_INSTANCE.getSelector()).toBe(`[data-fieldname=""]input:visible`);
+        const LdInstance = new clDataTypeData("Data", LdInvalidAction);
+        expect(LdInstance.getSelector()).toBe(`[data-fieldname=""]input:visible`);
     });
  }); 
  describe("input() Tests", () => {
@@ -256,18 +256,18 @@ describe("clDataTypeData Unit Tests", () => {
         ldMockAction.actionRow.value = "John Doe";
         ldDatatypeInstance = new clDataTypeData("Data", ldMockAction);
     
-        const L_EXPECTEDSELECTOR = `[data-fieldname="customer_name"]input:visible`;
+        const LExpectedSelector = `[data-fieldname="customer_name"]input:visible`;
     
-        expect(ldDatatypeInstance.getSelector()).toBe(L_EXPECTEDSELECTOR);
+        expect(ldDatatypeInstance.getSelector()).toBe(LExpectedSelector);
     });
     test("Return correct selector for special characters", () => {
         ldMockAction.actionRow.field_name = "customer_name";
         ldMockAction.actionRow.value = "J@hn D#e!";
         ldDatatypeInstance = new clDataTypeData("Data", ldMockAction);
     
-        const L_EXPECTEDSELECTOR = `[data-fieldname="customer_name"]input:visible`;
+        const LExpectedSelector = `[data-fieldname="customer_name"]input:visible`;
     
-        expect(ldDatatypeInstance.getSelector()).toBe(L_EXPECTEDSELECTOR);
+        expect(ldDatatypeInstance.getSelector()).toBe(LExpectedSelector);
     });
     test("Error on input in disabled/read-only field", () => {
         // Mocking a read-only field
@@ -280,8 +280,8 @@ describe("clDataTypeData Unit Tests", () => {
         // Creating an instance
         ldDatatypeInstance = new clDataTypeData("Data", ldMockAction);
         // Mock getSelector() to return expected selector
-        const L_EXPECTEDSELECTOR = `[data-fieldname="customer_name"]input:visible`;
-        expect(ldDatatypeInstance.getSelector()).toBe(L_EXPECTEDSELECTOR);
+        const LExpectedSelector = `[data-fieldname="customer_name"]input:visible`;
+        expect(ldDatatypeInstance.getSelector()).toBe(LExpectedSelector);
         expect(() => ldDatatypeInstance.input()).toThrow();
     });
         
@@ -312,8 +312,8 @@ describe("clDataTypeData Unit Tests", () => {
         ldMockAction.actionRow.field_name = "customer_name";
         ldDatatypeInstance = new clDataTypeData("Data", ldMockAction);
     
-        const L_EXPECTEDSELECTOR = `[data-fieldname="customer_name"]input:visible`;
-        expect(ldDatatypeInstance.getSelector()).toBe(L_EXPECTEDSELECTOR);
+        const LExpectedSelector = `[data-fieldname="customer_name"]input:visible`;
+        expect(ldDatatypeInstance.getSelector()).toBe(LExpectedSelector);
     });
     test("should update selector when field_name changes", () => {
         ldMockAction.actionRow.field_name = "customer_name";
@@ -373,7 +373,7 @@ describe('clDataTypeDate', () => {
     beforeEach(() => {
         ldActionData = {
             action: 'testAction',
-            actionData: LA_MOCKACTIONDATA,
+            actionData: LaMockActionData,
             executeAction: jest.fn(),
             checkFieldValue: jest.fn(),
             actionRow: { 
@@ -423,49 +423,49 @@ describe('clDataTypeDate', () => {
 
     describe('validate()', () => {
         test("validate() should use the correct selector", () => {
-            const LA_EXPECTED_SELECTORS = [
+            const LaExpectedSelector = [
                 `[data-fieldname="customer_name"]input:visible`,
                 `[data-fieldname="factory"]input:visible`
             ];
             // Set field_name to a fixed value before testing
             ldActionData.actionRow.field_name = "customer_name";
             ldInstance = new clDataTypeDate("Date", ldActionData); // Recreate Instance
-            expect(ldInstance.getSelector()).toBe(LA_EXPECTED_SELECTORS[0]);
+            expect(ldInstance.getSelector()).toBe(LaExpectedSelector[0]);
         
             ldActionData.actionRow.field_name = "factory";
             ldInstance = new clDataTypeDate("Date", ldActionData); // Recreate Instance
-            expect(ldInstance.getSelector()).toBe(LA_EXPECTED_SELECTORS[1]);
+            expect(ldInstance.getSelector()).toBe(LaExpectedSelector[1]);
         });
     });
 
     describe('input()', () => {
         test('input() should return the expected selector and value', () => {
-            const LD_ACTIONDATA = {
+            const LdActionData = {
                 actionRow: {
                     field_name: 'start_date',
                     value: '2025-12-31',
                 }
             } as unknown as ifActionHandler;
         
-            const LD_INSTANCE = new clDataTypeDate("Date", LD_ACTIONDATA);
+            const LdInstance = new clDataTypeDate("Date", LdActionData);
         
-            const LD_EXPECTED_OUTPUT = {
-                selector: LD_INSTANCE.getSelector(),
-                value: LD_ACTIONDATA.actionRow.value
+            const LdExpectedOutput = {
+                selector: LdInstance.getSelector(),
+                value: LdActionData.actionRow.value
             };
             // Mock the expected behavior
-            jest.spyOn(LD_INSTANCE, 'input').mockImplementation(() => LD_EXPECTED_OUTPUT);
+            jest.spyOn(LdInstance, 'input').mockImplementation(() => LdExpectedOutput);
         
-            expect(LD_INSTANCE.input()).toEqual(LD_EXPECTED_OUTPUT);
+            expect(LdInstance.input()).toEqual(LdExpectedOutput);
         });
              
    });
 
     describe('execute()', () => {
        test('should execute without modifying actionRow', () => {
-            const LD_INITIAL_ACTIONROW = { ...ldActionData.actionRow };
+            const LdInitialActionRow = { ...ldActionData.actionRow };
             ldInstance.execute();
-            expect(ldActionData.actionRow).toEqual(LD_INITIAL_ACTIONROW);
+            expect(ldActionData.actionRow).toEqual(LdInitialActionRow);
         });
     });
 });
@@ -475,7 +475,7 @@ describe('clDataTypeDynamiclink', () => {
     let ldInstance;
 
     // Mock action handler
-    const LD_MOCKACTION_HANDLER = (overrides = {}) => ({
+    const LdMockActionHandler = (overrides = {}) => ({
         action: 'testAction',
         actionData: [],
         actionRow: {
@@ -492,7 +492,7 @@ describe('clDataTypeDynamiclink', () => {
     });
 
     beforeEach(() => {
-        ldAction = LD_MOCKACTION_HANDLER();
+        ldAction = LdMockActionHandler();
         ldInstance = new clDataTypeDynamiclink('Dynamic Link', ldAction);
     });
 
@@ -532,7 +532,7 @@ describe('clDataTypeCurrency', () => {
     let ldAction;
     let ldInstance;
 
-    const LD_MOCKACTION_HANDLER = (overrides = {}) => ({
+    const LdMockActionHandler = (overrides = {}) => ({
         action: 'testAction',
         actionData: [],
         actionRow: {
@@ -549,7 +549,7 @@ describe('clDataTypeCurrency', () => {
     });
 
     beforeEach(() => {
-        ldAction = LD_MOCKACTION_HANDLER();
+        ldAction = LdMockActionHandler();
         ldInstance = new clDataTypeCurrency('Currency', ldAction);
     });
 

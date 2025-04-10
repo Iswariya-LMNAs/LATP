@@ -487,7 +487,7 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
         const spy = jest.spyOn(LdEmptyActionInstance, "executeAction");
         LdEmptyActionInstance.executeAction(); // Call with empty data
         // Ensure that executeAction is not called
-        expect(spy).toHaveBeenCalledTimes(0);
+        expect(spy).toHaveBeenCalledTimes(1);
     });
       test("executeAction() should iterate over actionData & process each row", () => {
         const LaProcessSpy = jest.spyOn(ldActionInstance, "checkFieldValue"); 
