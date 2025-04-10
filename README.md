@@ -173,7 +173,7 @@ npx cypress open
 ```
 
 - Select **End-to-End Testing**.
-- Choose the `test2.cy.ts` file.
+- Choose the `test.cy.ts` file.
 
 This will execute the base test for the Quotation module.
 
