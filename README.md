@@ -1,5 +1,9 @@
 # LENS AI Test Pilot
 
+<a href="https://labs.play-with-docker.com/?stack=https://raw.githubusercontent.com/lmnaslimited/lens_ai_test_pilot/refs/heads/develop/pwd.yml">
+  <img src="https://raw.githubusercontent.com/play-with-docker/stacks/master/assets/images/button.png" alt="Try in PWD"/>
+</a>
+
 **LENS AI Test Pilot** is a tool that automates the testing of web applications using Cypress. Traditionally, testing was done after development, which caused delays and issues. Now, with LENS AI Test Pilot, you can create automated test scripts before development even begins. This allows testing and development to happen at the same time, speeding up the process and improving product quality.
 
 It simplifies the testing process by automating repetitive tasks, allowing both developers and testers to focus on building the software, not on repetitive testing.
