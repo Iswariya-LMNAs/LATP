@@ -28,29 +28,27 @@ abstract class clAction implements ifActionHandler {
     handleMessages(): void{
     }
       /** @method expandSection - Placeholder for expanding a form section. */
+    
     expandSection(): void {
         if (!this.actionData || this.actionData.length === 0) {
             return;
-        } 
-        // Wait for all sections to be visible before clicking
-        cy.get('.section-head') // Use a generic class for section headers
-            .each(($sectionHeader) => {
-                cy.wrap($sectionHeader) // Wrap each section header
-                    .parent() // Get the parent of the section header
-                    .then(($parent) => {
-                        // Type assertion to indicate $parent is a JQuery object
-                        const parent = $parent as JQuery<HTMLElement>;  // Type assertion here
-        
-                        // Check if the parent is not hidden (i.e., display is not 'none')
-                        if (parent.css('display') !== 'none') {
-                            cy.wrap($sectionHeader) // If parent is visible, proceed to interact with the section header
-                              .wait(fnGetDelay("medium")) // Add a short delay (adjust timing as needed)
-                                .click({ force: true }); // Force click to ensure interaction
-                        } else {
-                        }
-                    });
-            });
+        }
+        cy.get('.section-head').each(($sectionHeader) => {
+            cy.wrap($sectionHeader)
+                .parent()
+                .then(($parent) => {
+                    const parent = $parent as JQuery<HTMLElement>;
+                    const isCollapsed = parent.find('.section-body').css('display') === 'none';
+    
+                    if (isCollapsed) {
+                        cy.wrap($sectionHeader)
+                            .wait(fnGetDelay("medium"))
+                            .click({ force: true });
+                    }
+                });
+        });
     }
+    
     /**@method executeAction Executes the action by processing each action data row.*/
     executeAction(): void {   
         this.actionData.forEach((actionDataRow) => {

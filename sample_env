@@ -1,3 +1,14 @@
+RUNNING_MODE=UI
+# UI Delays
+DELAY_UI_SHORT=500     # Delay ranges between 500 to 900 ms
+DELAY_UI_MEDIUM=1000   # Delay ranges between 1000 to 1400 ms
+DELAY_UI_LONG=1500     # Delay ranges between 1500 to 2000 ms
+
+# CLI Delays
+DELAY_CLI_SHORT=400    # Delay ranges between 400 to 700 ms
+DELAY_CLI_MEDIUM=800   # Delay ranges between 800 to 900 ms
+DELAY_CLI_LONG=1000     # Delay ranges upto 1000 ms
+
 HOST_URL=https://example.docker.localhost
 HOST_KEY=Basic YWNmODhmOWIzOGZmZGFkOmRhODI3YmI2bdgs5MjVmOA==
 TARGET_URL=https://test.docker.localhost
