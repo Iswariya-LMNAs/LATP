@@ -18,6 +18,15 @@ interface ifDataType {
     input(): void
     execute(): void
 }
+
+interface ifProperties {
+    is_read_only: boolean;
+    is_mandatory: boolean;
+    is_hidden: boolean;
+    action: ifActionHandler
+    validate(): void
+    checkProperties(): void
+}
 /**@type TtestHeaderData - Represents test header data structure.
  *  Contains details about the doctype_to_be_tested and relevant test field data. */
 type TtestHeaderData = {
@@ -64,6 +73,7 @@ type TactionData = {
     parenttype: string;
     doctype: string;
     section: string;
+    tab: string;
 };
 /**@type TTactionsData - Represents an array of action data. */
 type TTactionsData = TactionData[]

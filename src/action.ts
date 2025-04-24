@@ -48,19 +48,55 @@ abstract class clAction implements ifActionHandler {
                 });
         });
     }
-    
+   
+       
     /**@method executeAction Executes the action by processing each action data row.*/
-    executeAction(): void {   
-        this.actionData.forEach((actionDataRow) => {
-            if (!actionDataRow.data_type) {
-                return; 
-            }
-            this.actionRow = { ...actionDataRow };
-            this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this)
-            this.checkFieldValue()
+    // executeAction(): void {   
+    //     this.actionData.forEach((actionDataRow) => {
+    //         if (!actionDataRow.data_type) {
+    //             return; 
+    //         }
+    //         this.actionRow = { ...actionDataRow };
+    //         this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this)
+    //        this.checkFieldValue()
+    //     });
+    // }
+    executeAction(): void {
+        if (!this.actionData?.length) return;
+      
+        // Group by tab (excluding default directly here)
+        const tabGroups = this.actionData.reduce((groups, row) => {
+            if (!row.tab) return groups; // Skip rows without a tab
+            (groups[row.tab] ||= []).push(row);
+            return groups;
+        }, {} as Record<string, TactionData[]>);
+    
+        // Iterate over named tabs only
+        Object.entries(tabGroups).forEach(([tab, rows]) => {
+            cy.get('.form-tabs .nav-item a')
+                .filter(`:contains("${tab}")`)
+                .should('be.visible')
+                .click({ force: true });
+    
+            cy.wait(fnGetDelay('medium'));
+           
+            rows.forEach(row => {
+                if (!row.data_type) return;
+                this.actionRow = { ...row };
+                this.dataType = clDataTypeFactory.createDataType(row.data_type, this);
+                this.checkFieldValue();
+            });
+
+            
         });
     }
+
+    saveForm(): void {
+        // cy.get('.page-head .btn-primary[data-label="Save"]:visible').click({ scrollBehavior: false, force: true });
+    }
+    
 }
+
 /**
  * @class clActionOnLoad Extends `clAction` to handle actions triggered on page load.
  * * Methods:  
@@ -75,9 +111,12 @@ class clActionOnLoad extends clAction {
     actionData: TTactionsData
     actionRow: TactionData
     dataType: ifDataType
+    
     executeAction(): void {
-        this.expandSection()
-        super.executeAction()}
+         this.expandSection()
+         //this.navigateToTab()
+         super.executeAction()
+    }
     checkFieldValue(): void {super.checkFieldValue()}
     checkFieldProperties(): void { super.checkFieldProperties()}
     handleNavigator(): void {super.handleNavigator()}
@@ -104,8 +143,10 @@ class clActionOnChange extends clAction {
         this.dataType.input()
         this.expandSection()
         super.executeAction()
+        this.saveForm()
       
     }
+   
     checkFieldValue(): void {super.checkFieldValue()}
     checkFieldProperties(): void {super.checkFieldProperties()}
     handleNavigator(): void {super.handleNavigator()}
@@ -127,9 +168,8 @@ class clActionOnChange extends clAction {
 class clActionOnTab extends clAction {
     action: string
     actionData: TactionData[]
-    executeAction(): void { 
-        this.expandSection()
-        super.executeAction()}
+    executeAction(): void {super.executeAction()}
+    
     checkFieldValue(): void {super.checkFieldValue}
     checkFieldProperties(): void {super.checkFieldProperties()}
     handleNavigator(): void {super.handleNavigator()}
