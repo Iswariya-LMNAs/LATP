@@ -15,9 +15,6 @@ if (!HOST_URL || !HOST_KEY) {
     process.exit(1);
 }
 
-// Sanitize HOST_URL for use in file names (removes invalid characters)
-const sanitizedHostUrl = HOST_URL.replace(/[^a-zA-Z0-9._-]/g, '_');
-
 // Define the directories and file paths
 const baseDir = process.cwd();
 const siteDetailsDir = path.join(baseDir, 'lens-test-pilot-config/document/Site Details');
@@ -29,8 +26,7 @@ if (!fs.existsSync(siteDetailsDir)) {
     process.exit(1);
 }
 
-// Define file paths
-const targetJson = path.join(siteDetailsDir, `${sanitizedHostUrl}.json`);
+// Define file path
 const hostSiteJson = path.join(siteDetailsDir, 'host-site.json');
 
 // Read and process host-site.json using node-jq
@@ -38,8 +34,8 @@ jq.run(
     `.site_name = "${HOST_URL}" | .authorization_key = "${HOST_KEY}"`,
     hostSiteJson, { input: 'file', output: 'json' }
 ).then((output) => {
-    // Write the modified content to the new file
-    fs.writeFileSync(targetJson, JSON.stringify(output, null, 2));
+    // Write the modified content back to host-site.json itself
+    fs.writeFileSync(hostSiteJson, JSON.stringify(output, null, 2));
 
     // Update Sample Test.json with the new site URL
     jq.run(
