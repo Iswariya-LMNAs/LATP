@@ -24,10 +24,24 @@ describe("Testing API Data", () => {
     const loginEmail = Cypress.env("LOGIN_EMAIL");
     const loginPassword = Cypress.env("LOGIN_PASSWORD");
     const targetPath = Cypress.env("TARGET_PATH")
-    cy.visit(`${targetUrl}/login#login`);
-    cy.get("#login_email").type(`${loginEmail}`);
-    cy.get("#login_password").type(`${loginPassword}{enter}`).wait(fnGetDelay("medium"));
-    cy.visit(`${targetUrl}/app/${targetPath}`);
+    cy.request({
+      method: 'POST',
+      url: `${targetUrl}/api/method/login`,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: {
+        usr: loginEmail,
+        pwd: loginPassword
+      }
+    }).then((response: Cypress.Response<any>) => {
+      cy.log(JSON.stringify(response.body));
+      // Now TypeScript knows response.body exists
+    });
+    cy.visit(`${targetUrl}/app/home`);
+    cy.get('.btn-primary').click()
+    cy.visit(`${targetUrl}/app/${targetPath}`); 
     cy.get(".primary-action").click();
     cy.task("fetchData").then((TtestHeader : TtestHeaderData) => {
       //Filter all header actions (Onload,On change ,OnTab...) from TtestHeaderData 
@@ -35,7 +49,7 @@ describe("Testing API Data", () => {
       CaFilteredActions.forEach((lActionRow) => {
       const CaActionData: TTactionsData = clActionFactory.filterActionData(TtestHeader.test_fields, lActionRow)
       var loAction:ifActionHandler = clActionFactory.createAction(lActionRow.action, CaActionData)  
-      loAction.executeAction()  
+      loAction.executeAction() 
       });
     });
   });

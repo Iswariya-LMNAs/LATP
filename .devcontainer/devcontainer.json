@@ -1,0 +1,4 @@
+{
+    "name": "LENS",
+      "postStartCommand": "docker-compose -f pwd.yml up -d"
+  }
