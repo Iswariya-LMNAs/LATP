@@ -17,7 +17,7 @@ if [ -n "$CODESPACES" ]; then
     fi
 
     # Set port visibility
-    gh codespace ports visibility 8080:private --codespace "$CODESPACE_NAME"
+    gh codespace ports visibility 8080:public --codespace "$CODESPACE_NAME"
 fi
 
 # Check if the repo already exists
