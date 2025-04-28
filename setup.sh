@@ -7,17 +7,19 @@ REPO_NAME="lens-test-pilot-config"
 if [ -n "$CODESPACES" ]; then
     echo "🔐 Detected GitHub Codespace. Setting port visibility..."
 
-    # Fetch the first codespace name
-    CODESPACE_NAME=$(gh codespace list --limit 1 --json name -q '.[0].name')
+    # Use the existing CODESPACE_NAME (this should already be set in GitHub Codespaces)
+    CODESPACE_NAME=$CODESPACE_NAME
 
-    # If no codespace found, exit
+    # If no codespace name found, exit
     if [ -z "$CODESPACE_NAME" ]; then
         echo "❌ No codespace found."
         exit 1
     fi
 
-    # Set port visibility
+    # Set port visibility to public (replace 8080 with your specific port if needed)
     gh codespace ports visibility 8080:public --codespace "$CODESPACE_NAME"
+
+    echo "✅ Port visibility set to public for codespace: $CODESPACE_NAME"
 fi
 
 # Check if the repo already exists
@@ -37,4 +39,4 @@ nvm install 20 >/dev/null 2>&1
 nvm use 20 >/dev/null 2>&1
 npm run upload
 npm run upload_testdata
-sudo apt-get install -y xvfb
+sudo apt-get update && sudo apt-get install -y xvfb
