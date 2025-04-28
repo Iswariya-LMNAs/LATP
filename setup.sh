@@ -37,3 +37,4 @@ nvm install 20 >/dev/null 2>&1
 nvm use 20 >/dev/null 2>&1
 npm run upload
 npm run upload_testdata
+sudo apt-get install -y xvfb
