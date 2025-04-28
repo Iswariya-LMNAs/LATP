@@ -45,27 +45,26 @@ This document provides step-by-step instructions to set up and test the *Lens AI
 
 - Update .env with the following format:
   env
-  HOST_URL=https://hostsite.docker.localhost
-  HOST_KEY=Basic <encoded-key>
-  TARGET_URL=https://targetsite.docker.localhost
-  TARGET_KEY=Basic <encoded-key>
-  DOCTYPE=Test Case Configurator
-  NODE_TLS_REJECT_UNAUTHORIZED=0
-  LOGIN_EMAIL=abc@gmail.com
-  LOGIN_PASSWORD=yourpassword
-  TESTCASE_TITLE=Sample Test Case
-  TARGET_PATH=/api/endpoint/path
-  
-
+```bash
+HOST_URL=https://hostsite.docker.localhost
+HOST_KEY=Basic <encoded-key>
+TARGET_URL=https://targetsite.docker.localhost
+TARGET_KEY=Basic <encoded-key>
+DOCTYPE=Test Case Configurator
+NODE_TLS_REJECT_UNAUTHORIZED=0
+LOGIN_EMAIL=abc@gmail.com
+LOGIN_PASSWORD=yourpassword
+TESTCASE_TITLE=Sample Test Case
+TARGET_PATH=/api/endpoint/path
+```
 ---
 
 ### 3. Install Project Dependencies and Verify
 - Run the following commands:
   bash
-  npm install
-  npm install child-process
-  npm run setup
-  
+- `npm install`
+- `npm install child-process`
+- `npm run setup`
 
 - After setup, verify the following Doctypes are available in the *Host site → Doctype List*:
   - Test Case Configurator
@@ -76,8 +75,7 @@ This document provides step-by-step instructions to set up and test the *Lens AI
 
 ### 4. Run Cypress Tests
 Run Cypress using:
-bash
-npx cypress run
+` npx cypress run`
 
 ---
 
