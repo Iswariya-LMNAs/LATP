@@ -1,4 +1,4 @@
 {
     "name": "LENS",
-      "postStartCommand": "sudo apt-get install -y xvfb && docker-compose -f pwd.yml up -d"
+      "postStartCommand": "docker-compose -f pwd.yml up -d && sudo apt-get install -y xvfb"
   }  
