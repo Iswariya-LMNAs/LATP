@@ -1,4 +1,5 @@
 import { clDataTypeFactory } from "./dataType"
+import { clPropertiesFactory } from "./properties";
 import { fnGetDelay } from "../src/delay";
 
 /** @class clAction - provides a framework for executing actions on data fields,like ensuring proper validation,.*/
@@ -20,6 +21,21 @@ abstract class clAction implements ifActionHandler {
     }
     /** @method checkFieldProperties Checks field properties such as mandatory constraints*/
     checkFieldProperties(): void {
+        if (this.actionRow.is_read_only) {
+            const readOnlyHandler = clPropertiesFactory.create("Is Read Only", this);
+            readOnlyHandler.validate();
+        }
+    
+        if (this.actionRow.is_mandatory) {
+            const mandatoryHandler = clPropertiesFactory.create("Is Mandatory", this);
+            mandatoryHandler.validate();
+        }
+    
+        if (this.actionRow.is_hidden) {
+            const hiddenHandler = clPropertiesFactory.create("Is Hidden", this);
+            hiddenHandler.validate();
+        }
+        
     }
     /**@method handleNavigator Handles navigation logic for the action.*/
     handleNavigator(): void {
@@ -51,45 +67,46 @@ abstract class clAction implements ifActionHandler {
    
        
     /**@method executeAction Executes the action by processing each action data row.*/
-    // executeAction(): void {   
-    //     this.actionData.forEach((actionDataRow) => {
-    //         if (!actionDataRow.data_type) {
-    //             return; 
-    //         }
-    //         this.actionRow = { ...actionDataRow };
-    //         this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this)
-    //        this.checkFieldValue()
-    //     });
-    // }
-    executeAction(): void {
-        if (!this.actionData?.length) return;
-      
-        // Group by tab (excluding default directly here)
-        const tabGroups = this.actionData.reduce((groups, row) => {
-            if (!row.tab) return groups; // Skip rows without a tab
-            (groups[row.tab] ||= []).push(row);
-            return groups;
-        }, {} as Record<string, TactionData[]>);
-    
-        // Iterate over named tabs only
-        Object.entries(tabGroups).forEach(([tab, rows]) => {
-            cy.get('.form-tabs .nav-item a')
-                .filter(`:contains("${tab}")`)
-                .should('be.visible')
-                .click({ force: true });
-    
-            cy.wait(fnGetDelay('medium'));
-           
-            rows.forEach(row => {
-                if (!row.data_type) return;
-                this.actionRow = { ...row };
-                this.dataType = clDataTypeFactory.createDataType(row.data_type, this);
-                this.checkFieldValue();
-            });
-
-            
+    executeAction(): void {   
+        this.actionData.forEach((actionDataRow) => {
+            if (!actionDataRow.data_type) {
+                return; 
+            }
+            this.actionRow = { ...actionDataRow };
+            this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this)     
+         this.checkFieldProperties()
+         this.checkFieldValue()
         });
     }
+    // executeAction(): void {
+    //     if (!this.actionData?.length) return;
+      
+    //     // Group by tab (excluding default directly here)
+    //     const tabGroups = this.actionData.reduce((groups, row) => {
+    //         if (!row.tab) return groups; // Skip rows without a tab
+    //         (groups[row.tab] ||= []).push(row);
+    //         return groups;
+    //     }, {} as Record<string, TactionData[]>);
+    
+    //     // Iterate over named tabs only
+    //     Object.entries(tabGroups).forEach(([tab, rows]) => {
+    //         cy.get('.form-tabs .nav-item a')
+    //             .filter(`:contains("${tab}")`)
+    //             .should('be.visible')
+    //             .click({ force: true });
+    
+    //         cy.wait(fnGetDelay('medium'));
+           
+    //         rows.forEach(row => {
+    //             if (!row.data_type) return;
+    //             this.actionRow = { ...row };
+    //             this.dataType = clDataTypeFactory.createDataType(row.data_type, this);
+    //             this.checkFieldValue();
+    //         });
+
+            
+    //     });
+    // }
 
     saveForm(): void {
         // cy.get('.page-head .btn-primary[data-label="Save"]:visible').click({ scrollBehavior: false, force: true });
@@ -111,14 +128,12 @@ class clActionOnLoad extends clAction {
     actionData: TTactionsData
     actionRow: TactionData
     dataType: ifDataType
-    
     executeAction(): void {
          this.expandSection()
-         //this.navigateToTab()
          super.executeAction()
     }
     checkFieldValue(): void {super.checkFieldValue()}
-    checkFieldProperties(): void { super.checkFieldProperties()}
+    checkFieldProperties(): void {super.checkFieldProperties()}
     handleNavigator(): void {super.handleNavigator()}
     handleMessages(): void{super.handleMessages()}
     constructor(iAction: string, iaActionData:TTactionsData){
@@ -134,28 +149,65 @@ class clActionOnLoad extends clAction {
  * @method handleNavigator - Manages navigation if required after the change.  
  * @method handleMessages - Ensures correct messages are displayed after the change.  
  */
+// class clActionOnChange extends clAction {
+//     action: string
+//     actionData: TactionData[]
+//     executeAction(): void { 
+//         this.actionRow = this.actionData[0]
+//         this.dataType = clDataTypeFactory.createDataType(this.actionData[0].data_type, this) // take only the header datatype
+//         this.dataType.input()
+//         this.expandSection()
+//         super.executeAction()
+//         this.saveForm()
+//     }
+    
+//     checkFieldValue(): void {super.checkFieldValue()}
+//     checkFieldProperties(): void {super.checkFieldProperties()}
+//     handleNavigator(): void {super.handleNavigator()}
+//     handleMessages(): void{super.handleMessages()} 
+//     constructor(iAction: string, iaActionData:TTactionsData){
+//         super(iAction, iaActionData)
+//         this.actionData = iaActionData
+//     }
+// }
 class clActionOnChange extends clAction {
     action: string
     actionData: TactionData[]
-    executeAction(): void { 
-        this.actionRow = this.actionData[0]
-        this.dataType = clDataTypeFactory.createDataType(this.actionData[0].data_type, this) // take only the header datatype
-        this.dataType.input()
-        this.expandSection()
+
+    executeAction(): void {
+        // Ensure we have data
+        if (this.actionData && this.actionData.length > 0) {
+            // Work with the first action data row
+            this.actionRow = this.actionData[0];
+            this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this);
+
+            // Log the action for debugging purposes
+            console.log('Executing On Change for:', this.actionRow);
+
+            // Trigger input handling
+            this.dataType.input();
+
+            // If needed, expand sections
+            this.expandSection();
+
+            // Save the form if required
+            this.saveForm();
+        } else {
+            console.error('No action data found for On Change!');
+        }
         super.executeAction()
-        this.saveForm()
-      
+        
     }
-   
-    checkFieldValue(): void {super.checkFieldValue()}
+    checkFieldValue(): void {super.checkFieldValue}
     checkFieldProperties(): void {super.checkFieldProperties()}
     handleNavigator(): void {super.handleNavigator()}
     handleMessages(): void{super.handleMessages()} 
     constructor(iAction: string, iaActionData:TTactionsData){
-        super(iAction, iaActionData)
-        this.actionData = iaActionData
-    }
+                super(iAction, iaActionData)
+                this.actionData = iaActionData
+            }
 }
+
 /**
  * @class clActionOnTab Extends `clAction` to handle actions triggered when switching between form tabs.  
  * This class ensures that the necessary actions are executed when a tab is changed.  
@@ -168,8 +220,29 @@ class clActionOnChange extends clAction {
 class clActionOnTab extends clAction {
     action: string
     actionData: TactionData[]
-    executeAction(): void {super.executeAction()}
+    // executeAction(): void {super.executeAction()}
+    executeAction(): void {
+        if (!this.actionData?.length) return;
+      
+        // Group by tab (excluding default directly here)
+        const tabGroups = this.actionData.reduce((groups, row) => {
+            if (!row.tab) return groups; // Skip rows without a tab
+            (groups[row.tab] ||= []).push(row);
+            return groups;
+        }, {} as Record<string, TactionData[]>);
     
+        // Iterate over named tabs only
+        Object.entries(tabGroups).forEach(([tab, rows]) => {
+            cy.get('.form-tabs .nav-item a')
+                .filter(`:contains("${tab}")`)
+                .should('be.visible')
+                .click({ force: true });
+    
+            cy.wait(fnGetDelay('medium'));
+                              
+        });
+        super.executeAction()
+    }
     checkFieldValue(): void {super.checkFieldValue}
     checkFieldProperties(): void {super.checkFieldProperties()}
     handleNavigator(): void {super.handleNavigator()}

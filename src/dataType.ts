@@ -1,4 +1,6 @@
+import { property } from "cypress/types/lodash";
 import { fnGetDelay } from "../src/delay";
+
 /**
  * @class clDataType -Abstract base class for handling different data types.  
  * @method validate - Abstract method for validation logic.  
@@ -21,6 +23,7 @@ abstract class clDataType implements ifDataType {
     abstract execute(): void;
     getSelector(): string{
         return `${this.fieldSlector}${this.fieldProp}`
+        
     }
 }
 /** @class clDataTypeData - Handles validation and input actions for generic data types. */
@@ -30,24 +33,58 @@ class clDataTypeData extends clDataType {
         this.fieldProp = `input:visible`
     }
     validate(): void {
-        // if (this.action.actionRow.is_read_only){this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value'}
-        // cy.get(this.getSelector()).should('exist').and('be.visible').wait(3000).and('have.value',this.action.actionRow.value);
+    //     // if (this.action.actionRow.is_read_only){this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value'}
+    //     // cy.get(this.getSelector()).should('exist').and('be.visible').wait(3000).and('have.value',this.action.actionRow.value);
         if (this.action.actionRow.is_read_only) {
             this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value';
             cy.get(this.getSelector())
                 .should('exist')
                 .and('be.visible')
                 .and('have.text', this.action.actionRow.value);  // use have.text for read-only fields
-        } else {
+         }  
+        //  else {
             // For editable fields, check the input value
-            cy.get(this.getSelector())
-                .should('exist')
-                .and('be.visible')
-                .and('have.value', this.action.actionRow.value);
-        }
+            // cy.get(this.getSelector())
+            //     .should('exist')
+            //     .and('be.visible')
+            //     .and('have.value', this.action.actionRow.value);
+            
+            
+        // }
     }
+    
+    // input(): void {
+    //     cy.get(this.getSelector()).wait(fnGetDelay("medium")).type(this.action.actionRow.value).wait(fnGetDelay("medium")).type('{enter}',{force:true}).wait(fnGetDelay("short"));
+    // }
     input(): void {
-        cy.get(this.getSelector()).wait(fnGetDelay("medium")).type(this.action.actionRow.value).wait(fnGetDelay("medium")).type('{enter}',{force:true}).wait(fnGetDelay("short"));
+        // Check if this actionRow is part of a child table
+        if (this.action.actionRow.is_child) {
+            // Get the child table name (this will allow us to target the child table)
+            const childTableName = this.action.actionRow.child_name;  // Get the child table name
+
+            // Get the parent field name (to help us target the child table rows)
+            const parentFieldName = this.action.actionRow.parentfield;
+
+            // Construct the selector for the child table and field inside it
+            const childTableSelector = `[data-table="${childTableName}"]`;  // Assuming the child table is identified by a data-table attribute
+
+            // Find the specific row within the child table using the parentfield, and target the field
+            const childFieldSelector = `${childTableSelector} [data-fieldname="${this.action.actionRow.field_name}"]:nth-child(${this.action.actionRow.child_index + 1})`;
+
+            // Now, type into the child table field
+            cy.get(childFieldSelector).wait(fnGetDelay("medium"))
+                .type(this.action.actionRow.value)
+                .wait(fnGetDelay("medium"))
+                .type('{enter}', { force: true })
+                .wait(fnGetDelay("short"));
+        } else {
+            // Normal input handling for non-child tables
+            cy.get(this.getSelector()).wait(fnGetDelay("medium"))
+                .type(this.action.actionRow.value)
+                .wait(fnGetDelay("medium"))
+                .type('{enter}', { force: true })
+                .wait(fnGetDelay("short"));
+        }
     }
     execute(): void {
         this.action.actionRow

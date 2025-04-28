@@ -60,7 +60,9 @@ type TactionData = {
     pos: number;
     field_name: string;
     is_child: boolean;
+    child_name: string;
     child_index: number;
+    add_row: boolean;
     action: string;
     value: string;
     data_type: string;
