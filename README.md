@@ -39,12 +39,11 @@ This document provides step-by-step instructions to set up and test the *Lens AI
   - Go to *Host site → Profile → My Settings → API Access → Generate Keys*.
 
 - Encode your credentials:
-  bash
+```bash
   echo -n "YOUR_API_KEY:YOUR_API_SECRET" | base64
-  
+ ``` 
 
 - Update .env with the following format:
-  env
 ```bash
 HOST_URL=https://hostsite.docker.localhost
 HOST_KEY=Basic <encoded-key>
