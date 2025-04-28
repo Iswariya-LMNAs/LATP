@@ -20,7 +20,7 @@ This document provides step-by-step instructions to set up and test the *Lens AI
 ### Procedure 1: If You Do Not Have a Local Site
 ### 1. Launch Codespace and Set Up Site
 - Launch the Codespace and wait for 2–3 minutes.
-- Open the generated site in the browser.
+- Open the forwarded site in the browser.
 - Login using:
   - *Username:* administrator
   - *Password:* admin
@@ -79,7 +79,7 @@ Run Cypress using:
 
 ---
 
-This will execute the base test for the Quotation module.You can download the video of the test.cy.ts execution to see how the test was performed.
+This will execute the base test for the Quotation module.You can download the video of the test.cy.ts.mp4 execution to see how the test was performed.
 
 Following the above steps will ensure a successful setup and execution of tests in the Lens AI Test Pilot repository. For troubleshooting or further information, refer to the [official documentation](https://lmnaslimited.github.io/lens_ai_test_pilot_docs/ai-test-pilot/introduction/lens_ai_test_pilot/).
 
