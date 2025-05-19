@@ -2,7 +2,6 @@ import  { clActionFactory } from "../../src/action";
 import { fnGetDelay } from "../../src/delay";
 
 /// <reference types="cypress" />
-
 /**
  * @describe
  *  Fetch the test data through API and store in "TtestHeaderData"
@@ -11,13 +10,13 @@ import { fnGetDelay } from "../../src/delay";
  * Filter the actions from the "TtestHeaderData".
  * Perform the executeAction in class clAction for filtered actions
  */
-
 describe("Testing API Data", () => {
   before(() => {
     cy.task("fetchData").then((TtestHeader :TtestHeaderData) => {
-      cy.wrap(TtestHeader).as('TtestHeader'); 
-    });
+    cy.wrap(TtestHeader).as('TtestHeader'); 
+    // cy.log("Log full fetchData", JSON.stringify(TtestHeader.test_fields));
   });
+});
 
   it("login to the url and should log full API test data", () => {   
     const targetUrl = Cypress.env("TARGET_URL");
@@ -31,13 +30,13 @@ describe("Testing API Data", () => {
     cy.get(".primary-action").click();
     cy.task("fetchData").then((TtestHeader : TtestHeaderData) => {
       //Filter all header actions (Onload,On change ,OnTab...) from TtestHeaderData 
-      const CaFilteredActions :TTactionsData = TtestHeader.test_fields.filter(lActionRow => lActionRow.action); 
-      CaFilteredActions.forEach((lActionRow) => {
-      const CaActionData: TTactionsData = clActionFactory.filterActionData(TtestHeader.test_fields, lActionRow)
-      var loAction:ifActionHandler = clActionFactory.createAction(lActionRow.action, CaActionData)  
-      loAction.executeAction()  
-      });
+    const CaFilteredActions :TTactionsData = TtestHeader.test_fields.filter(lActionRow => lActionRow.action); 
+    CaFilteredActions.forEach((lActionRow) => {
+    const CaActionData: TTactionsData = clActionFactory.filterActionData(TtestHeader.test_fields, lActionRow)
+    var loAction:ifActionHandler = clActionFactory.createAction(lActionRow.action, CaActionData)  
+    loAction.executeAction()  
     });
+   });
   });
 });
  

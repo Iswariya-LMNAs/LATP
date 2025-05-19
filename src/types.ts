@@ -5,9 +5,7 @@ interface ifActionHandler {
     actionRow: TactionData
     executeAction(): void
     checkFieldValue(): void
-    checkFieldProperties(): void
-    handleNavigator(): void
-    handleMessages(): void
+    checkFieldProperties(): void    
     dataType: ifDataType
 }
 /**@interface ifDataType - Defines for handling different data types. */
@@ -25,8 +23,12 @@ interface ifProperties {
     is_hidden: boolean;
     action: ifActionHandler
     validate(): void
-    checkProperties(): void
+    fieldSelector: string;
+    fieldProp: string;
+    getSelector(): string;
 }
+
+
 /**@type TtestHeaderData - Represents test header data structure.
  *  Contains details about the doctype_to_be_tested and relevant test field data. */
 type TtestHeaderData = {

@@ -33,54 +33,45 @@ class clDataTypeData extends clDataType {
         this.fieldProp = `input:visible`
     }
     validate(): void {
-    //     // if (this.action.actionRow.is_read_only){this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value'}
-    //     // cy.get(this.getSelector()).should('exist').and('be.visible').wait(3000).and('have.value',this.action.actionRow.value);
-        if (this.action.actionRow.is_read_only) {
-            this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value';
-            cy.get(this.getSelector())
-                .should('exist')
-                .and('be.visible')
-                .and('have.text', this.action.actionRow.value);  // use have.text for read-only fields
-         }  
-        //  else {
-            // For editable fields, check the input value
-            // cy.get(this.getSelector())
-            //     .should('exist')
-            //     .and('be.visible')
-            //     .and('have.value', this.action.actionRow.value);
-            
-            
-        // }
+    if (this.action.actionRow.is_hidden) {
+        return;
     }
-    
+    if (this.action.actionRow.is_read_only) {
+        this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value';
+        cy.get(this.getSelector())
+            .should('exist')
+            .and('be.visible')
+            .and('have.text', this.action.actionRow.value);
+    } else {
+        cy.get(this.getSelector())
+            .should('exist')
+            .and('be.visible')
+            .and('have.value', this.action.actionRow.value);
+    }
+    }
     // input(): void {
-    //     cy.get(this.getSelector()).wait(fnGetDelay("medium")).type(this.action.actionRow.value).wait(fnGetDelay("medium")).type('{enter}',{force:true}).wait(fnGetDelay("short"));
+    //     // cy.get(this.getSelector()).wait(fnGetDelay("medium")).type(this.action.actionRow.value).wait(fnGetDelay("medium")).type('{enter}',{force:true}).wait(fnGetDelay("short"));
     // }
     input(): void {
-        // Check if this actionRow is part of a child table
-        if (this.action.actionRow.is_child) {
-            // Get the child table name (this will allow us to target the child table)
-            const childTableName = this.action.actionRow.child_name;  // Get the child table name
-
-            // Get the parent field name (to help us target the child table rows)
-            const parentFieldName = this.action.actionRow.parentfield;
-
-            // Construct the selector for the child table and field inside it
-            const childTableSelector = `[data-table="${childTableName}"]`;  // Assuming the child table is identified by a data-table attribute
-
-            // Find the specific row within the child table using the parentfield, and target the field
-            const childFieldSelector = `${childTableSelector} [data-fieldname="${this.action.actionRow.field_name}"]:nth-child(${this.action.actionRow.child_index + 1})`;
-
-            // Now, type into the child table field
-            cy.get(childFieldSelector).wait(fnGetDelay("medium"))
-                .type(this.action.actionRow.value)
-                .wait(fnGetDelay("medium"))
-                .type('{enter}', { force: true })
-                .wait(fnGetDelay("short"));
+        const { is_child, value, field_name, child_name } = this.action.actionRow;
+    
+        if (is_child && child_name) {
+            const childSelector = `[data-fieldname="${field_name}"] ul:visible li:first-child`;  
+            // cy.get(`[data-table="${child_name}"] .grid-row`).then($rows => {
+            //     const rows = $rows as JQuery<HTMLElement>;
+            //     if (rows.length === 0) {
+            //         cy.get(`[data-table="${child_name}"] .grid-add-row`).click({ force: true });
+            //     }
+            // });
+            cy.get(`[data-fieldname="${child_name}"] .grid-row`).should('have.length.at.least', 1);
+            cy.get('.rows > .grid-row:first .col-xs-4 [data-fieldname="item_code"] ul:visible li:first-child')
+              .click({ scrollBehavior: false });    
         } else {
-            // Normal input handling for non-child tables
-            cy.get(this.getSelector()).wait(fnGetDelay("medium"))
-                .type(this.action.actionRow.value)
+            // Default input logic for normal fields
+            cy.get(this.getSelector())
+                .wait(fnGetDelay("medium"))
+                .type(value)
+                .should('have.value', value)
                 .wait(fnGetDelay("medium"))
                 .type('{enter}', { force: true })
                 .wait(fnGetDelay("short"));
@@ -90,6 +81,8 @@ class clDataTypeData extends clDataType {
         this.action.actionRow
     }
 }
+
+
 /** @class clDataTypeLink - Inherits from `clDataTypeData` to handle link-type fields. */
 class clDataTypeLink extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) { 
@@ -101,6 +94,12 @@ class clDataTypeSelect extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
         this.fieldProp = `:visible select`
+    }
+    input(): void {
+        cy.get(this.getSelector())
+          .wait(fnGetDelay("medium"))
+          .select(this.action.actionRow.value, { force: true })
+          .wait(fnGetDelay("short"));
     }
 }
 /** @class clDataTypeDate -Handles date input fields. */
@@ -143,3 +142,7 @@ export class clDataTypeFactory {
         return new LA_ACTIONCLASS(data_type, actiondata);
     }
 }
+
+
+
+
