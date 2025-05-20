@@ -78,6 +78,7 @@ type TactionData = {
     doctype: string;
     section: string;
     tab: string;
+    row_index: 1
 };
 /**@type TTactionsData - Represents an array of action data. */
 type TTactionsData = TactionData[]

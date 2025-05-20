@@ -28,7 +28,6 @@ abstract class clAction implements ifActionHandler {
       (acc[Tab] ||= []).push(row);
       return acc; 
     },[]);
-
     Object.entries(groupTab).forEach(([tabName, rows]) => {
         if (tabName !== "NO_TAB") {
             const tabClick = clActionFactory.createAction("On Tab", [rows[0]]);
@@ -91,7 +90,6 @@ class clActionOnChange extends clAction {
             childAction.executeAction();
             return;
         }
-        
         this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this);
         this.dataType.input();
         super.executeAction();
@@ -105,7 +103,6 @@ class clActionOnChangeChild extends clActionOnChange{
    executeAction(): void {
     this.actionRow = this.actionData[0];
         if (this.actionRow.add_row) {
-            // Delegate to clActionAddRow if add_row is enabled
             const addRowAction = new clActionAddRow(this.action, this.actionData);
             addRowAction.executeAction();
         }
@@ -115,9 +112,9 @@ class clActionOnChangeChild extends clActionOnChange{
         }
         this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this);
         this.dataType.input();
+     
    }
 }
-
 
 /** @class clActionAddRow - Conditionally adds a row in a child table if `add_row` is enabled. */
 class clActionAddRow extends clActionOnChangeChild {
@@ -129,14 +126,13 @@ class clActionAddRow extends clActionOnChangeChild {
               .should('exist')
               .should('be.visible')
               .within(() => {
-                  cy.contains('button', 'Add Row', { matchCase: false })
-                    .should('be.visible')
-                    .click({ force: true });
-              });
+            cy.contains('button', 'Add Row', { matchCase: false })
+              .should('be.visible')
+              .click({ force: true });
+          });
         }
     }
 }
-
 
 /** @class clActionOnTab - Handles tab switching. */
 class clActionOnTab extends clAction {
@@ -166,20 +162,7 @@ export class clActionFactory {
           throw new Error(`Invalid action type: ${iAction}`);
         } 
         return new LA_ACTIONCLASS(iAction=iAction,iaActionData=iaActionData);
-      }  
-    // static createAction(iAction: string, iaActionData: TTactionsData): ifActionHandler {
-    //     let ActionClass;
-    //     if (iAction === "On Change") {
-    //         const row = iaActionData[0];
-    //         ActionClass = row?.is_child ? clActionOnChangeChild : clActionOnChange;
-    //     } else {
-    //         ActionClass = this.actionsMap[iAction];
-    //     }
-    //     if (!ActionClass) {
-    //         throw new Error(`Invalid action type: ${iAction}`);
-    //     }
-    //     return new ActionClass(iAction, iaActionData);
-    // }    
+      }    
     static filterActionData(iaActionsData: TTactionsData, iActionRow: TactionData): TTactionsData {
         const lposNext = iActionRow.pos + 10;
         return iaActionsData.filter((item) => (

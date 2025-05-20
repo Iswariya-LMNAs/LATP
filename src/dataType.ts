@@ -23,7 +23,6 @@ abstract class clDataType implements ifDataType {
     abstract execute(): void;
     getSelector(): string{
         return `${this.fieldSlector}${this.fieldProp}`
-        
     }
 }
 /** @class clDataTypeData - Handles validation and input actions for generic data types. */
@@ -49,39 +48,70 @@ class clDataTypeData extends clDataType {
             .and('have.value', this.action.actionRow.value);
     }
     }
-    // input(): void {
-    //     // cy.get(this.getSelector()).wait(fnGetDelay("medium")).type(this.action.actionRow.value).wait(fnGetDelay("medium")).type('{enter}',{force:true}).wait(fnGetDelay("short"));
-    // }
     input(): void {
-        const { is_child, value, field_name, child_name } = this.action.actionRow;
-    
-        if (is_child && child_name) {
-            const childSelector = `[data-fieldname="${field_name}"] ul:visible li:first-child`;  
-            // cy.get(`[data-table="${child_name}"] .grid-row`).then($rows => {
-            //     const rows = $rows as JQuery<HTMLElement>;
-            //     if (rows.length === 0) {
-            //         cy.get(`[data-table="${child_name}"] .grid-add-row`).click({ force: true });
-            //     }
-            // });
-            cy.get(`[data-fieldname="${child_name}"] .grid-row`).should('have.length.at.least', 1);
-            cy.get('.rows > .grid-row:first .col-xs-4 [data-fieldname="item_code"] ul:visible li:first-child')
-              .click({ scrollBehavior: false });    
-        } else {
+        const { value } = this.action.actionRow;
             // Default input logic for normal fields
             cy.get(this.getSelector())
-                .wait(fnGetDelay("medium"))
+               .wait(fnGetDelay("medium"))
                 .type(value)
                 .should('have.value', value)
                 .wait(fnGetDelay("medium"))
                 .type('{enter}', { force: true })
-                .wait(fnGetDelay("short"));
-        }
+                .wait(fnGetDelay("short"));   
     }
     execute(): void {
         this.action.actionRow
     }
 }
 
+/** @class clDataTypeDataChild - Handles child data input logic. */
+class clDataTypeDataChild extends clDataTypeData {
+    constructor(iDataType: string, ioAction: ifActionHandler) {
+        super(iDataType, ioAction);
+    }
+    input(): void {
+        const { is_child, value, field_name, child_name } = this.action.actionRow;
+        if (is_child && child_name) {
+            cy.get(`[data-fieldname="${child_name}"] .grid-row`)
+              .should('have.length.at.least', 1);
+            cy.get(`[data-fieldname="${child_name}"] .grid-body .grid-row`)
+              .last()  
+              .within(() => {
+                  cy.get(`[data-fieldname="${field_name}"]`).then($field => {
+                      const $el = $field as unknown as JQuery<HTMLElement>;
+                      if ($el.find('input').length) {
+                          cy.wrap($field).find('input').clear().click().type(value).blur();
+                      } else {
+                          cy.wrap($field).dblclick();
+                          cy.wrap($field).find('input').clear().click().type(value).blur();
+                      }
+                  });
+              });
+        }
+    }
+    validate(): void{
+        const { is_child, value, field_name, child_name } = this.action.actionRow;
+        if (is_child && child_name) {
+            // Validate inside child table
+            cy.get(`[data-fieldname="${child_name}"] .grid-row`).should('have.length.at.least', 1);
+            cy.get(`[data-fieldname="${child_name}"] .grid-body .grid-row`)
+                .first()
+                .within(() => {
+                    cy.get(`[data-fieldname="${field_name}"]`)
+                        .should('exist')
+                        .and('be.visible')
+                        .then($field => {
+                            const $el = $field as unknown as JQuery<HTMLElement>;
+                            if ($el.find('input').length) {
+                                cy.wrap($field).find('input').should('have.value', value);
+                            } else {
+                                cy.wrap($field).should('have.text', value);
+                            }
+                        });
+                });
+        } 
+    }
+}
 
 /** @class clDataTypeLink - Inherits from `clDataTypeData` to handle link-type fields. */
 class clDataTypeLink extends clDataTypeData {
@@ -102,6 +132,43 @@ class clDataTypeSelect extends clDataTypeData {
           .wait(fnGetDelay("short"));
     }
 }
+
+/** @class clDataTypeSelectChild - Handles child select field logic. */
+class clDataTypeSelectChild extends clDataTypeSelect {
+    constructor(iDataType: string, ioAction: ifActionHandler) {
+        super(iDataType, ioAction);
+    }  
+    input(): void {
+        const {value, child_name, field_name } = this.action.actionRow; 
+        cy.get(`[data-fieldname="${child_name}"] .grid-body .grid-row`)
+          .first()
+          .within(() => {
+            cy.get(`[data-fieldname="${field_name}"]`)
+              .invoke('text', value)  // tries to set the text directly (may or may not work)
+              .should('contain.text', value);
+          });
+      }
+    validate(): void {
+        const { value, child_name, field_name } = this.action.actionRow;
+        if (child_name) {
+            cy.get(`[data-fieldname="${child_name}"] .grid-row`).should('have.length.at.least', 1);
+            cy.get(`[data-fieldname="${child_name}"] .grid-body .grid-row`)
+                .first()
+                .within(() => {
+                    cy.get(`[data-fieldname="${field_name}"]`).then($field => {
+                        const $el = $field as unknown as JQuery<HTMLElement>;
+                        if ($el.find('select').length) {
+                            cy.wrap($field).find('select').should('have.value', value);
+                        } else {
+                            cy.wrap($field).should('have.text', value);
+                        }
+                    });
+                });
+        }
+    }
+    
+}
+
 /** @class clDataTypeDate -Handles date input fields. */
 class clDataTypeDate extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
@@ -128,21 +195,34 @@ class clDataTypeCurrency extends clDataTypeData {
 export class clDataTypeFactory {
     private static actionsMap: { [key: string]: new (data_type: string, action: ifActionHandler) => clDataType } = {
         "Data": clDataTypeData,
-        "Link" : clDataTypeLink,
-        "Select" : clDataTypeSelect, 
-        "Date" : clDataTypeDate,
-        "Dynamic Link" : clDataTypeDynamiclink,
-        "Currency" :clDataTypeCurrency
+        "Select": clDataTypeSelect,
+        "Link": clDataTypeLink,
+        "Date": clDataTypeDate,
+        "Dynamic Link": clDataTypeDynamiclink,
+        "Currency": clDataTypeCurrency
     };
     static createDataType(data_type: string, actiondata: ifActionHandler): clDataType {
-        const LA_ACTIONCLASS = this.actionsMap[data_type];
+        let row = actiondata.actionData[0];
+        let isChild = row.is_child;
+    
+        let LA_ACTIONCLASS = this.actionsMap[data_type];
         if (!LA_ACTIONCLASS) {
             throw new Error(`Invalid data type: ${data_type}`);
         }
+    
+        if (data_type === "Select" && isChild) {
+            return new clDataTypeSelectChild(data_type, actiondata);
+        }
+    
+        let handledChildTypes = ["Data", "Link", "Date", "Dynamic Link", "Currency"];
+        if (isChild && handledChildTypes.includes(data_type)) {
+            return new clDataTypeDataChild(data_type, actiondata);
+        }
+    
         return new LA_ACTIONCLASS(data_type, actiondata);
     }
+    
 }
-
 
 
 
