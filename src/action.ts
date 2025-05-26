@@ -24,16 +24,15 @@ abstract class clAction implements ifActionHandler {
     }    
     executeAction(): void {
     const groupTab = this.actionData.reduce((acc, row) => {
-     const Tab = row.tab || "No Tab";
+     const Tab = row.tab || " ";
       (acc[Tab] ||= []).push(row);
       return acc; 
-    },[]);
+    }, []);
     Object.entries(groupTab).forEach(([tabName, rows]) => {
-        if (tabName !== "NO_TAB") {
+        if (tabName !== " ") {
             const tabClick = clActionFactory.createAction("On Tab", [rows[0]]);
             tabClick.executeAction();
         }
-        new clActionExpandSection().executeAction();
         rows.forEach(row => {
             if (!row.data_type) return;
             this.actionRow = row;
@@ -44,39 +43,49 @@ abstract class clAction implements ifActionHandler {
         });
     }
 }
-
-/** Standalone class to expand all UI sections */
+/** @class clActionExpandSection Standalone class to expand all UI sections */
 class clActionExpandSection extends clAction {
-    constructor() {
-        super("Expand Section", []);
-    }
-    executeAction(): void {
-        cy.get('.section-head').each(($sectionHeader) => {
-        cy.wrap($sectionHeader)
-            .parent()
-            .then(($parent) => {
-        const parent = $parent as JQuery<HTMLElement>;
-        const isCollapsed = parent.find('.section-body').css('display') === 'none';
-        if (isCollapsed) {
-            cy.wrap($sectionHeader)
-              .wait(fnGetDelay("medium"))
-              .click({ force: true });
+    constructor(iAction: string, iaActionData: TTactionsData) {
+               super(iAction, iaActionData);
+             }  
+         executeAction(): void {
+            this.actionRow = this.actionData[0];
+            if (this.actionRow.tab) {
+                const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+                tabClick.executeAction();
             }
-        });
-    }); 
-   }
+            const sectionTitle = this.actionRow?.section;
+            if (!sectionTitle) {
+                return;
+            }
+            cy.get('.section-head').each(($el) => {
+            const text = Cypress.$($el).text().trim();
+            if (text === sectionTitle) {
+            const $parent = Cypress.$($el).parent();
+            const isCollapsed = $parent.find('.section-body').css('display') === 'none';
+            if (isCollapsed) {
+                cy.wrap($el).wait(fnGetDelay("medium")).click({ force: true });} 
+            }
+            });
+            this.actionData.forEach(row => {
+                if (!row.data_type) return;
+                this.actionRow = row;
+                this.dataType = clDataTypeFactory.createDataType(row.data_type, this, row);
+                this.checkFieldValue();
+            });
+     }                      
 }
 
 /** @class clActionOnLoad - Handles actions on page load. */
 class clActionOnLoad extends clAction {
-    executeAction(): void {super.executeAction();}
+    executeAction(): void { super.executeAction()}
     checkFieldValue(): void { super.checkFieldValue(); }
     checkFieldProperties(): void { super.checkFieldProperties(); }
     constructor(iAction: string, iaActionData: TTactionsData) {
         super(iAction, iaActionData);
     }
 }
-
+/** @class clActionOnChange - Handles actions like On Change */
 class clActionOnChange extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
@@ -84,56 +93,84 @@ class clActionOnChange extends clAction {
             const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
             tabClick.executeAction();
         }
-        const isChildAction = this.actionData.some(row => row.is_child);
-        if (isChildAction) {
+         if (this.actionRow.is_child) {
             const childAction = new clActionOnChangeChild(this.action, this.actionData);
             childAction.executeAction();
             return;
         }
         this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this);
         this.dataType.input();
+        // new clActionExpandSection().executeAction();
         super.executeAction();
     }
     constructor(iAction: string, iaActionData: TTactionsData) {
         super(iAction, iaActionData);
     }
 }
-
 class clActionOnChangeChild extends clActionOnChange{
    executeAction(): void {
     this.actionRow = this.actionData[0];
-        if (this.actionRow.add_row) {
-            const addRowAction = new clActionAddRow(this.action, this.actionData);
-            addRowAction.executeAction();
-        }
         if (this.actionRow.tab) {
             const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
             tabClick.executeAction();
         }
         this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this);
         this.dataType.input();
-     
+        this.actionData.forEach(row => {
+            if (!row.data_type) return;
+            this.actionRow = row;
+            this.dataType = clDataTypeFactory.createDataType(row.data_type, this, row);
+            this.checkFieldValue();
+        });
    }
 }
-
-/** @class clActionAddRow - Conditionally adds a row in a child table if `add_row` is enabled. */
-class clActionAddRow extends clActionOnChangeChild {
+class clActionAddRow extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
-        const childName = this.actionRow.child_name;
-        if (this.actionRow.add_row && childName) {
-            cy.get(`[data-fieldname="${childName}"]`, { timeout: 10000 })
-              .should('exist')
-              .should('be.visible')
-              .within(() => {
-            cy.contains('button', 'Add Row', { matchCase: false })
-              .should('be.visible')
-              .click({ force: true });
-          });
+        if(this.actionRow.tab){
+            const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            tabClick.executeAction();
         }
+        cy.get(`[data-fieldname="${this.actionRow.child_name}"]`, { timeout: 10000 })
+            .should('exist')
+            .should('be.visible')
+            .within(() => {
+                cy.contains('button', 'Add Row', { matchCase: false })
+                    .should('be.visible')
+                    .click({ force: true });
+            });
+            this.actionData.forEach(row => {
+                if (!row.data_type) return;
+                this.actionRow = row;
+                this.dataType = clDataTypeFactory.createDataType(row.data_type, this, row);
+                this.checkFieldValue();
+            });
     }
 }
-
+class clActionEditDetails extends clAction{
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        if (this.actionRow.tab) {
+            const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            tabClick.executeAction();
+        }
+        const rowIndex = (this.actionRow.child_index || 1) - 1;
+        const childSelector = `[data-fieldname="${this.actionRow.child_name}"] .grid-body .grid-row`;
+        cy.get(childSelector).eq(rowIndex).within(() => {
+            cy.get('.btn-open-row').first().click({ force: true });
+        });
+        cy.wait(fnGetDelay("medium"));
+        this.actionData.forEach(row => {
+            if (!row.data_type) return;
+            this.actionRow = row;
+            this.dataType = clDataTypeFactory.createDataType(row.data_type, this, row);
+            this.checkFieldValue();
+        });
+        cy.get(childSelector).eq(rowIndex).within(() => {
+            cy.get('.btn-open-row').first().click({ force: true });
+        });
+    }
+}
 /** @class clActionOnTab - Handles tab switching. */
 class clActionOnTab extends clAction {
     executeAction(): void {
@@ -154,7 +191,10 @@ export class clActionFactory {
         [key: string]: new (iAction: string, iaActionData: TTactionsData) => clAction } = {
         "Onload": clActionOnLoad,
         "On Change": clActionOnChange,
-        "On Tab": clActionOnTab
+        "On Tab": clActionOnTab,
+        "Add Row": clActionAddRow,
+        "Edit Details": clActionEditDetails,
+        "Expand Section": clActionExpandSection,
     };
     static createAction(iAction: string, iaActionData:TTactionsData): ifActionHandler {
         const LA_ACTIONCLASS = this.actionsMap[iAction];       

@@ -37,27 +37,14 @@ class clDataTypeData extends clDataType {
     }
     if (this.action.actionRow.is_read_only) {
         this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value';
-        cy.get(this.getSelector())
-            .should('exist')
-            .and('be.visible')
-            .and('have.text', this.action.actionRow.value);
+        cy.get(this.getSelector()).should('exist').and('be.visible').and('have.text', this.action.actionRow.value);
     } else {
-        cy.get(this.getSelector())
-            .should('exist')
-            .and('be.visible')
-            .and('have.value', this.action.actionRow.value);
+        cy.get(this.getSelector()).should('exist').and('be.visible').and('have.value', this.action.actionRow.value);
     }
     }
     input(): void {
         const { value } = this.action.actionRow;
-            // Default input logic for normal fields
-            cy.get(this.getSelector())
-               .wait(fnGetDelay("medium"))
-                .type(value)
-                .should('have.value', value)
-                .wait(fnGetDelay("medium"))
-                .type('{enter}', { force: true })
-                .wait(fnGetDelay("short"));   
+            cy.get(this.getSelector()).wait(fnGetDelay("medium")) .type(value) .should('have.value', value) .wait(fnGetDelay("medium")) .type('{enter}', { force: true }) .wait(fnGetDelay("short"));   
     }
     execute(): void {
         this.action.actionRow
@@ -69,48 +56,44 @@ class clDataTypeDataChild extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
     }
-    input(): void {
-        const { is_child, value, field_name, child_name } = this.action.actionRow;
-        if (is_child && child_name) {
-            cy.get(`[data-fieldname="${child_name}"] .grid-row`)
-              .should('have.length.at.least', 1);
-            cy.get(`[data-fieldname="${child_name}"] .grid-body .grid-row`)
-              .last()  
-              .within(() => {
-                  cy.get(`[data-fieldname="${field_name}"]`).then($field => {
-                      const $el = $field as unknown as JQuery<HTMLElement>;
-                      if ($el.find('input').length) {
-                          cy.wrap($field).find('input').clear().click().type(value).blur();
-                      } else {
-                          cy.wrap($field).dblclick();
-                          cy.wrap($field).find('input').clear().click().type(value).blur();
-                      }
-                  });
-              });
-        }
+       input(): void {
+        const { is_child, value, field_name, child_name, child_index} = this.action.actionRow;
+        if (!is_child || !child_name) return;
+        const rowIndex = child_index ? child_index - 1 : 0;
+        const rowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
+        cy.get(rowSelector).eq(rowIndex).within(() => {
+            cy.get(`[data-fieldname="${field_name}"]`).then($field => {
+                const $el = $field as unknown as JQuery<HTMLElement>;
+                const $input = $el.find('input:visible');
+                if ($input.length > 0) {
+                    cy.wrap($input).should('be.visible').wait(600).first().clear({ force: true }).type(value, { force: true }).wait(100).blur({ force: true });
+                } 
+                else {
+                    cy.wrap($field).dblclick();
+                    cy.wait(300); 
+                    cy.wrap($field).find('input:visible').should('exist').wait(600).clear({ force: true }).type(value, { force: true }).wait(100).blur({ force: true });
+                }
+            });
+        });
     }
-    validate(): void{
-        const { is_child, value, field_name, child_name } = this.action.actionRow;
+    validate(): void {
+        const { is_child, value, field_name, child_name, child_index } = this.action.actionRow;
         if (is_child && child_name) {
-            // Validate inside child table
-            cy.get(`[data-fieldname="${child_name}"] .grid-row`).should('have.length.at.least', 1);
-            cy.get(`[data-fieldname="${child_name}"] .grid-body .grid-row`)
-                .first()
-                .within(() => {
-                    cy.get(`[data-fieldname="${field_name}"]`)
-                        .should('exist')
-                        .and('be.visible')
-                        .then($field => {
-                            const $el = $field as unknown as JQuery<HTMLElement>;
-                            if ($el.find('input').length) {
-                                cy.wrap($field).find('input').should('have.value', value);
-                            } else {
-                                cy.wrap($field).should('have.text', value);
-                            }
-                        });
+            const rowIndex = child_index ? child_index - 1 : 0;
+            const rowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
+            cy.get(rowSelector).eq(rowIndex).within(() => {
+                cy.get(`[data-fieldname="${field_name}"]`).then($field => {
+                    const $el = $field as unknown as JQuery<HTMLElement>;
+                    const $input = $el.find('input');
+                    if ($input.length) {
+                        cy.wrap($input).should('have.value', value);
+                    } else {
+                        cy.wrap($field).should('contain.text', value);
+                    }
                 });
-        } 
-    }
+            });
+        }
+    } 
 }
 
 /** @class clDataTypeLink - Inherits from `clDataTypeData` to handle link-type fields. */
@@ -132,41 +115,54 @@ class clDataTypeSelect extends clDataTypeData {
           .wait(fnGetDelay("short"));
     }
 }
-
 /** @class clDataTypeSelectChild - Handles child select field logic. */
 class clDataTypeSelectChild extends clDataTypeSelect {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
-    }  
-    input(): void {
-        const {value, child_name, field_name } = this.action.actionRow; 
-        cy.get(`[data-fieldname="${child_name}"] .grid-body .grid-row`)
-          .first()
-          .within(() => {
-            cy.get(`[data-fieldname="${field_name}"]`)
-              .invoke('text', value)  // tries to set the text directly (may or may not work)
-              .should('contain.text', value);
-          });
-      }
-    validate(): void {
-        const { value, child_name, field_name } = this.action.actionRow;
-        if (child_name) {
-            cy.get(`[data-fieldname="${child_name}"] .grid-row`).should('have.length.at.least', 1);
-            cy.get(`[data-fieldname="${child_name}"] .grid-body .grid-row`)
-                .first()
-                .within(() => {
-                    cy.get(`[data-fieldname="${field_name}"]`).then($field => {
-                        const $el = $field as unknown as JQuery<HTMLElement>;
-                        if ($el.find('select').length) {
-                            cy.wrap($field).find('select').should('have.value', value);
-                        } else {
-                            cy.wrap($field).should('have.text', value);
-                        }
-                    });
-                });
-        }
     }
-    
+    input(): void {
+        const { value, child_name, field_name, child_index } = this.action.actionRow;
+        const rowIndex = child_index ? child_index - 1 : 0;
+        const rowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
+
+        cy.get(rowSelector).eq(rowIndex).within(() => {
+            cy.get(`[data-fieldname="${field_name}"]`).then($field => {
+                const $el = $field as unknown as JQuery<HTMLElement>;
+                const $select = $el.find('select:visible');
+
+                if ($select.length) {
+                    cy.wrap($select)
+                        .select(value, { force: true })
+                        .should('have.value', value);
+                } else {
+                    cy.wrap($field).dblclick();
+                    cy.wait(300);
+                    cy.wrap($field)
+                        .find('select')
+                        .should('exist')
+                        .select(value, { force: true })
+                        .should('have.value', value);
+                }
+            });
+        });
+    }
+    validate(): void {
+        const  {value, child_name, field_name, child_index }= this.action.actionRow;
+        const rowIndex = child_index ? child_index - 1 : 0;
+        const rowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
+        cy.get(rowSelector).eq(rowIndex).within(() => {
+            cy.get(`[data-fieldname="${field_name}"]`).then($field => {
+                const $el = $field as unknown as JQuery<HTMLElement>;
+                const $select = $el.find('select:visible');
+
+                if ($select.length) {
+                    cy.wrap($select).should('have.value', value);
+                } else {
+                    cy.wrap($field).should('contain.text', value);
+                }
+            });
+        });
+    }
 }
 
 /** @class clDataTypeDate -Handles date input fields. */
@@ -201,27 +197,21 @@ export class clDataTypeFactory {
         "Dynamic Link": clDataTypeDynamiclink,
         "Currency": clDataTypeCurrency
     };
-    static createDataType(data_type: string, actiondata: ifActionHandler): clDataType {
-        let row = actiondata.actionData[0];
-        let isChild = row.is_child;
-    
+    static createDataType(data_type: string, actiondata: ifActionHandler, row?: TactionData): clDataType {
+        let actualRow = row || actiondata.actionData[0];
         let LA_ACTIONCLASS = this.actionsMap[data_type];
         if (!LA_ACTIONCLASS) {
             throw new Error(`Invalid data type: ${data_type}`);
         }
-    
-        if (data_type === "Select" && isChild) {
+        if (data_type === "Select" && actualRow.is_child) {
             return new clDataTypeSelectChild(data_type, actiondata);
         }
-    
         let handledChildTypes = ["Data", "Link", "Date", "Dynamic Link", "Currency"];
-        if (isChild && handledChildTypes.includes(data_type)) {
+        if (actualRow.is_child && handledChildTypes.includes(data_type)) {
             return new clDataTypeDataChild(data_type, actiondata);
         }
-    
         return new LA_ACTIONCLASS(data_type, actiondata);
     }
-    
 }
 
 
