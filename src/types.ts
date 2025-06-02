@@ -14,8 +14,6 @@ interface ifDataType {
     action: ifActionHandler
     validate(): void
     input(): void
-    execute(): void
-
 }
 interface ifProperties {
     is_read_only: boolean;
@@ -26,6 +24,8 @@ interface ifProperties {
     fieldSelector: string;
     fieldProp: string;
     getSelector(): string;
+    // getChildSelector(): string;
+    // gridSector(): string;
    
 }
 /**@type TtestHeaderData - Represents test header data structure.

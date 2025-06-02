@@ -1,5 +1,6 @@
 import { property } from "cypress/types/lodash";
 import { fnGetDelay } from "../src/delay";
+import { clPropertiesFactory } from "./properties";
 
 /**
  * @class clDataType -Abstract base class for handling different data types.  
@@ -19,8 +20,7 @@ abstract class clDataType implements ifDataType {
         this.fieldSlector = `[data-fieldname="${this.action.actionRow.field_name}"]`;
     }
     abstract validate(): void 
-    abstract input(): void
-    abstract execute(): void;
+    abstract input(): void 
     getSelector(): string{
         return `${this.fieldSlector}${this.fieldProp}`
     }
@@ -44,10 +44,9 @@ class clDataTypeData extends clDataType {
     }
     input(): void {
         const { value } = this.action.actionRow;
-            cy.get(this.getSelector()).wait(fnGetDelay("medium")) .type(value) .should('have.value', value) .wait(fnGetDelay("medium")) .type('{enter}', { force: true }) .wait(fnGetDelay("short"));   
-    }
-    execute(): void {
-        this.action.actionRow
+            cy.get(this.getSelector()).wait(fnGetDelay("short")).type(value).wait(fnGetDelay("medium")).should('have.value', value).wait(fnGetDelay("medium"))
+            .type('{enter}',{ force: true }) 
+            .wait(fnGetDelay("short"));   
     }
 }
 
@@ -93,7 +92,7 @@ class clDataTypeDataChild extends clDataTypeData {
                 });
             });
         }
-    } 
+    }
 }
 
 /** @class clDataTypeLink - Inherits from `clDataTypeData` to handle link-type fields. */
@@ -164,11 +163,14 @@ class clDataTypeSelectChild extends clDataTypeSelect {
         });
     }
 }
-
 /** @class clDataTypeDate -Handles date input fields. */
 class clDataTypeDate extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
+    }
+    input(): void {
+        const {value} = this.action.actionRow
+        cy.get(this.getSelector()).clear().wait(fnGetDelay("short")).type(value).wait(fnGetDelay("short"))
     }
 }
 /** @class clDataTypeDynamiclink - Handles dynamic link fields. */
@@ -185,6 +187,7 @@ class clDataTypeCurrency extends clDataTypeData {
     }
 }
 /**
+ * 
  * @class clDataTypeFactory - Factory class for creating data type instances.   
  * @method createDataType - Creates a data type instance based on the given type.  
  */

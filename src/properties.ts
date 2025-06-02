@@ -18,7 +18,7 @@ abstract class clProperties implements ifProperties {
         this.is_mandatory = is_mandatory;
         this.is_hidden = is_hidden;
         this.action = action;
-        this.fieldSelector = `.frappe-control[data-fieldname="${this.action.actionRow.field_name}"]`;
+        this.fieldSelector = `[data-fieldname="${this.action.actionRow.field_name}"]`;
         this.fieldProp = "";
     }
     getSelector(): string {

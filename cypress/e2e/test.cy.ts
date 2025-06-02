@@ -23,7 +23,7 @@ describe("Testing API Data", () => {
     const loginEmail = Cypress.env("LOGIN_EMAIL");
     const loginPassword = Cypress.env("LOGIN_PASSWORD");
     const targetPath = Cypress.env("TARGET_PATH")
-    cy.visit(`${targetUrl}/login#login`);
+    cy.visit(`${targetUrl}/login#login`); //v-14
     cy.get("#login_email").type(`${loginEmail}`);
     cy.get("#login_password").type(`${loginPassword}{enter}`).wait(fnGetDelay("medium"));
     cy.visit(`${targetUrl}/app/${targetPath}`);

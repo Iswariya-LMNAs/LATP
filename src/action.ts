@@ -3,6 +3,7 @@ import { clPropertiesFactory } from "./properties";
 import { fnGetDelay } from "../src/delay";
 
 /** @class clAction - Base abstract class for executing actions on data fields. */
+//clAction base class which implements the ifHandler interface
 abstract class clAction implements ifActionHandler {
     action: string;
     actionData: TTactionsData;
@@ -43,7 +44,9 @@ abstract class clAction implements ifActionHandler {
         });
     }
 }
-/** @class clActionExpandSection Standalone class to expand all UI sections */
+/** @class clActionExpandSection is extended class from the clAction*/
+/* Expand Section class is used to expand the section mentioned in the configurator
+ */ 
 class clActionExpandSection extends clAction {
     constructor(iAction: string, iaActionData: TTactionsData) {
                super(iAction, iaActionData);
@@ -54,7 +57,7 @@ class clActionExpandSection extends clAction {
                 const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
                 tabClick.executeAction();
             }
-            const sectionTitle = this.actionRow?.section;
+            const sectionTitle = this.actionRow.section;
             if (!sectionTitle) {
                 return;
             }
@@ -72,6 +75,7 @@ class clActionExpandSection extends clAction {
                 this.actionRow = row;
                 this.dataType = clDataTypeFactory.createDataType(row.data_type, this, row);
                 this.checkFieldValue();
+                this.checkFieldProperties();
             });
      }                      
 }
@@ -89,7 +93,7 @@ class clActionOnLoad extends clAction {
 class clActionOnChange extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
-        if (this.actionRow.tab) {
+        if (this.actionRow.tab) {   
             const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
             tabClick.executeAction();
         }
@@ -100,7 +104,6 @@ class clActionOnChange extends clAction {
         }
         this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this);
         this.dataType.input();
-        // new clActionExpandSection().executeAction();
         super.executeAction();
     }
     constructor(iAction: string, iaActionData: TTactionsData) {
@@ -121,6 +124,7 @@ class clActionOnChangeChild extends clActionOnChange{
             this.actionRow = row;
             this.dataType = clDataTypeFactory.createDataType(row.data_type, this, row);
             this.checkFieldValue();
+            this.checkFieldProperties();
         });
    }
 }
@@ -210,3 +214,4 @@ export class clActionFactory {
         ));
     }
 }
+
