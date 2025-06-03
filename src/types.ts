@@ -23,10 +23,7 @@ interface ifProperties {
     validate(): void
     fieldSelector: string;
     fieldProp: string;
-    getSelector(): string;
-    // getChildSelector(): string;
-    // gridSector(): string;
-   
+    getSelector(): string;   
 }
 /**@type TtestHeaderData - Represents test header data structure.
  *  Contains details about the doctype_to_be_tested and relevant test field data. */

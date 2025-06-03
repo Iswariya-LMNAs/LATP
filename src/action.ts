@@ -32,7 +32,6 @@ abstract class clAction implements ifActionHandler {
     Object.entries(LAgroupTab).forEach(([lTabName, laRows]) => {
         if (lTabName !== " ") {
             const LOtabClick = clActionFactory.createAction("On Tab", [laRows[0]]);
-            cy.log("Tab click",JSON.stringify(LOtabClick));
             LOtabClick.executeAction();
         }
         laRows.forEach(ldRow => {

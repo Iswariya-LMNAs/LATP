@@ -14,15 +14,28 @@ abstract class clDataType implements ifDataType {
     action: ifActionHandler;
     fieldSlector: string
     fieldProp: string
+    childSelector: string
+    rowSelector: number
     constructor(iDataType: string, ioAction: ifActionHandler) {
         this.dataType = iDataType;
         this.action = ioAction;
         this.fieldSlector = `[data-fieldname="${this.action.actionRow.field_name}"]`;
+        this.childSelector = `[data-fieldname="${this.action.actionRow.child_name}"] .grid-body .grid-row`;
+        this.rowSelector = this.action.actionRow.child_index ? this.action.actionRow.child_index - 1 : 0;;
     }
     abstract validate(): void 
     abstract input(): void 
     getSelector(): string{
         return `${this.fieldSlector}${this.fieldProp}`
+    }
+    getfieldchild(): string{
+        return`${this.fieldSlector}`
+    }
+    getchildSelector(): string{
+        return `${this.childSelector}`
+    }
+    getchildRow(): number{
+        return this.rowSelector
     }
 }
 /** @class clDataTypeData - Handles validation and input actions for generic data types. */
@@ -55,13 +68,12 @@ class clDataTypeDataChild extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
     }
-       input(): void {
-        const { is_child, value, field_name, child_name, child_index} = this.action.actionRow;
+
+    input(): void {
+        const { is_child, value, child_name} = this.action.actionRow;
         if (!is_child || !child_name) return;
-        const LrowIndex = child_index ? child_index - 1 : 0;
-        const LrowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
-        cy.get(LrowSelector).eq(LrowIndex).within(() => {
-            cy.get(`[data-fieldname="${field_name}"]`).then($field => {
+        cy.get(this.getchildSelector()).eq(this.getchildRow()).within(() => {
+            cy.get(this.getfieldchild()).then($field => {
                 const $el = $field as unknown as JQuery<HTMLElement>;
                 const $input = $el.find('input:visible');
                 if ($input.length > 0) {
@@ -76,12 +88,10 @@ class clDataTypeDataChild extends clDataTypeData {
         });
     }
     validate(): void {
-        const { is_child, value, field_name, child_name, child_index } = this.action.actionRow;
+        const { is_child, value,  child_name } = this.action.actionRow;
         if (is_child && child_name) {
-            const LrowIndex = child_index ? child_index - 1 : 0;
-            const LrowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
-            cy.get(LrowSelector).eq(LrowIndex).within(() => {
-                cy.get(`[data-fieldname="${field_name}"]`).then($field => {
+            cy.get(this.getchildSelector()).eq(this.getchildRow()).within(() => {
+                cy.get(this.getfieldchild()).then($field => {
                     const $el = $field as unknown as JQuery<HTMLElement>;
                     const $input = $el.find('input');
                     if ($input.length) {
@@ -119,16 +129,13 @@ class clDataTypeSelectChild extends clDataTypeSelect {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
     }
+   
     input(): void {
-        const { value, child_name, field_name, child_index } = this.action.actionRow;
-        const LrowIndex = child_index ? child_index - 1 : 0;
-        const LrowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
-
-        cy.get(LrowSelector).eq(LrowIndex).within(() => {
-            cy.get(`[data-fieldname="${field_name}"]`).then($field => {
+        const { value } = this.action.actionRow;
+        cy.get(this.getchildSelector()).eq(this.getchildRow()).within(() => {
+            cy.get(this.getfieldchild()).then($field => {
                 const $el = $field as unknown as JQuery<HTMLElement>;
                 const $select = $el.find('select:visible');
-
                 if ($select.length) {
                     cy.wrap($select)
                         .select(value, { force: true })
@@ -146,14 +153,11 @@ class clDataTypeSelectChild extends clDataTypeSelect {
         });
     }
     validate(): void {
-        const  {value, child_name, field_name, child_index }= this.action.actionRow;
-        const LrowIndex = child_index ? child_index - 1 : 0;
-        const LrowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
-        cy.get(LrowSelector).eq(LrowIndex).within(() => {
-            cy.get(`[data-fieldname="${field_name}"]`).then($field => {
+        const  { value }= this.action.actionRow;
+        cy.get(this.getchildSelector()).eq(this.getchildRow()).within(() => {
+            cy.get(this.getfieldchild()).then($field => {
                 const $el = $field as unknown as JQuery<HTMLElement>;
                 const $select = $el.find('select:visible');
-
                 if ($select.length) {
                     cy.wrap($select).should('have.value', value);
                 } else {
