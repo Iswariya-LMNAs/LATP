@@ -20,24 +20,25 @@ abstract class clAction implements ifActionHandler {
         this.dataType.validate();
     }
     checkFieldProperties(): void {
-        const propertyValidators = clPropertiesFactory.createAllFor(this);
-        propertyValidators.forEach((validator) => validator.validate());  
+        const LApropertyValidators = clPropertiesFactory.createAllFor(this);
+        LApropertyValidators.forEach((ldValidator) => ldValidator.validate());  
     }    
     executeAction(): void {
-    const groupTab = this.actionData.reduce((acc, row) => {
-     const Tab = row.tab || " ";
-      (acc[Tab] ||= []).push(row);
-      return acc; 
+    const LAgroupTab = this.actionData.reduce((LAacc, ldRow) => {
+    const Ltab = ldRow.tab || " ";
+      (LAacc[Ltab] ||= []).push(ldRow);
+      return LAacc; 
     }, []);
-    Object.entries(groupTab).forEach(([tabName, rows]) => {
-        if (tabName !== " ") {
-            const tabClick = clActionFactory.createAction("On Tab", [rows[0]]);
-            tabClick.executeAction();
+    Object.entries(LAgroupTab).forEach(([lTabName, laRows]) => {
+        if (lTabName !== " ") {
+            const LOtabClick = clActionFactory.createAction("On Tab", [laRows[0]]);
+            cy.log("Tab click",JSON.stringify(LOtabClick));
+            LOtabClick.executeAction();
         }
-        rows.forEach(row => {
-            if (!row.data_type) return;
-            this.actionRow = row;
-            this.dataType = clDataTypeFactory.createDataType(row.data_type, this);
+        laRows.forEach(ldRow => {
+            if (!ldRow.data_type) return;
+            this.actionRow = ldRow;
+            this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this);
             this.checkFieldValue();
             this.checkFieldProperties();
             });
@@ -54,26 +55,26 @@ class clActionExpandSection extends clAction {
          executeAction(): void {
             this.actionRow = this.actionData[0];
             if (this.actionRow.tab) {
-                const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
-                tabClick.executeAction();
+                const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+                LOtabClick.executeAction();
             }
-            const sectionTitle = this.actionRow.section;
-            if (!sectionTitle) {
+            const LsectionTitle = this.actionRow.section;
+            if (!LsectionTitle) {
                 return;
             }
             cy.get('.section-head').each(($el) => {
-            const text = Cypress.$($el).text().trim();
-            if (text === sectionTitle) {
+            const Ltext = Cypress.$($el).text().trim();
+            if (Ltext === LsectionTitle) {
             const $parent = Cypress.$($el).parent();
-            const isCollapsed = $parent.find('.section-body').css('display') === 'none';
-            if (isCollapsed) {
+            const LisCollapsed = $parent.find('.section-body').css('display') === 'none';
+            if (LisCollapsed) {
                 cy.wrap($el).wait(fnGetDelay("medium")).click({ force: true });} 
             }
             });
-            this.actionData.forEach(row => {
-                if (!row.data_type) return;
-                this.actionRow = row;
-                this.dataType = clDataTypeFactory.createDataType(row.data_type, this, row);
+            this.actionData.forEach(ldRow => {
+                if (!ldRow.data_type) return;
+                this.actionRow = ldRow;
+                this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this, ldRow);
                 this.checkFieldValue();
                 this.checkFieldProperties();
             });
@@ -94,12 +95,12 @@ class clActionOnChange extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         if (this.actionRow.tab) {   
-            const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
-            tabClick.executeAction();
+            const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            LOtabClick.executeAction();
         }
          if (this.actionRow.is_child) {
-            const childAction = new clActionOnChangeChild(this.action, this.actionData);
-            childAction.executeAction();
+            const LOchildAction = new clActionOnChangeChild(this.action, this.actionData);
+            LOchildAction.executeAction();
             return;
         }
         this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this);
@@ -114,15 +115,15 @@ class clActionOnChangeChild extends clActionOnChange{
    executeAction(): void {
     this.actionRow = this.actionData[0];
         if (this.actionRow.tab) {
-            const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
-            tabClick.executeAction();
+            const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            LOtabClick.executeAction();
         }
         this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this);
         this.dataType.input();
-        this.actionData.forEach(row => {
-            if (!row.data_type) return;
-            this.actionRow = row;
-            this.dataType = clDataTypeFactory.createDataType(row.data_type, this, row);
+        this.actionData.forEach(ldRow => {
+            if (!ldRow.data_type) return;
+            this.actionRow = ldRow;
+            this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this, ldRow);
             this.checkFieldValue();
             this.checkFieldProperties();
         });
@@ -132,8 +133,8 @@ class clActionAddRow extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         if(this.actionRow.tab){
-            const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
-            tabClick.executeAction();
+            const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            LOtabClick.executeAction();
         }
         cy.get(`[data-fieldname="${this.actionRow.child_name}"]`, { timeout: 10000 })
             .should('exist')
@@ -143,10 +144,10 @@ class clActionAddRow extends clAction {
                     .should('be.visible')
                     .click({ force: true });
             });
-            this.actionData.forEach(row => {
-                if (!row.data_type) return;
-                this.actionRow = row;
-                this.dataType = clDataTypeFactory.createDataType(row.data_type, this, row);
+            this.actionData.forEach(ldRow => {
+                if (!ldRow.data_type) return;
+                this.actionRow = ldRow;
+                this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this, ldRow);
                 this.checkFieldValue();
             });
     }
@@ -155,22 +156,22 @@ class clActionEditDetails extends clAction{
     executeAction(): void {
         this.actionRow = this.actionData[0];
         if (this.actionRow.tab) {
-            const tabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
-            tabClick.executeAction();
+            const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            LOtabClick.executeAction();
         }
-        const rowIndex = (this.actionRow.child_index || 1) - 1;
-        const childSelector = `[data-fieldname="${this.actionRow.child_name}"] .grid-body .grid-row`;
-        cy.get(childSelector).eq(rowIndex).within(() => {
+        const LrowIndex = (this.actionRow.child_index || 1) - 1;
+        const LchildSelector = `[data-fieldname="${this.actionRow.child_name}"] .grid-body .grid-row`;
+        cy.get(LchildSelector).eq(LrowIndex).within(() => {
             cy.get('.btn-open-row').first().click({ force: true });
         });
         cy.wait(fnGetDelay("medium"));
-        this.actionData.forEach(row => {
-            if (!row.data_type) return;
-            this.actionRow = row;
-            this.dataType = clDataTypeFactory.createDataType(row.data_type, this, row);
+        this.actionData.forEach(ldRow => {
+            if (!ldRow.data_type) return;
+            this.actionRow = ldRow;
+            this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this, ldRow);
             this.checkFieldValue();
         });
-        cy.get(childSelector).eq(rowIndex).within(() => {
+        cy.get(LchildSelector).eq(LrowIndex).within(() => {
             cy.get('.btn-open-row').first().click({ force: true });
         });
     }
@@ -179,9 +180,9 @@ class clActionEditDetails extends clAction{
 class clActionOnTab extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
-        const tab = this.actionRow.tab;
-        if (!tab) return;
-        cy.get('.form-tabs .nav-item a').filter(`:contains("${tab}")`).first().click({ force: true });
+        const Ltab = this.actionRow.tab;
+        if (!Ltab) return;
+        cy.get('.form-tabs .nav-item a').filter(`:contains("${Ltab}")`).first().click({ force: true });
         cy.wait(fnGetDelay('medium'));
     }
     constructor(iAction: string, iaActionData: TTactionsData) {
@@ -201,16 +202,16 @@ export class clActionFactory {
         "Expand Section": clActionExpandSection,
     };
     static createAction(iAction: string, iaActionData:TTactionsData): ifActionHandler {
-        const LA_ACTIONCLASS = this.actionsMap[iAction];       
-        if (!LA_ACTIONCLASS) {
+        const LAactionClass = this.actionsMap[iAction];       
+        if (!LAactionClass) {
           throw new Error(`Invalid action type: ${iAction}`);
         } 
-        return new LA_ACTIONCLASS(iAction=iAction,iaActionData=iaActionData);
+        return new LAactionClass(iAction=iAction,iaActionData=iaActionData);
       }    
     static filterActionData(iaActionsData: TTactionsData, iActionRow: TactionData): TTactionsData {
-        const lposNext = iActionRow.pos + 10;
-        return iaActionsData.filter((item) => (
-            item.pos >= iActionRow.pos && item.pos < lposNext
+        const LposNext = iActionRow.pos + 10;
+        return iaActionsData.filter((ldItem) => (
+            ldItem.pos >= iActionRow.pos && ldItem.pos < LposNext
         ));
     }
 }

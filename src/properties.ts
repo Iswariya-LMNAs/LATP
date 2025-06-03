@@ -65,17 +65,17 @@ export class clPropertiesFactory {
         "Is Hidden": clHidden,
     };
     static create(propertyType: string, action: ifActionHandler): clProperties {
-        const PropertyClass = this.actionsMap[propertyType];
-        if (!PropertyClass) throw new Error(`Unknown property type: ${propertyType}`);
-        return new PropertyClass(action);
+        const LpropertyClass = this.actionsMap[propertyType];
+        if (!LpropertyClass) throw new Error(`Unknown property type: ${propertyType}`);
+        return new LpropertyClass(action);
     }
     static createAllFor(action: ifActionHandler): clProperties[] {
-        const props: clProperties[] = [];
-        const row = action.actionRow; // actionRow comes from the instance of clAction
-        if (row.is_read_only) props.push(new clReadOnly(action));
-        if (row.is_mandatory) props.push(new clMandatory(action));
-        if (row.is_hidden) props.push(new clHidden(action));
-        return props;
+        const LAprops: clProperties[] = [];
+        const LDrow = action.actionRow; // actionRow comes from the instance of clAction
+        if (LDrow.is_read_only) LAprops.push(new clReadOnly(action));
+        if (LDrow.is_mandatory) LAprops.push(new clMandatory(action));
+        if (LDrow.is_hidden) LAprops.push(new clHidden(action));
+        return LAprops;
     }
 }
 

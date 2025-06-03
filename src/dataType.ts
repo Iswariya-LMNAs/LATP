@@ -58,9 +58,9 @@ class clDataTypeDataChild extends clDataTypeData {
        input(): void {
         const { is_child, value, field_name, child_name, child_index} = this.action.actionRow;
         if (!is_child || !child_name) return;
-        const rowIndex = child_index ? child_index - 1 : 0;
-        const rowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
-        cy.get(rowSelector).eq(rowIndex).within(() => {
+        const LrowIndex = child_index ? child_index - 1 : 0;
+        const LrowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
+        cy.get(LrowSelector).eq(LrowIndex).within(() => {
             cy.get(`[data-fieldname="${field_name}"]`).then($field => {
                 const $el = $field as unknown as JQuery<HTMLElement>;
                 const $input = $el.find('input:visible');
@@ -78,9 +78,9 @@ class clDataTypeDataChild extends clDataTypeData {
     validate(): void {
         const { is_child, value, field_name, child_name, child_index } = this.action.actionRow;
         if (is_child && child_name) {
-            const rowIndex = child_index ? child_index - 1 : 0;
-            const rowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
-            cy.get(rowSelector).eq(rowIndex).within(() => {
+            const LrowIndex = child_index ? child_index - 1 : 0;
+            const LrowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
+            cy.get(LrowSelector).eq(LrowIndex).within(() => {
                 cy.get(`[data-fieldname="${field_name}"]`).then($field => {
                     const $el = $field as unknown as JQuery<HTMLElement>;
                     const $input = $el.find('input');
@@ -121,10 +121,10 @@ class clDataTypeSelectChild extends clDataTypeSelect {
     }
     input(): void {
         const { value, child_name, field_name, child_index } = this.action.actionRow;
-        const rowIndex = child_index ? child_index - 1 : 0;
-        const rowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
+        const LrowIndex = child_index ? child_index - 1 : 0;
+        const LrowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
 
-        cy.get(rowSelector).eq(rowIndex).within(() => {
+        cy.get(LrowSelector).eq(LrowIndex).within(() => {
             cy.get(`[data-fieldname="${field_name}"]`).then($field => {
                 const $el = $field as unknown as JQuery<HTMLElement>;
                 const $select = $el.find('select:visible');
@@ -147,9 +147,9 @@ class clDataTypeSelectChild extends clDataTypeSelect {
     }
     validate(): void {
         const  {value, child_name, field_name, child_index }= this.action.actionRow;
-        const rowIndex = child_index ? child_index - 1 : 0;
-        const rowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
-        cy.get(rowSelector).eq(rowIndex).within(() => {
+        const LrowIndex = child_index ? child_index - 1 : 0;
+        const LrowSelector = `[data-fieldname="${child_name}"] .grid-body .grid-row`;
+        cy.get(LrowSelector).eq(LrowIndex).within(() => {
             cy.get(`[data-fieldname="${field_name}"]`).then($field => {
                 const $el = $field as unknown as JQuery<HTMLElement>;
                 const $select = $el.find('select:visible');
@@ -201,19 +201,19 @@ export class clDataTypeFactory {
         "Currency": clDataTypeCurrency
     };
     static createDataType(data_type: string, actiondata: ifActionHandler, row?: TactionData): clDataType {
-        let actualRow = row || actiondata.actionData[0];
-        let LA_ACTIONCLASS = this.actionsMap[data_type];
-        if (!LA_ACTIONCLASS) {
+        let lActualRow = row || actiondata.actionData[0];
+        let laActionClass = this.actionsMap[data_type];
+        if (!laActionClass) {
             throw new Error(`Invalid data type: ${data_type}`);
         }
-        if (data_type === "Select" && actualRow.is_child) {
+        if (data_type === "Select" && lActualRow.is_child) {
             return new clDataTypeSelectChild(data_type, actiondata);
         }
-        let handledChildTypes = ["Data", "Link", "Date", "Dynamic Link", "Currency"];
-        if (actualRow.is_child && handledChildTypes.includes(data_type)) {
+        let laHandledChildTypes = ["Data", "Link", "Date", "Dynamic Link", "Currency"];
+        if (lActualRow.is_child && laHandledChildTypes.includes(data_type)) {
             return new clDataTypeDataChild(data_type, actiondata);
         }
-        return new LA_ACTIONCLASS(data_type, actiondata);
+        return new laActionClass(data_type, actiondata);
     }
 }
 
