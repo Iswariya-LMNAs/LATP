@@ -37,6 +37,6 @@ export NVM_DIR="$HOME/.nvm"
 # Use or install Node.js v20
 nvm install 20 >/dev/null 2>&1
 nvm use 20 >/dev/null 2>&1
-npm run upload
+npm run upload_testlab_setup
 npm run upload_testdata
 sudo apt-get update && sudo apt-get install -y xvfb
