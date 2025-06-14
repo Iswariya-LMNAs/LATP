@@ -5,9 +5,7 @@ interface ifActionHandler {
     actionRow: TactionData
     executeAction(): void
     checkFieldValue(): void
-    checkFieldProperties(): void
-    handleNavigator(): void
-    handleMessages(): void
+    checkFieldProperties(): void    
     dataType: ifDataType
 }
 /**@interface ifDataType - Defines for handling different data types. */
@@ -16,7 +14,16 @@ interface ifDataType {
     action: ifActionHandler
     validate(): void
     input(): void
-    execute(): void
+}
+interface ifProperties {
+    is_read_only: boolean;
+    is_mandatory: boolean;
+    is_hidden: boolean;
+    action: ifActionHandler
+    validate(): void
+    fieldSelector: string;
+    fieldProp: string;
+    getSelector(): string;   
 }
 /**@type TtestHeaderData - Represents test header data structure.
  *  Contains details about the doctype_to_be_tested and relevant test field data. */
@@ -51,7 +58,9 @@ type TactionData = {
     pos: number;
     field_name: string;
     is_child: boolean;
+    child_name: string;
     child_index: number;
+    add_row: boolean;
     action: string;
     value: string;
     data_type: string;
@@ -64,6 +73,9 @@ type TactionData = {
     parenttype: string;
     doctype: string;
     section: string;
+    tab: string;
+    row_index: 1 ; 
+    
 };
 /**@type TTactionsData - Represents an array of action data. */
 type TTactionsData = TactionData[]

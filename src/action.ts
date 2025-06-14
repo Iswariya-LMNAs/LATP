@@ -1,167 +1,217 @@
-import { clDataTypeFactory } from "./dataType"
+import { clDataTypeFactory } from "./dataType";
+import { clPropertiesFactory } from "./properties";
 import { fnGetDelay } from "../src/delay";
 
-/** @class clAction - provides a framework for executing actions on data fields,like ensuring proper validation,.*/
+/** @class clAction - Base abstract class for executing actions on data fields. */
+//clAction base class which implements the ifHandler interface
 abstract class clAction implements ifActionHandler {
-    action : string
-    actionData: TTactionsData  //Array type for TactionData
-    dataType: ifDataType
-    actionRow: TactionData
-    fieldSlector: string
-    fieldProp: string
-    constructor(iAction: string, iaActionData:TTactionsData){
-        this.actionData = iaActionData
-        this.action = iAction
-    }  
-    waithandler() :void{}
-    /** @method checkFieldValue  Validates the field value using the assigned data type */
+    action: string;
+    actionData: TTactionsData;
+    dataType: ifDataType;
+    actionRow: TactionData;
+    fieldSlector: string;
+    fieldProp: string;
+
+    constructor(iAction: string, iaActionData: TTactionsData) {
+        this.actionData = iaActionData;
+        this.action = iAction;
+    }
     checkFieldValue(): void {
-        this.dataType.validate()    
+        this.dataType.validate();
     }
-    /** @method checkFieldProperties Checks field properties such as mandatory constraints*/
     checkFieldProperties(): void {
+        const LApropertyValidators = clPropertiesFactory.createAllFor(this);
+        LApropertyValidators.forEach((ldValidator) => ldValidator.validate());  
+    }    
+    executeAction(): void {
+    const LAgroupTab = this.actionData.reduce((LAacc, ldRow) => {
+    const Ltab = ldRow.tab || " ";
+      (LAacc[Ltab] ||= []).push(ldRow);
+      return LAacc; 
+    }, []);
+    Object.entries(LAgroupTab).forEach(([lTabName, laRows]) => {
+        if (lTabName !== " ") {
+            const LOtabClick = clActionFactory.createAction("On Tab", [laRows[0]]);
+            LOtabClick.executeAction();
+        }
+        laRows.forEach(ldRow => {
+            if (!ldRow.data_type) return;
+            this.actionRow = ldRow;
+            this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this);
+            this.checkFieldValue();
+            this.checkFieldProperties();
+            });
+        });
     }
-    /**@method handleNavigator Handles navigation logic for the action.*/
-    handleNavigator(): void {
+}
+/** @class clActionExpandSection is extended class from the clAction*/
+/* Expand Section class is used to expand the section mentioned in the configurator
+ */ 
+class clActionExpandSection extends clAction {
+    constructor(iAction: string, iaActionData: TTactionsData) {
+               super(iAction, iaActionData);
+             }  
+         executeAction(): void {
+            this.actionRow = this.actionData[0];
+            if (this.actionRow.tab) {
+                const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+                LOtabClick.executeAction();
+            }
+            const LsectionTitle = this.actionRow.section;
+            if (!LsectionTitle) {
+                return;
+            }
+            cy.get('.section-head').each(($el) => {
+            const Ltext = Cypress.$($el).text().trim();
+            if (Ltext === LsectionTitle) {
+            const $parent = Cypress.$($el).parent();
+            const LisCollapsed = $parent.find('.section-body').css('display') === 'none';
+            if (LisCollapsed) {
+                cy.wrap($el).wait(fnGetDelay("medium")).click({ force: true });} 
+            }
+            });
+            this.actionData.forEach(ldRow => {
+                if (!ldRow.data_type) return;
+                this.actionRow = ldRow;
+                this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this, ldRow);
+                this.checkFieldValue();
+                this.checkFieldProperties();
+            });
+     }                      
+}
+
+/** @class clActionOnLoad - Handles actions on page load. */
+class clActionOnLoad extends clAction {
+    executeAction(): void { super.executeAction()}
+    checkFieldValue(): void { super.checkFieldValue(); }
+    checkFieldProperties(): void { super.checkFieldProperties(); }
+    constructor(iAction: string, iaActionData: TTactionsData) {
+        super(iAction, iaActionData);
     }
-    /**@method handleMessages Processes messages related to the action.*/
-    handleMessages(): void{
-    }
-      /** @method expandSection - Placeholder for expanding a form section. */
-    
-    expandSection(): void {
-        if (!this.actionData || this.actionData.length === 0) {
+}
+/** @class clActionOnChange - Handles actions like On Change */
+class clActionOnChange extends clAction {
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        if (this.actionRow.tab) {   
+            const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            LOtabClick.executeAction();
+        }
+         if (this.actionRow.is_child) {
+            const LOchildAction = new clActionOnChangeChild(this.action, this.actionData);
+            LOchildAction.executeAction();
             return;
         }
-        cy.get('.section-head').each(($sectionHeader) => {
-            cy.wrap($sectionHeader)
-                .parent()
-                .then(($parent) => {
-                    const parent = $parent as JQuery<HTMLElement>;
-                    const isCollapsed = parent.find('.section-body').css('display') === 'none';
-    
-                    if (isCollapsed) {
-                        cy.wrap($sectionHeader)
-                            .wait(fnGetDelay("medium"))
-                            .click({ force: true });
-                    }
-                });
-        });
+        this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this);
+        this.dataType.input();
+        super.executeAction();
     }
-    
-    /**@method executeAction Executes the action by processing each action data row.*/
-    executeAction(): void {   
-        this.actionData.forEach((actionDataRow) => {
-            if (!actionDataRow.data_type) {
-                return; 
-            }
-            this.actionRow = { ...actionDataRow };
-            this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this)
-            this.checkFieldValue()
-        });
+    constructor(iAction: string, iaActionData: TTactionsData) {
+        super(iAction, iaActionData);
     }
 }
-/**
- * @class clActionOnLoad Extends `clAction` to handle actions triggered on page load.
- * * Methods:  
- * @method executeAction - Calls the parent method to process all actions on load.  
- * @method checkFieldValue - Validates field values when the form loads.  
- * @method checkFieldProperties - Checks field attributes such as mandatory or read-only status.  
- * @method handleNavigator - Manages navigation-related logic triggered by the OnLoad event.  
- * @method handleMessages - Ensures correct messages are displayed during form load.  
- */
-class clActionOnLoad extends clAction {
-    action: string
-    actionData: TTactionsData
-    actionRow: TactionData
-    dataType: ifDataType
+class clActionOnChangeChild extends clActionOnChange{
+   executeAction(): void {
+    this.actionRow = this.actionData[0];
+        if (this.actionRow.tab) {
+            const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            LOtabClick.executeAction();
+        }
+        this.dataType = clDataTypeFactory.createDataType(this.actionRow.data_type, this);
+        this.dataType.input();
+        this.actionData.forEach(ldRow => {
+            if (!ldRow.data_type) return;
+            this.actionRow = ldRow;
+            this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this, ldRow);
+            this.checkFieldValue();
+            this.checkFieldProperties();
+        });
+   }
+}
+class clActionAddRow extends clAction {
     executeAction(): void {
-        this.expandSection()
-        super.executeAction()}
-    checkFieldValue(): void {super.checkFieldValue()}
-    checkFieldProperties(): void { super.checkFieldProperties()}
-    handleNavigator(): void {super.handleNavigator()}
-    handleMessages(): void{super.handleMessages()}
-    constructor(iAction: string, iaActionData:TTactionsData){
-        super(iAction, iaActionData)
-        this.actionData = iaActionData
+        this.actionRow = this.actionData[0];
+        if(this.actionRow.tab){
+            const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            LOtabClick.executeAction();
+        }
+        cy.get(`[data-fieldname="${this.actionRow.child_name}"]`, { timeout: 10000 })
+            .should('exist')
+            .should('be.visible')
+            .within(() => {
+                cy.contains('button', 'Add Row', { matchCase: false })
+                    .should('be.visible')
+                    .click({ force: true });
+            });
+            this.actionData.forEach(ldRow => {
+                if (!ldRow.data_type) return;
+                this.actionRow = ldRow;
+                this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this, ldRow);
+                this.checkFieldValue();
+            });
     }
 }
-/**
- * @class clActionOnChange  Extends `clAction` to handle actions triggered when a field value changes.   
- * @method executeAction - Processes only the first action data row and invokes input handling.  
- * @method checkFieldValue - Validates the new field value after change.  
- * @method checkFieldProperties - Checks if any field properties need to be enforced.  
- * @method handleNavigator - Manages navigation if required after the change.  
- * @method handleMessages - Ensures correct messages are displayed after the change.  
- */
-class clActionOnChange extends clAction {
-    action: string
-    actionData: TactionData[]
-    executeAction(): void { 
-        this.actionRow = this.actionData[0]
-        this.dataType = clDataTypeFactory.createDataType(this.actionData[0].data_type, this) // take only the header datatype
-        this.dataType.input()
-        this.expandSection()
-        super.executeAction()
-      
-    }
-    checkFieldValue(): void {super.checkFieldValue()}
-    checkFieldProperties(): void {super.checkFieldProperties()}
-    handleNavigator(): void {super.handleNavigator()}
-    handleMessages(): void{super.handleMessages()} 
-    constructor(iAction: string, iaActionData:TTactionsData){
-        super(iAction, iaActionData)
-        this.actionData = iaActionData
+class clActionEditDetails extends clAction{
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        if (this.actionRow.tab) {
+            const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            LOtabClick.executeAction();
+        }
+        const LrowIndex = (this.actionRow.child_index || 1) - 1;
+        const LchildSelector = `[data-fieldname="${this.actionRow.child_name}"] .grid-body .grid-row`;
+        cy.get(LchildSelector).eq(LrowIndex).within(() => {
+            cy.get('.btn-open-row').first().click({ force: true });
+        });
+        cy.wait(fnGetDelay("medium"));
+        this.actionData.forEach(ldRow => {
+            if (!ldRow.data_type) return;
+            this.actionRow = ldRow;
+            this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this, ldRow);
+            this.checkFieldValue();
+        });
+        cy.get(LchildSelector).eq(LrowIndex).within(() => {
+            cy.get('.btn-open-row').first().click({ force: true });
+        });
     }
 }
-/**
- * @class clActionOnTab Extends `clAction` to handle actions triggered when switching between form tabs.  
- * This class ensures that the necessary actions are executed when a tab is changed.  
- * @method executeAction - Calls the parent method to process actions when switching tabs.  
- * @method checkFieldValue - Validates field values within the newly selected tab.  
- * @method checkFieldProperties - Checks field attributes such as mandatory or read-only status.  
- * @method handleNavigator - Manages any required navigation between form tabs.  
- * @method handleMessages - Ensures correct messages are displayed when switching tabs.  
- */
+/** @class clActionOnTab - Handles tab switching. */
 class clActionOnTab extends clAction {
-    action: string
-    actionData: TactionData[]
-    executeAction(): void { 
-        this.expandSection()
-        super.executeAction()}
-    checkFieldValue(): void {super.checkFieldValue}
-    checkFieldProperties(): void {super.checkFieldProperties()}
-    handleNavigator(): void {super.handleNavigator()}
-    handleMessages(): void{super.handleMessages()} 
-    constructor(iAction: string, iaActionData:TTactionsData){
-        super(iAction, iaActionData)
-        this.actionData = iaActionData
-    } 
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        const Ltab = this.actionRow.tab;
+        if (!Ltab) return;
+        cy.get('.form-tabs .nav-item a').filter(`:contains("${Ltab}")`).first().click({ force: true });
+        cy.wait(fnGetDelay('medium'));
+    }
+    constructor(iAction: string, iaActionData: TTactionsData) {
+        super(iAction, iaActionData);
+    }
 }
-/**
- * @class clActionFactory -A factory class responsible for creating and managing different action objects. 
- * @method createAction - Creates an action instance based on the given action name and data.  
- * @method filterActionData - Filters the action data to process only relevant entries based on position.  
- */
-export class clActionFactory { 
-    private static actionsMap: { [key:string]: new(iAction: string, iaActionData: TTactionsData )=> clAction}= {
-    "Onload": clActionOnLoad,
-    "On Change": clActionOnChange,
-    "On Tab":clActionOnTab
-    };   
+
+/** @class clActionFactory - Factory for creating action instances */
+export class clActionFactory {
+    private static actionsMap: {
+        [key: string]: new (iAction: string, iaActionData: TTactionsData) => clAction } = {
+        "Onload": clActionOnLoad,
+        "On Change": clActionOnChange,
+        "On Tab": clActionOnTab,
+        "Add Row": clActionAddRow,
+        "Edit Details": clActionEditDetails,
+        "Expand Section": clActionExpandSection,
+    };
     static createAction(iAction: string, iaActionData:TTactionsData): ifActionHandler {
-        const LA_ACTIONCLASS = this.actionsMap[iAction];       
-        if (!LA_ACTIONCLASS) {
+        const LAactionClass = this.actionsMap[iAction];       
+        if (!LAactionClass) {
           throw new Error(`Invalid action type: ${iAction}`);
         } 
-        return new LA_ACTIONCLASS(iAction=iAction,iaActionData=iaActionData);
-      }  
-    static filterActionData(iaActionsData:TTactionsData, iActionRow: TactionData): TTactionsData  {
-        let lposNext = iActionRow.pos + 10
-        const LA_FILTERED_DATA: TTactionsData = iaActionsData.filter((item) => {
-            return (item.pos >= iActionRow.pos && item.pos < lposNext);
-        });   
-        return LA_FILTERED_DATA
+        return new LAactionClass(iAction=iAction,iaActionData=iaActionData);
+      }    
+    static filterActionData(iaActionsData: TTactionsData, iActionRow: TactionData): TTactionsData {
+        const LposNext = iActionRow.pos + 10;
+        return iaActionsData.filter((ldItem) => (
+            ldItem.pos >= iActionRow.pos && ldItem.pos < LposNext
+        ));
     }
-};
+}
+
