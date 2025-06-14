@@ -13,124 +13,75 @@ It simplifies the testing process by automating repetitive tasks, allowing both 
 
 
 # Lens AI Test Pilot - Setup and Testing Guide
+This document provides step-by-step instructions to set up and test the *Lens AI Test Pilot* repository. If you already have the local site, *skip Procedure 1* and continue with *Procedure 2*.
 
-This document provides step-by-step instructions to set up and test the **Lens AI Test Pilot** repository. Follow these steps carefully to ensure a smooth configuration and execution of test cases.
+---
 
 ### Procedure 1: If You Do Not Have a Local Site
+### 1. Launch Codespace and Set Up Site
+- Launch the Codespace and wait for 2–3 minutes.
+- Open the forwarded site in the browser.
+- Login using:
+  - *Username:* administrator
+  - *Password:* admin
+- Complete the setup wizard.
+- This site will now act as both:
+  - *Host site*: used for configuration.
+  - *Target site*: where tests will be executed.
 
-### Step 1: Set Up Local Lens Site 
+---
+### Procedure 2: If You Already Have the Local Site
 
-1. Open the **Codespace**.  
-2. Run the command in the terminal:
+### 2. Configure the .env File
+- Copy sample_env and create a .env file in root folder
 
-   ```bash
-   npm install local
-   ```
+- Generate API Key & Secret:
+  - Go to *Host site → Profile → My Settings → API Access → Generate Keys*.
 
-  Once your local site is up and running, continue with **Procedure 2** to set up and run the `lens-ai-test-pilot`.
-  
-  ---
-
-###  Procedure 2:  If You Already Have a Local Site
-
-
-### Step 1: Clone the Test Pilot Repository
-
-1. Run the following command in the terminal to clone the repository:
-
-   ```bash
-   git clone https://github.com/lmnaslimited/lens_ai_test_pilot.git
-   ```
-
-2. Navigate to the project folder and open it in VS Code ( or your preferred code editor ):
-
-   ```bash
-   cd lens_ai_test_pilot
-   code .
-   ```
-
-
-### Step 2: Install Dependencies
-
-1. In the code editor terminal, install the project dependencies:
-   ```bash
-   npm install
-   nvm use v20
-   ```
-   
-###  Step 3: Configure Environment Variables
-
-1. Copy the `sample_env` and create a `.env` file in root folder and make the following changes.
-2. To generate the encoded auth key:
-   - Go to **Profile → My Settings → API Access →Generate Keys** on the Host/Target site.
-   - Copy the **API Key** and **API Secret**.
-   - Run the command  in your terminal:
-
-     ```bash
-     echo -n "YOUR_API_KEY:YOUR_API_SECRET" | base64
-     ```
-     
-> **Note:**  In case of single site , **same site** can be used for both **Host and Target** .
-3. Example `.env` variables:
-   ```env
-   HOST_URL=https://hostsite.docker.localhost
-   HOST_KEY=Basic <base64-encoded-key>
-   TARGET_URL=https://targetsite.docker.localhost
-   TARGET_KEY=Basic <base64-encoded-key>
-   DOCTYPE=Test Case Configurator
-   NODE_TLS_REJECT_UNAUTHORIZED=0
-   LOGIN_EMAIL=abc@gmail.com
-   LOGIN_PASSWORD=yourpassword
-   TESTCASE_TITLE=Sample Test Case
-   TARGET_PATH=/api/endpoint/path
-   ```
-### Step 4: Upload Scripts & Configure Host Site
-1. Run the Command to upload all  the scripts to the Host and Target sites
-   ```bash
-   npm run setup
-   ```
-
-2. Once completed, go to the **Host site** and verify the following Doctypes are available in the **Doctype List**: 
-   - Test Case Configurator
-   - Site Details
-   - Test Fields
-
-### Step 5: Configure Site Details on Host
-
-- Refer to the vedio [Configure Site Details](https://lmnaslimited.github.io/lens_ai_test_pilot_docs/ai-test-pilot/configure_test_pilot/setting_up_configurator/)
-- Navigate to **Site Details** on the Host site and do the following:
-   - Click **Add New**. Set **Site Name** to the Target site URL.
-   - Set **Key** to the authentication key (Base64 encoded).
-   - Set **Client** to the name of the client.
-   - Set **Doctype List** Give the Doctype Names to be Tested:  Eg : `["Customer", "Quotation"] `
-   - Click **Save** to complete the setup.
-   
-
-
-### Step 6: Upload and Verify Test Data
-
-1. Run the following command to upload the sample test data in the code editor terminal:
-    ```bash
-    npm run upload_testdata
-    ```
-2. After the upload completes, verify that the test data has been uploaded correctly:
-    - Go to the host site.
-    - Navigate to **Test Case Configurator**.
-    - Search for the sample test data.
-    - Confirm that test cases related to quotations are available.
-
-### Step 7: Run Cypress Tests
-
-Open Cypress using the following command:
-
+- Encode your credentials:
 ```bash
-npx cypress open
+  echo -n "YOUR_API_KEY:YOUR_API_SECRET" | base64
+ ``` 
+
+- Update .env with the following format:
+```bash
+HOST_URL=https://hostsite.docker.localhost
+HOST_KEY=Basic <encoded-key>
+TARGET_URL=https://targetsite.docker.localhost
+TARGET_KEY=Basic <encoded-key>
+DOCTYPE=Test Case Configurator
+NODE_TLS_REJECT_UNAUTHORIZED=0
+LOGIN_EMAIL=abc@gmail.com
+LOGIN_PASSWORD=yourpassword
+TESTCASE_TITLE=Sample Test Case
+TARGET_PATH=/api/endpoint/path
 ```
+---
 
-- Select **End-to-End Testing**.
-- Choose the `test.cy.ts` file.
+### 3. Install Project Dependencies and Verify
+- Run the following commands:
+  bash
+- `npm install`
+- `npm install child-process`
+- `npm run setup`
 
-This will execute the base test for the Quotation module.
+- After setup, verify the following Doctypes are available in the *Host site → Doctype List*:
+  - Test Case Configurator
+  - Site Details
+  - Test Fields
+  - Test Plan
+  - Test Lab
+  - Test Run
+
+---
+
+### 4. Run Cypress Tests
+Run Cypress using:
+` npx cypress run`
+
+---
+
+This will execute the base test for the Quotation module.You can download the video of the test.cy.ts.mp4 execution to see how the test was performed.
 
 Following the above steps will ensure a successful setup and execution of tests in the Lens AI Test Pilot repository. For troubleshooting or further information, refer to the [official documentation](https://lmnaslimited.github.io/lens_ai_test_pilot_docs/ai-test-pilot/introduction/lens_ai_test_pilot/).
 

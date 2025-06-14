@@ -1,12 +1,16 @@
 import { defineConfig } from "cypress";
-import fetchData from "./src/fetchdata";
 import * as dotenv from "dotenv";
 
 dotenv.config(); // Load variables from .env
 
 export default defineConfig({
   e2e: {
-    setupNodeEvents(on, config) {
+    chromeWebSecurity: false,
+    video: true,
+    videoCompression: true, 
+    setupNodeEvents: async(on, config) =>{
+      const { default: fetchData } = await import("./src/fetchdata.js");
+
       // Set default running mode
       config.env.RUNNING_MODE = config.env.RUNNING_MODE || process.env.RUNNING_MODE || "UI";
 
@@ -29,12 +33,13 @@ export default defineConfig({
         async fetchData() {
           return await fetchData();
         },
+         // Custom log task
+         log(message) {
+          console.log(message);
+          return null;
+        },
       });
     return config; // Return updated config
     },
   },
 });
-
-
-
-
