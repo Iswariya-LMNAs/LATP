@@ -1,25 +1,16 @@
 import { defineConfig } from "cypress";
 import * as dotenv from "dotenv";
-
-dotenv.config(); // Load variables from .env
-
+dotenv.config();                          // Load variables from .env
 export default defineConfig({
   e2e: {
-    chromeWebSecurity: false,
-    video: true,
-    videoCompression: true, 
-    setupNodeEvents: async(on, config) =>{
-      const { default: fetchData } = await import("./src/fetchdata.js");
-
+    setupNodeEvents(on, config) {
       // Set default running mode
       config.env.RUNNING_MODE = config.env.RUNNING_MODE || process.env.RUNNING_MODE || "UI";
-
       // General environment variables
       config.env.TARGET_URL = process.env.TARGET_URL;
       config.env.LOGIN_EMAIL = process.env.LOGIN_EMAIL;
       config.env.LOGIN_PASSWORD = process.env.LOGIN_PASSWORD;
       config.env.TARGET_PATH = process.env.TARGET_PATH;
-
       // Load delay values for CLI and UI modes
       ["UI", "CLI"].forEach(mode => {
         ["SHORT", "MEDIUM", "LONG"].forEach(level => {
@@ -27,19 +18,25 @@ export default defineConfig({
           config.env[L_key] = process.env[L_key];
         });
       });
-
       // Define custom Cypress tasks
+      //Used to fetch the scripts from the server side
       on("task", {
-        async fetchData() {
-          return await fetchData();
-        },
-         // Custom log task
-         log(message) {
-          console.log(message);
-          return null;
-        },
+        fetchtestscript: async () => {
+          const response = await fetch(
+              `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=${process.env.TEST_LAB}&i_action=get_test_data`,
+            {
+              headers: {
+                Authorization: `${process.env.HOST_KEY}`,
+                "Content-Type": "application/json"
+              }
+            }
+          );
+          const result = await response.json();
+         // console.log("fetchMasterData result:", result);
+          return result;
+        }
       });
-    return config; // Return updated config
+    return config; 
     },
   },
 });
