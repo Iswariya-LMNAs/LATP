@@ -69,6 +69,9 @@ TARGET_PATH=/api/endpoint/path
   - Test Case Configurator
   - Site Details
   - Test Fields
+  - Test Plan
+  - Test Lab
+  - Test Run
 
 ---
 
