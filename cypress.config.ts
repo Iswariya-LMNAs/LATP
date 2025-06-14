@@ -1,7 +1,6 @@
 import { defineConfig } from "cypress";
-// import { fnCreateTestRunIfLabExists, fetchData, type ifScript } from "./src/fetchLab";
 import * as dotenv from "dotenv";
-dotenv.config(); // Load variables from .env
+dotenv.config();                          // Load variables from .env
 export default defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
@@ -22,10 +21,10 @@ export default defineConfig({
       // Define custom Cypress tasks
       //Used to fetch the scripts from the server side
       on("task", {
-        fetchMasterData: async () => {
+        fetchtestscript: async () => {
           console.log("HOST_KEY:", process.env.HOST_KEY);
           const response = await fetch(
-            "https://qsgbcz.docker.localhost/api/method/ai_test_pilot_handle_request?i_test_lab=TL-0001-Test-1&i_action=get_test_data",
+              `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=TL-0001-Test-1&i_action=get_test_data`,
             {
               headers: {
                 Authorization: `${process.env.HOST_KEY}`,
@@ -38,7 +37,7 @@ export default defineConfig({
           return result;
         }
       });
-    return config; // Return updated config
+    return config; 
     },
   },
 });
