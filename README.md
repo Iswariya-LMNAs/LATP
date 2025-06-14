@@ -59,9 +59,10 @@ TEST_LAB=<Test Lab ID>
 
 ### 3. Install Project Dependencies and Verify
 - Run the following commands:
-  bash
-- `npm install`
-- `npm run setup`
+```bash
+npm install
+npm run setup
+```
 
 - After setup, verify the following Doctypes are available in the *Host site → Doctype List*:
   - Test Case Configurator
@@ -74,8 +75,11 @@ TEST_LAB=<Test Lab ID>
 ---
 
 ### 4. Run Cypress Tests
+> **Note** : Clone the lens_ai_test_pilot repo and run locally. Currenctly codespace environment has no support for Cypress.
 Run Cypress using:
-` npx cypress run`
+
+```bash
+npx cypress run
 
 ---
 

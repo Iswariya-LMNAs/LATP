@@ -20,6 +20,18 @@ if [ -n "$CODESPACES" ]; then
     gh codespace ports visibility 8080:public --codespace "$CODESPACE_NAME"
 
     echo "✅ Port visibility set to public for codespace: $CODESPACE_NAME"
+
+    # Find container ID for container whose name starts with 'lens-backend'
+    CONTAINER_ID=$(docker ps --filter "name=lens-backend" --format "{{.ID}}" | head -n 1)
+
+    if [ -z "$CONTAINER_ID" ]; then
+        echo "❌ No container found with name starting with 'lens-backend'"
+        exit 1
+    fi
+
+    # Run command inside the container
+    docker exec -it "$CONTAINER_ID" bench set-config -g server_script_enabled 1
+
 fi
 
 # Check if the repo already exists
