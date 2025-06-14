@@ -29,7 +29,7 @@ it("loops through each test data", function () {
       cy.wait(fnGetDelay("medium"));
       cy.get(".primary-action").click();
       cy.wait(fnGetDelay("medium"));
-      console.log(script);
+      // console.log(script);
     // Filter header actions that contain an 'action' field (e.g., onLoad, onChange, etc.)
       const CaFilteredActions: TTactionsData = script.test_fields.filter((lActionRow) => lActionRow.action);
      

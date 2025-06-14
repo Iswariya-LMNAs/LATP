@@ -22,9 +22,8 @@ export default defineConfig({
       //Used to fetch the scripts from the server side
       on("task", {
         fetchtestscript: async () => {
-          console.log("HOST_KEY:", process.env.HOST_KEY);
           const response = await fetch(
-              `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=TL-0001-Test-1&i_action=get_test_data`,
+              `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=${process.env.TEST_LAB}&i_action=get_test_data`,
             {
               headers: {
                 Authorization: `${process.env.HOST_KEY}`,

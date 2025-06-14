@@ -49,12 +49,11 @@ HOST_URL=https://hostsite.docker.localhost
 HOST_KEY=Basic <encoded-key>
 TARGET_URL=https://targetsite.docker.localhost
 TARGET_KEY=Basic <encoded-key>
-DOCTYPE=Test Case Configurator
 NODE_TLS_REJECT_UNAUTHORIZED=0
 LOGIN_EMAIL=abc@gmail.com
 LOGIN_PASSWORD=yourpassword
-TESTCASE_TITLE=Sample Test Case
-TARGET_PATH=/api/endpoint/path
+TARGET_PATH=<doctype endpoint> // Eg: quotation
+TEST_LAB=<Test Lab ID>
 ```
 ---
 
@@ -62,7 +61,6 @@ TARGET_PATH=/api/endpoint/path
 - Run the following commands:
   bash
 - `npm install`
-- `npm install child-process`
 - `npm run setup`
 
 - After setup, verify the following Doctypes are available in the *Host site → Doctype List*:
@@ -83,10 +81,10 @@ Run Cypress using:
 
 This will execute the base test for the Quotation module.You can download the video of the test.cy.ts.mp4 execution to see how the test was performed.
 
-Following the above steps will ensure a successful setup and execution of tests in the Lens AI Test Pilot repository. For troubleshooting or further information, refer to the [official documentation](https://lmnaslimited.github.io/lens_ai_test_pilot_docs/ai-test-pilot/introduction/lens_ai_test_pilot/).
+Following the above steps will ensure a successful setup and execution of tests in the Lens AI Test Pilot repository. For troubleshooting or further information, refer to the [official documentation](https://lmnaslimited.github.io/lens-docs/03-lens-ai-test-pilot/01-introduction/01-lens_ai_test_pilot/).
 
 ---
 ###  Explore & Engage
 Looking to dive deeper or need help getting started? Check out our full documentation for detailed insights, tips, and support.
 
-###  [Documentation](https://lmnaslimited.github.io/lens_ai_test_pilot_docs/ai-test-pilot/introduction/lens_ai_test_pilot/)
+###  [Documentation](https://lmnaslimited.github.io/lens-docs/03-lens-ai-test-pilot/01-introduction/01-lens_ai_test_pilot/)

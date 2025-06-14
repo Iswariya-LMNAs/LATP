@@ -11,11 +11,10 @@ DELAY_CLI_LONG=1000     # Delay ranges upto 1000 ms
 
 HOST_URL=https://example.docker.localhost
 HOST_KEY=Basic YWNmODhmOWIzOGZmZGFkOmRhODI3YmI2bdgs5MjVmOA==
-TARGET_URL=https://test.docker.localhost
+TARGET_URL=https://example.docker.localhost
 TARGET_KEY=Basic YWNmODhmOWIzOGZmZGghadnjhODI3YmI2NGY5MjVmOA==
-DOCTYPE=Test Case Configurator
 NODE_TLS_REJECT_UNAUTHORIZED=0
 LOGIN_EMAIL=wesupport@lmnas.com
 LOGIN_PASSWORD=*************
-TESTCASE_TITLE=<Title-of-test-case>
 TARGET_PATH=<Doctype-Endpoint>
+TEST_LAB=TL-0001-Sample Test Lab
