@@ -5,6 +5,9 @@ describe("Fetch Test scripts", () => {
   before(() => {
     cy.task("fetchtestscript").then((result: { message: { scripts_data: any[] } }) => {
       testData = result.message.scripts_data;
+      if (!testData || testData.length === 0) {
+      throw new Error("No test scripts found. Failing the test run.");
+     }
       cy.wrap(testData).as("scripts");
       // cy.log("Fetched Scripts Data: " + JSON.stringify(testData));
     });
