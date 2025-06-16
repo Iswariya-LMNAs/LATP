@@ -13,9 +13,10 @@ It simplifies the testing process by automating repetitive tasks, allowing both 
 
 
 # Lens AI Test Pilot - Setup and Testing Guide
-This document provides step-by-step instructions to set up and test the *Lens AI Test Pilot* repository. If you already have the local site, *skip Procedure 1* and continue with *Procedure 2*.
+This document provides step-by-step instructions to set up and test the Lens AI Test Pilot repository.
 
----
+- If you already have the local site set up, skip Procedure 1 and proceed directly to Procedure 2.
+- If not, follow Procedure 1 and then continue with Procedure 2.
 
 ### Procedure 1: If You Do Not Have a Local Site
 ### 1. Launch Codespace and Set Up Site
