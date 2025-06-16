@@ -23,11 +23,23 @@ it("loops through each test data", function () {
   cy.get("@scripts").then((scripts: TtestHeaderData[]) => {
     scripts.forEach((script) => {
     // Visit login page and perform login
-      cy.visit(`${targetUrl}/login#login`); //v-14
-      cy.get("#login_email").type(`${loginEmail}`);
-      cy.get("#login_password").type(`${loginPassword}{enter}`).wait(fnGetDelay("medium"));
-    // Navigate to the target path
-      cy.wait(fnGetDelay("medium"));
+      cy.request({
+      method: 'POST',
+      url: `${targetUrl}/api/method/login`,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: {
+        usr: loginEmail,
+        pwd: loginPassword
+      }
+    }).then((response: Cypress.Response<any>) => {
+      cy.log(JSON.stringify(response.body));
+      // Now TypeScript knows response.body exists
+    });
+    cy.visit(`${targetUrl}/app/home`);
+    cy.get('.btn-primary').click()
       cy.visit(`${targetUrl}/app/${targetPath}`);
       cy.wait(fnGetDelay("medium"));
       cy.get(".primary-action").click();
