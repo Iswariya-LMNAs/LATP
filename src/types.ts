@@ -42,12 +42,15 @@ type TtestHeaderData = {
         client_name: string;
         json_response: string;
         doctype: string;
+        action: string;
+        document: string;
         test_fields: TTactionsData; 
 };
 /**@type TactionData - Represents the action data.
  * Stores information about an action performed on a field, 
  */
 type TactionData = {
+    doctype_to_be_tested: any
     name: string;
     owner: string;
     creation: Date;
@@ -80,7 +83,11 @@ type TactionData = {
 /**@type TTactionsData - Represents an array of action data. */
 type TTactionsData = TactionData[]
 
-
+// type TcreateRow = {
+//   doctype_to_be_tested: string;
+//   action: string;
+//   document: string;
+// };
   
 
 

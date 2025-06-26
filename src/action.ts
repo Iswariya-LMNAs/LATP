@@ -51,32 +51,32 @@ class clActionExpandSection extends clAction {
     constructor(iAction: string, iaActionData: TTactionsData) {
                super(iAction, iaActionData);
              }  
-         executeAction(): void {
-            this.actionRow = this.actionData[0];
-            if (this.actionRow.tab) {
-                const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
-                LOtabClick.executeAction();
-            }
-            const LsectionTitle = this.actionRow.section;
-            if (!LsectionTitle) {
-                return;
-            }
-            cy.get('.section-head').each(($el) => {
-            const Ltext = Cypress.$($el).text().trim();
-            if (Ltext === LsectionTitle) {
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        if (this.actionRow.tab) {
+            const LOtabClick = clActionFactory.createAction("On Tab", [this.actionRow]);
+            LOtabClick.executeAction();
+        }
+        const LsectionTitle = this.actionRow.section;
+        if (!LsectionTitle) {
+            return;
+        }
+        cy.get('.section-head').each(($el) => {
+        const Ltext = Cypress.$($el).text().trim();
+        if (Ltext === LsectionTitle) {
             const $parent = Cypress.$($el).parent();
             const LisCollapsed = $parent.find('.section-body').css('display') === 'none';
-            if (LisCollapsed) {
-                cy.wrap($el).wait(fnGetDelay("medium")).click({ force: true });} 
-            }
-            });
-            this.actionData.forEach(ldRow => {
-                if (!ldRow.data_type) return;
-                this.actionRow = ldRow;
-                this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this, ldRow);
-                this.checkFieldValue();
-                this.checkFieldProperties();
-            });
+        if (LisCollapsed) {
+            cy.wrap($el).wait(fnGetDelay("medium")).click({ force: true });} 
+        }
+        });
+        this.actionData.forEach(ldRow => {
+        if (!ldRow.data_type) return;
+            this.actionRow = ldRow;
+            this.dataType = clDataTypeFactory.createDataType(ldRow.data_type, this, ldRow);
+            this.checkFieldValue();
+            this.checkFieldProperties();
+        });
      }                      
 }
 
@@ -189,6 +189,59 @@ class clActionOnTab extends clAction {
     }
 }
 
+class clActionSave extends clAction{
+    executeAction(): void {
+        cy.contains('button', 'Save').scrollIntoView().should('exist').click({force:true});
+        cy.log("Document Saved sucessfully");
+        cy.wait(fnGetDelay("short"));
+    }
+}
+
+class clActionSubmit extends clAction{
+    executeAction(): void {
+        cy.contains('button', 'Submit').scrollIntoView().should('exist').click({force:true});
+        cy.wait(fnGetDelay("short"));
+        cy.contains('button', 'Yes').scrollIntoView().should('exist').click({force:true});
+        cy.wait(fnGetDelay("long"));
+        cy.get('.btn-modal-close').click({ force: true });
+        cy.log("Document Submitted sucessfully");  
+        cy.wait(30000)  
+    }
+}
+class clActionCancel extends clAction{
+    executeAction(): void {
+        cy.contains('button', 'Cancel').scrollIntoView().should('exist').click({ force: true });
+        cy.wait(fnGetDelay("medium"));
+        cy.get('.modal:visible').within(() => {
+        cy.contains('button', /^Yes$/).should('be.visible').click({ force: true }); });
+        cy.wait(fnGetDelay("long"));
+        // Optional: Close modal if it's still there
+        cy.get('.modal:visible').within(() => {
+        cy.get('.btn-modal-close').click({ force: true });
+        });                                                        
+        cy.log("Document Cancelled Successfully");
+   }
+}
+class clActionAmend extends clAction{
+    executeAction(): void {
+        
+    }
+}
+
+class clActionDelete extends clAction{
+    executeAction(): void {
+        cy.get('.menu-btn-group > .btn').click({ force: true }); 
+        cy.contains('a.dropdown-item', 'Delete').should('be.visible').click({ force: true });
+        cy.wait(fnGetDelay("medium"));
+        cy.get('.modal:visible').within(() => {
+        cy.contains('button', /^Yes$/).should('be.visible').click({ force: true });
+        });
+        cy.log("Document Deleted Successfully");
+        cy.wait(fnGetDelay("long"));
+    }
+}
+
+
 /** @class clActionFactory - Factory for creating action instances */
 export class clActionFactory {
     private static actionsMap: {
@@ -199,6 +252,11 @@ export class clActionFactory {
         "Add Row": clActionAddRow,
         "Edit Details": clActionEditDetails,
         "Expand Section": clActionExpandSection,
+        "Save": clActionSave,
+        "Submit": clActionSubmit,
+        "Amend": clActionAmend,
+        "Cancel":clActionCancel,
+        "Delete": clActionDelete,
     };
     static createAction(iAction: string, iaActionData:TTactionsData): ifActionHandler {
         const LAactionClass = this.actionsMap[iAction];       
@@ -213,5 +271,40 @@ export class clActionFactory {
             ldItem.pos >= iActionRow.pos && ldItem.pos < LposNext
         ));
     }
+    static executeAction(data: TtestHeaderData[]): void {
+        const LvalidRows = data.filter(
+        row =>
+            (row.action === "Create" && row.doctype_to_be_tested.trim()) ||
+            (row.action === "Update" && row.doctype_to_be_tested.trim() && row.document.trim())
+        );
+    if (LvalidRows.length === 0) {
+      cy.log("No valid entries found in CaFilteredParent.");
+      return;
+    }
+    LvalidRows.forEach(row => {
+        const Ldoctype = row.doctype_to_be_tested.trim().toLowerCase().replace(/\s+/g, "-");
+        cy.location("origin").then(origin => {
+        let LfullUrl = `${origin}/app/${Ldoctype}`;
+        switch (row.action) {
+            case "Create":
+            LfullUrl += "/new";
+            break;
+            case "Update":
+            const documentName = row.document.trim();
+            LfullUrl += `/${documentName}`;
+            break;
+            default:
+            cy.log(`Unsupported action type: ${row.action}`);
+            return;
+        }
+        cy.log(`Navigating to: ${LfullUrl}`);
+        cy.visit(LfullUrl);
+        cy.wait(fnGetDelay("medium"));
+        });
+    });
+  }
 }
+
+
+
 
