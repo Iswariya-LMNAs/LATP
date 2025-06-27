@@ -9,10 +9,6 @@ DELAY_CLI_SHORT=400    # Delay ranges between 400 to 700 ms
 DELAY_CLI_MEDIUM=800   # Delay ranges between 800 to 900 ms
 DELAY_CLI_LONG=1000     # Delay ranges upto 1000 ms
 
-HOST_URL=https://example.docker.localhost
-HOST_KEY=Basic YWNmODhmOWIzOGZmZGFkOmRhODI3YmI2bdgs5MjVmOA==
-TARGET_URL=https://example.docker.localhost
-TARGET_KEY=Basic YWNmODhmOWIzOGZmZGghadnjhODI3YmI2NGY5MjVmOA==
 NODE_TLS_REJECT_UNAUTHORIZED=0
 LOGIN_EMAIL=wesupport@lmnas.com
 LOGIN_PASSWORD=*************

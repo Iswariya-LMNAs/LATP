@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "setup": "node replace.js > /dev/null 2>&1 && node envGenerate.js && ./setup.sh > /dev/null 2>&1",
+    "setup": "node replace.js > /dev/null 2>&1  && ./setup.sh > /dev/null 2>&1",
+    "env": "node envGenerate.js",
     "upload_testdata": "./setup.sh",
     "start": "ts-node src/fetchdata.ts"
   },

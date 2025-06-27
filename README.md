@@ -33,35 +33,18 @@ This document provides step-by-step instructions to set up and test the Lens AI 
 ---
 ### Procedure 2: If You Already Have the Local Site
 
-### 2. Configure the .env File
-- Copy sample_env and create a .env file in root folder
+### 2. Take the Access Key
 
 - Generate API Key & Secret:
   - Go to *Host site → Profile → My Settings → API Access → Generate Keys*.
 
-- Encode your credentials:
-```bash
-  echo -n "YOUR_API_KEY:YOUR_API_SECRET" | base64
- ``` 
-
-- Update .env with the following format:
-```bash
-HOST_URL=https://hostsite.docker.localhost
-HOST_KEY=Basic <encoded-key>
-TARGET_URL=https://targetsite.docker.localhost
-TARGET_KEY=Basic <encoded-key>
-NODE_TLS_REJECT_UNAUTHORIZED=0
-LOGIN_EMAIL=abc@gmail.com
-LOGIN_PASSWORD=yourpassword
-TARGET_PATH=<doctype endpoint> // Eg: quotation
-TEST_LAB=<Test Lab ID>
-```
 ---
 
 ### 3. Install Project Dependencies and Verify
 - Run the following commands:
 ```bash
 npm install
+npm run env
 npm run setup
 ```
 
@@ -72,6 +55,7 @@ npm run setup
   - Test Plan
   - Test Lab
   - Test Run
+  - Master Data
 
 ---
 
