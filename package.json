@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "setup": "node replace.js > /dev/null 2>&1 && ./setup.sh",
+    "setup": "node replace.js > /dev/null 2>&1 && ./setup.sh > /dev/null 2>&1",
     "upload_testdata": "./setup.sh",
     "start": "ts-node src/fetchdata.ts"
   },

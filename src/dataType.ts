@@ -129,7 +129,6 @@ class clDataTypeSelectChild extends clDataTypeSelect {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
     }
-   
     input(): void {
         const { value } = this.action.actionRow;
         cy.get(this.getchildSelector()).eq(this.getchildRow()).within(() => {
@@ -174,7 +173,7 @@ class clDataTypeDate extends clDataTypeData {
     }
     input(): void {
         const {value} = this.action.actionRow
-        cy.get(this.getSelector()).clear().wait(fnGetDelay("short")).type(value).wait(fnGetDelay("short"))
+        cy.get(this.getSelector()).clear().wait(fnGetDelay("short")).first().type(value).wait(fnGetDelay("short"))
     }
 }
 /** @class clDataTypeDynamiclink - Handles dynamic link fields. */
