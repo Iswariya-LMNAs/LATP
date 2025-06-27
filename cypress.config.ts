@@ -32,7 +32,7 @@ export default defineConfig({
             }
           );
           const result = await response.json();
-         // console.log("fetchMasterData result:", result);
+          // console.log("fetchMasterData result:", result);
           return result;
         }
       });

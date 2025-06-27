@@ -205,7 +205,7 @@ class clActionSubmit extends clAction{
         cy.wait(fnGetDelay("long"));
         cy.get('.btn-modal-close').click({ force: true });
         cy.log("Document Submitted sucessfully");  
-        cy.wait(30000)  
+        cy.wait(fnGetDelay("long"));
     }
 }
 class clActionCancel extends clAction{
@@ -216,9 +216,9 @@ class clActionCancel extends clAction{
         cy.contains('button', /^Yes$/).should('be.visible').click({ force: true }); });
         cy.wait(fnGetDelay("long"));
         // Optional: Close modal if it's still there
-        cy.get('.modal:visible').within(() => {
-        cy.get('.btn-modal-close').click({ force: true });
-        });                                                        
+        // cy.get('.modal:visible').within(() => {
+        // cy.get('.btn-modal-close').click({ force: true });
+        // });                                                        
         cy.log("Document Cancelled Successfully");
    }
 }

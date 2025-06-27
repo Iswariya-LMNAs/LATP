@@ -44,7 +44,7 @@ type TtestHeaderData = {
         doctype: string;
         action: string;
         document: string;
-        test_fields: TTactionsData; 
+        actual_test_data: TTactionsData; 
 };
 /**@type TactionData - Represents the action data.
  * Stores information about an action performed on a field, 
