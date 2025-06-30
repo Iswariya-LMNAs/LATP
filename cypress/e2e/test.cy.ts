@@ -1,14 +1,39 @@
 import { clActionFactory } from "../../src/action";
 import { fnGetDelay } from "../../src/delay";
+
+let capturedErrors: string[] = [];
+let capturedLogs: string[] = [];
+
+// ⛔ Capture test errors
+Cypress.on("fail", (error, runnable) => {
+  capturedErrors.push(`Test Failed: ${runnable.title} — ${error.message}`);
+  throw error;
+});
+
+// ⚠️ Capture uncaught exceptions
+Cypress.on("uncaught:exception", (err) => {
+  capturedErrors.push(`Uncaught Exception: ${err.message}`);
+  return false;
+});
+
+// 📝 Capture Cypress command logs
+Cypress.on("log:added", (options) => {
+  if (["log", "assert"].includes(options.name)) {
+    capturedLogs.push(`[${options.name}] ${options.message}`);
+  }
+});
+
 describe("Fetching Test scripts", () => {
   let testData: TtestHeaderData[] = [];
+  let testRunData
   before(() => {
-    cy.task("fetchtestscript").then((result: { message: { master_data:[] } }) => {
+    cy.task("fetchtestscript").then((result: { message: { test_run, master_data:[] } }) => {
       testData = result.message.master_data;
+      testRunData = result.message.test_run
       if (!testData || testData.length === 0) {
       throw new Error("No test scripts found. Failed to create the test run.");}
       cy.wrap(testData).as("scripts");
-    cy.log("Fetched Scripts Data: " + JSON.stringify(testData));
+    // cy.log("Fetched Scripts Data: " + JSON.stringify(testData));
   });
 });
 
@@ -52,12 +77,33 @@ it("loops through each Master Data", function () {
     // Clear session data to isolate each script test
       cy.clearCookies();
       cy.clearLocalStorage();
+
     });
   });
 });
+after(() => {
+  const logEntries = [
+    ...capturedLogs.map((log) => ({ type: "log", message: log })),
+    ...capturedErrors.map((err) => ({ type: "error", message: err }))
+  ];
+
+  const payload = {
+    "script-id": testData.test_script,
+    "master-data-id": testData.name,
+    "test-run-id": testRunData.name,
+    "log_entries": logEntries
+  };
+
+  cy.log("payload " + JSON.stringify(payload));
+
+  cy.request({
+    method: "POST",
+    url: "https://lens.docker.localhost/api/resource/Run Log",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
 });
-
-
-
-
-
+});
