@@ -11,6 +11,7 @@ export default defineConfig({
       config.env.LOGIN_EMAIL = process.env.LOGIN_EMAIL;
       config.env.LOGIN_PASSWORD = process.env.LOGIN_PASSWORD;
       config.env.TARGET_PATH = process.env.TARGET_PATH;
+      config.env.TARGET_KEY = process.env.TARGET_KEY;
       // Load delay values for CLI and UI modes
       ["UI", "CLI"].forEach(mode => {
         ["SHORT", "MEDIUM", "LONG"].forEach(level => {
@@ -23,7 +24,7 @@ export default defineConfig({
       on("task", {
         fetchtestscript: async () => {
           const response = await fetch(
-              `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=${process.env.TEST_LAB}&i_action=get_test_data`,
+            `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=${process.env.TEST_LAB}&i_action=get_test_data`,
             {
               headers: {
                 Authorization: `${process.env.HOST_KEY}`,
@@ -36,7 +37,7 @@ export default defineConfig({
           return result;
         }
       });
-    return config; 
+      return config;
     },
   },
 });

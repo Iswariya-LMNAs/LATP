@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "setup": "node replace.js > /dev/null 2>&1  && ./setup.sh > /dev/null 2>&1",
+    "setup": "node replace.js && ./setup.sh",
     "env": "node envGenerate.js",
     "upload_testdata": "./setup.sh",
-    "start": "ts-node src/fetchdata.ts"
+    "start": "ts-node src/fetchdata.ts",
+    "ui_test": "node --loader ts-node/esm cypress/scripts/fetchTestData.ts && cypress open",
+    "cli_test": "node --loader ts-node/esm cypress/scripts/fetchTestData.ts && cypress run"
   },
   "keywords": [],
   "author": "",
