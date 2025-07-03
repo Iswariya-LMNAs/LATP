@@ -52,4 +52,4 @@ nvm use 20 >/dev/null 2>&1
 npm run upload_testlab_setup
 npm run upload_testdata
 echo "Installing X virtual framebuffer for running graphical applications in a headless environment"
-sudo apt-get update && sudo apt-get install -y xvfb
+sudo apt-get update >/dev/null 2>&1 && sudo apt-get install -y xvfb >/dev/null 2>&1

@@ -27,7 +27,7 @@ Cypress.on("log:added", (options) => {
   }
 });
 
-describe("Dynamic Master Test Scripts", () => {
+describe("Automated Test Run", () => {
   let currentScript: any;
   masterScripts.forEach((script) => {
     it(`should run test script: ${script.test_script}`, () => {
@@ -75,9 +75,13 @@ describe("Dynamic Master Test Scripts", () => {
       });
 
       // Perform logout sequence
-      cy.get('.nav-link > .avatar > .avatar-frame').click();
-      cy.wait(fnGetDelay("long"));
-      cy.get('[onclick="return frappe.app.logout()"]').click();
+      cy.request({
+        method: 'GET',
+        url: `${targetUrl}/api/method/logout`,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
       cy.wait(3000);
       // Clear session data to isolate each script test
       cy.clearCookies();
