@@ -5,7 +5,7 @@ interface ifActionHandler {
     actionRow: TactionData
     executeAction(): void
     checkFieldValue(): void
-    checkFieldProperties(): void    
+    checkFieldProperties(): void
     dataType: ifDataType
 }
 /**@interface ifDataType - Defines for handling different data types. */
@@ -23,28 +23,29 @@ interface ifProperties {
     validate(): void
     fieldSelector: string;
     fieldProp: string;
-    getSelector(): string;   
+    getSelector(): string;
 }
 /**@type TtestHeaderData - Represents test header data structure.
  *  Contains details about the doctype_to_be_tested and relevant test field data. */
 type TtestHeaderData = {
-        name: string;
-        owner: string;
-        creation: Date;
-        modified: Date;
-        modified_by: string;
-        docstatus: number;
-        idx: number;
-        title: string;
-        sequence: number;
-        site: string;
-        doctype_to_be_tested: string;
-        client_name: string;
-        json_response: string;
-        doctype: string;
-        action: string;
-        document: string;
-        actual_test_data: TTactionsData; 
+    name: string;
+    owner: string;
+    creation: Date;
+    modified: Date;
+    modified_by: string;
+    docstatus: number;
+    idx: number;
+    title: string;
+    sequence: number;
+    site: string;
+    doctype_to_be_tested: string;
+    client_name: string;
+    json_response: string;
+    doctype: string;
+    action: string;
+    document: string;
+    test_script: string;
+    actual_test_data: TTactionsData;
 };
 /**@type TactionData - Represents the action data.
  * Stores information about an action performed on a field, 
@@ -77,8 +78,8 @@ type TactionData = {
     doctype: string;
     section: string;
     tab: string;
-    row_index: 1 ; 
-    
+    row_index: 1;
+
 };
 /**@type TTactionsData - Represents an array of action data. */
 type TTactionsData = TactionData[]
@@ -88,8 +89,28 @@ type TTactionsData = TactionData[]
 //   action: string;
 //   document: string;
 // };
-  
 
 
+type TrunLogResponse = {
+    body: {
+        data: {
+            name: string;
+            script_id: string;
+            test_run_id: string;
+            master_data_id: string;
+        };
+    };
+};
 
+type TtestRunResponse = {
+    body: {
+        data: {
+            test_log: {
+                name: string;
+                test_script: string;
+                master_data: string;
+            }[];
+        };
+    };
+};
 
