@@ -46,7 +46,7 @@ abstract class clAction implements ifActionHandler {
 }
 /** @class clActionExpandSection is extended class from the clAction*/
 /* Expand Section class is used to expand the section mentioned in the configurator
- */ 
+*/ 
 class clActionExpandSection extends clAction {
     constructor(iAction: string, iaActionData: TTactionsData) {
                super(iAction, iaActionData);
@@ -196,7 +196,6 @@ class clActionSave extends clAction{
         cy.wait(fnGetDelay("short"));
     }
 }
-
 class clActionSubmit extends clAction{
     executeAction(): void {
         cy.contains('button', 'Submit').scrollIntoView().should('exist').click({force:true});
@@ -242,6 +241,58 @@ class clActionDelete extends clAction{
 }
 
 
+class clActionClickButton extends clAction{
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        const LbuttonLabel = this.actionRow.value;
+        cy.contains('button, a', LbuttonLabel, { matchCase: false }).scrollIntoView().click({ force: true });
+        cy.log(`Clicked custom button: ${LbuttonLabel}`);
+        cy.wait(fnGetDelay("medium"));
+         cy.get('body').then(($body: JQuery<HTMLElement>) => {
+                  const hasModal = $body.find('.modal:visible').length > 0;
+                  if (hasModal) {
+                      cy.get('.modal:visible').within(() => {
+                          cy.contains('button', /^Yes$/)
+                            .click({ force: true });
+                          cy.log('Clicked Yes in modal');
+                      });
+                  }
+              });
+    }
+}
+
+
+class clActionCheckbox extends clAction{
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        const LfieldName = this.actionRow.field_name;
+        const Lvalue = this.actionRow.value;
+        if (Lvalue === '1') {
+        cy.get(`input[type="checkbox"][data-fieldname="${LfieldName}"]`).first().scrollIntoView()
+          .check({ force: true })
+          .then(() => {
+        cy.log(`Checked checkbox: ${LfieldName}`);
+        });
+        cy.wait(fnGetDelay("medium"));
+        }
+    }
+}
+
+class clActionActionMenu extends clAction {
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        const actionLabel = this.actionRow.value;
+        cy.contains('button, a', /^Actions$/i)
+          .scrollIntoView()
+          .click({ force: true });
+        cy.contains('.dropdown-menu li, .dropdown-item, button, a', actionLabel, { matchCase: false })
+          .should('be.visible')
+          .click({ force: true });
+        cy.log(`Clicked Action menu item: ${actionLabel}`);
+        cy.wait(fnGetDelay("medium"));
+    }
+}
+
 /** @class clActionFactory - Factory for creating action instances */
 export class clActionFactory {
     private static actionsMap: {
@@ -257,6 +308,9 @@ export class clActionFactory {
         "Amend": clActionAmend,
         "Cancel":clActionCancel,
         "Delete": clActionDelete,
+        "Click Button": clActionClickButton,
+        "Check Box": clActionCheckbox,
+        "Action Menu": clActionActionMenu,
     };
     static createAction(iAction: string, iaActionData:TTactionsData): ifActionHandler {
         const LAactionClass = this.actionsMap[iAction];       
