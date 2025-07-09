@@ -59,8 +59,8 @@ async function generateEnvIfMissing() {
     console.log('📄 sample_env copied to .env');
 
     // Ask for credentials
-    const username = await ask('Enter Auth Username: ');
-    const password = await ask('Enter Auth Password: ', true);
+    const password = await ask('Enter API Secret: ', true);
+    const username = await ask('Enter API Key: ');
     console.log();
 
     const base64Key = Buffer.from(`${username}:${password}`).toString('base64');
@@ -81,51 +81,6 @@ async function generateEnvIfMissing() {
 async function main() {
     await generateEnvIfMissing();
     config(); // load .env
-
-    const REPO_NAME = "lens-test-pilot-config";
-    const repoPath = path.join(process.cwd(), REPO_NAME);
-    if (!fs.existsSync(repoPath)) {
-        try {
-            execSync(`git clone -b develop https://github.com/lmnaslimited/${REPO_NAME}.git`, { stdio: 'ignore' });
-        } catch (error) {
-            console.error(`❌ Failed to clone ${REPO_NAME}`, error);
-            process.exit(1);
-        }
-    }
-
-    const { HOST_URL, HOST_KEY } = process.env;
-    if (!HOST_URL || !HOST_KEY) {
-        console.error('❌ HOST_URL or HOST_KEY missing from .env');
-        process.exit(1);
-    }
-
-    const siteDetailsDir = path.join(repoPath, 'document/Site Details');
-    const testConfigFile = path.join(repoPath, 'document/Test Case Configurator/Sample Test.json');
-
-    if (!fs.existsSync(siteDetailsDir)) {
-        console.error('❌ Site Details directory does not exist');
-        process.exit(1);
-    }
-
-    const hostSiteJson = path.join(siteDetailsDir, 'host-site.json');
-
-    try {
-        const updatedHostSite = await jq.run(
-            `.site_name = "${HOST_URL}" | .authorization_key = "${HOST_KEY}"`,
-            hostSiteJson, { input: 'file', output: 'json' }
-        );
-        fs.writeFileSync(hostSiteJson, JSON.stringify(updatedHostSite, null, 2));
-
-        const updatedTestConfig = await jq.run(
-            `.site = "${HOST_URL}"`,
-            testConfigFile, { input: 'file', output: 'json' }
-        );
-        fs.writeFileSync(testConfigFile, JSON.stringify(updatedTestConfig, null, 2));
-
-        console.log('✅ JSON files updated successfully.');
-    } catch (err) {
-        console.error('❌ Error during JSON updates:', err);
-    }
 }
 
 main();

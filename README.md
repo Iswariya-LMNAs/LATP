@@ -60,11 +60,11 @@ npm run setup
 ---
 
 ### 4. Run Cypress Tests
-> **Note** : Clone the lens_ai_test_pilot repo and run locally. Currenctly codespace environment has no support for Cypress.
+> **Note** : Clone the lens_ai_test_pilot repo and run locally. Currenctly codespace environment has no support for Cypress UI.
 Run Cypress using:
 
 ```bash
-npx cypress run
+npm run ui_test
 
 ---
 

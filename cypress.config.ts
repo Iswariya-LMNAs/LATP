@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 dotenv.config();                          // Load variables from .env
 export default defineConfig({
   e2e: {
-    setupNodeEvents(on, config) {
+    async setupNodeEvents(on, config) {
       // Set default running mode
       config.env.RUNNING_MODE = config.env.RUNNING_MODE || process.env.RUNNING_MODE || "UI";
       // General environment variables
@@ -11,6 +11,7 @@ export default defineConfig({
       config.env.LOGIN_EMAIL = process.env.LOGIN_EMAIL;
       config.env.LOGIN_PASSWORD = process.env.LOGIN_PASSWORD;
       config.env.TARGET_PATH = process.env.TARGET_PATH;
+      config.env.TARGET_KEY = process.env.TARGET_KEY;
       // Load delay values for CLI and UI modes
       ["UI", "CLI"].forEach(mode => {
         ["SHORT", "MEDIUM", "LONG"].forEach(level => {
@@ -18,25 +19,51 @@ export default defineConfig({
           config.env[L_key] = process.env[L_key];
         });
       });
-      // Define custom Cypress tasks
-      //Used to fetch the scripts from the server side
+      // Register tasks
       on("task", {
         fetchtestscript: async () => {
           const response = await fetch(
-              `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=${process.env.TEST_LAB}&i_action=get_test_data`,
+            `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=${process.env.TEST_LAB}&i_action=get_test_data`,
             {
               headers: {
                 Authorization: `${process.env.HOST_KEY}`,
-                "Content-Type": "application/json"
-              }
+                "Content-Type": "application/json",
+              },
             }
           );
           const result = await response.json();
-          // console.log("fetchMasterData result:", result);
           return result;
-        }
+        },
+        fetchtestLab: async () => {
+          const response = await fetch(
+            `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=${process.env.TEST_LAB}&i_action=get_test_lab`,
+            {
+              headers: {
+                Authorization: `${process.env.HOST_KEY}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          const result = await response.json();
+          return result;
+        },
       });
-    return config; 
+
+      // Prefetch and attach to env
+      const res = await fetch(
+        `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=${process.env.TEST_LAB}&i_action=get_test_data`,
+        {
+          headers: {
+            Authorization: `${process.env.HOST_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await res.json();
+      config.env.FETCHED_TEST_RUN = data.message.test_run.name;
+      config.env.FETCHED_MASTER_DATA = data.message.master_data;
+
+      return config;
     },
   },
 });
