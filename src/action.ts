@@ -46,7 +46,7 @@ abstract class clAction implements ifActionHandler {
 }
 /** @class clActionExpandSection is extended class from the clAction*/
 /* Expand Section class is used to expand the section mentioned in the configurator
- */ 
+*/ 
 class clActionExpandSection extends clAction {
     constructor(iAction: string, iaActionData: TTactionsData) {
                super(iAction, iaActionData);
@@ -196,7 +196,6 @@ class clActionSave extends clAction{
         cy.wait(fnGetDelay("short"));
     }
 }
-
 class clActionSubmit extends clAction{
     executeAction(): void {
         cy.contains('button', 'Submit').scrollIntoView().should('exist').click({force:true});
@@ -241,6 +240,40 @@ class clActionDelete extends clAction{
     }
 }
 
+class clActionClickButton extends clAction{
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        const LbuttonLabel = this.actionRow.value;
+        cy.contains('button, a', LbuttonLabel, { matchCase: false }).scrollIntoView().click({ force: true });
+        cy.log(`Clicked custom button: ${LbuttonLabel}`);
+        cy.wait(fnGetDelay("medium"));
+         cy.get('body').then(($body: JQuery<HTMLElement>) => {
+                  const hasModal = $body.find('.modal:visible').length > 0;
+                  if (hasModal) {
+                      cy.get('.modal:visible').within(() => {
+                          cy.contains('button', /^Yes$/)
+                            .click({ force: true });
+                          cy.log('Clicked Yes in modal');
+                      });
+                  }
+              });
+    }
+}
+
+class clActionActionMenu extends clAction {
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        const actionLabel = this.actionRow.value;
+        cy.contains('button, a', /^Actions$/i)
+          .scrollIntoView()
+          .click({ force: true });
+        cy.contains('.dropdown-menu li, .dropdown-item, button, a', actionLabel, { matchCase: false })
+          .should('be.visible')
+          .click({ force: true });
+        cy.log(`Clicked Action menu item: ${actionLabel}`);
+        cy.wait(fnGetDelay("medium"));
+    }
+}
 
 /** @class clActionFactory - Factory for creating action instances */
 export class clActionFactory {
@@ -257,6 +290,8 @@ export class clActionFactory {
         "Amend": clActionAmend,
         "Cancel":clActionCancel,
         "Delete": clActionDelete,
+        "Click Button": clActionClickButton,
+        "Action Menu": clActionActionMenu,
     };
     static createAction(iAction: string, iaActionData:TTactionsData): ifActionHandler {
         const LAactionClass = this.actionsMap[iAction];       
@@ -303,7 +338,60 @@ export class clActionFactory {
         });
     });
   }
+
+static handleConnection(script: TtestLabScript): Cypress.Chainable<string | null> {
+  const { connection, connection_doctype } = script;
+
+  if (!connection_doctype) {
+    cy.log("Missing connection_doctype, skipping.");
+    return cy.wrap(null);
+  }
+
+  if (connection === "Create") {
+    cy.log("Initiating connection creation from current document...");
+    return cy.contains(".nav-item", "Connections", { timeout: 10000 })
+      .should("be.visible")
+      .click()
+      .wait(fnGetDelay("medium"))
+      .then(() => {
+        return cy.get(".form-dashboard", { timeout: 10000 }).within(() => {
+          return cy.contains(".document-link-badge", connection_doctype, { timeout: 10000 })
+            .should("be.visible")
+            .parents(".document-link")
+            .within(() => {
+              cy.get("button.btn-open-row, button.btn")
+                .should("be.visible")
+                .click({ force: true });
+            });
+        });
+      })
+      .then(() => {
+        return cy.contains('button', 'Save')
+          .scrollIntoView()
+          .should('exist')
+          .click({ force: true })
+          .wait(fnGetDelay("short"))
+          .url()
+          .then((url: string) => {
+            const docname = url.split("/").pop() || null;
+            cy.log(`Created document: ${docname}`);
+            script.linked_document = docname || undefined;
+
+            // Wrap the value to avoid Cypress async/sync issue
+            return cy.wrap(docname);
+          });
+      });
+  }
+
+  // If not creating a connection, return null wrapped in a Cypress chain
+  return cy.wrap(null);
 }
+
+}
+
+
+
+
 
 
 

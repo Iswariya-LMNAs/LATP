@@ -109,7 +109,30 @@ type TtestRunResponse = {
                 name: string;
                 test_script: string;
                 master_data: string;
+                linked_document: string;
             }[];
         };
     };
+};
+
+/** @type TtestLabScript - Represents a single Test Lab Script item */
+type TtestLabScript = {
+  name: string;
+  owner: string;
+  creation: string;
+  modified: string;
+  modified_by: string;
+  docstatus: number;
+  idx: number;
+  test_plan: string;
+  test_script: string;
+  master_data: string;
+  connection: string;
+  connection_doctype: string;
+  connection_from: number;
+  linked_document: string;
+  parent: string;
+  parentfield: string;
+  parenttype: string;
+  doctype: string;
 };

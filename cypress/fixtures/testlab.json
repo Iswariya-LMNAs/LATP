@@ -1,0 +1,57 @@
+{
+  "message": {
+    "test_lab": {
+      "name": "TL-0006-Test-demo",
+      "owner": "wesupport@lmnas.com",
+      "creation": "2025-07-04 14:46:57.696332",
+      "modified": "2025-07-09 20:13:58.267292",
+      "modified_by": "wesupport@lmnas.com",
+      "docstatus": 0,
+      "idx": 93,
+      "title": "Test-demo",
+      "status": "Not Started",
+      "naming_series": "TL.-.####.-.{title}",
+      "doctype": "Test Lab",
+      "reference_by": [
+        {
+          "name": "c4lrgp7sv0",
+          "owner": "wesupport@lmnas.com",
+          "creation": "2025-07-04 14:46:57.696332",
+          "modified": "2025-07-09 20:13:58.267292",
+          "modified_by": "wesupport@lmnas.com",
+          "docstatus": 0,
+          "idx": 1,
+          "reference_doctype": "Test Plan",
+          "reference_name": "9b66cd7e21",
+          "parent": "TL-0006-Test-demo",
+          "parentfield": "reference_by",
+          "parenttype": "Test Lab",
+          "doctype": "Reference ID"
+        }
+      ],
+      "test_lab_script": [
+        {
+          "name": "89mbcll3rq",
+          "owner": "wesupport@lmnas.com",
+          "creation": "2025-07-04 14:46:57.696332",
+          "modified": "2025-07-09 20:13:58.267292",
+          "modified_by": "wesupport@lmnas.com",
+          "docstatus": 0,
+          "idx": 1,
+          "task_id": null,
+          "test_plan": null,
+          "test_script": "Design custom button check",
+          "master_data": "uiop",
+          "connection": "",
+          "connection_doctype": "",
+          "linked_document": null,
+          "connection_from": 0,
+          "parent": "TL-0006-Test-demo",
+          "parentfield": "test_lab_script",
+          "parenttype": "Test Lab",
+          "doctype": "Test Lab Script"
+        }
+      ]
+    }
+  }
+}
