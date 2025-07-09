@@ -189,6 +189,39 @@ class clDataTypeCurrency extends clDataTypeData {
         
     }
 }
+
+class clDataTypecheck extends clDataTypeData {
+    constructor(iDataType: string, ioAction: ifActionHandler) {
+        super(iDataType, ioAction);
+    }
+
+    input(): void {
+        const { value, field_name } = this.action.actionRow;
+        const shouldCheck = value === "1";
+        cy.get(`input[type="checkbox"][data-fieldname="${field_name}"]`)
+          .first()
+          .scrollIntoView()
+          .then($checkbox => {
+              const isChecked = ($checkbox[0] as HTMLInputElement).checked;
+
+              (shouldCheck !== isChecked) &&
+              cy.wrap($checkbox)[shouldCheck ? 'check' : 'uncheck']({ force: true })
+                .then(() => cy.log(`${shouldCheck ? 'Checked' : 'Unchecked'} checkbox: ${field_name}`));
+              cy.wait(fnGetDelay("medium"));
+          });
+    }
+
+    validate(): void {
+        const { value, field_name } = this.action.actionRow;
+        const shouldBeChecked = value === "1";
+        cy.get(`input[type="checkbox"][data-fieldname="${field_name}"]`)
+          .first()
+          .should(shouldBeChecked ? 'be.checked' : 'not.be.checked');
+    }
+}
+
+
+
 /**
  * 
  * @class clDataTypeFactory - Factory class for creating data type instances.   
@@ -201,7 +234,8 @@ export class clDataTypeFactory {
         "Link": clDataTypeLink,
         "Date": clDataTypeDate,
         "Dynamic Link": clDataTypeDynamiclink,
-        "Currency": clDataTypeCurrency
+        "Currency": clDataTypeCurrency,
+        "Check": clDataTypecheck,
     };
     static createDataType(data_type: string, actiondata: ifActionHandler, row?: TactionData): clDataType {
         let lActualRow = row || actiondata.actionData[0];

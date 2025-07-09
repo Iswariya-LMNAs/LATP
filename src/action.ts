@@ -240,7 +240,6 @@ class clActionDelete extends clAction{
     }
 }
 
-
 class clActionClickButton extends clAction{
     executeAction(): void {
         this.actionRow = this.actionData[0];
@@ -258,23 +257,6 @@ class clActionClickButton extends clAction{
                       });
                   }
               });
-    }
-}
-
-
-class clActionCheckbox extends clAction{
-    executeAction(): void {
-        this.actionRow = this.actionData[0];
-        const LfieldName = this.actionRow.field_name;
-        const Lvalue = this.actionRow.value;
-        if (Lvalue === '1') {
-        cy.get(`input[type="checkbox"][data-fieldname="${LfieldName}"]`).first().scrollIntoView()
-          .check({ force: true })
-          .then(() => {
-        cy.log(`Checked checkbox: ${LfieldName}`);
-        });
-        cy.wait(fnGetDelay("medium"));
-        }
     }
 }
 
@@ -309,7 +291,6 @@ export class clActionFactory {
         "Cancel":clActionCancel,
         "Delete": clActionDelete,
         "Click Button": clActionClickButton,
-        "Check Box": clActionCheckbox,
         "Action Menu": clActionActionMenu,
     };
     static createAction(iAction: string, iaActionData:TTactionsData): ifActionHandler {
@@ -357,7 +338,60 @@ export class clActionFactory {
         });
     });
   }
+
+static handleConnection(script: TtestLabScript): Cypress.Chainable<string | null> {
+  const { connection, connection_doctype } = script;
+
+  if (!connection_doctype) {
+    cy.log("Missing connection_doctype, skipping.");
+    return cy.wrap(null);
+  }
+
+  if (connection === "Create") {
+    cy.log("Initiating connection creation from current document...");
+    return cy.contains(".nav-item", "Connections", { timeout: 10000 })
+      .should("be.visible")
+      .click()
+      .wait(fnGetDelay("medium"))
+      .then(() => {
+        return cy.get(".form-dashboard", { timeout: 10000 }).within(() => {
+          return cy.contains(".document-link-badge", connection_doctype, { timeout: 10000 })
+            .should("be.visible")
+            .parents(".document-link")
+            .within(() => {
+              cy.get("button.btn-open-row, button.btn")
+                .should("be.visible")
+                .click({ force: true });
+            });
+        });
+      })
+      .then(() => {
+        return cy.contains('button', 'Save')
+          .scrollIntoView()
+          .should('exist')
+          .click({ force: true })
+          .wait(fnGetDelay("short"))
+          .url()
+          .then((url: string) => {
+            const docname = url.split("/").pop() || null;
+            cy.log(`Created document: ${docname}`);
+            script.linked_document = docname || undefined;
+
+            // Wrap the value to avoid Cypress async/sync issue
+            return cy.wrap(docname);
+          });
+      });
+  }
+
+  // If not creating a connection, return null wrapped in a Cypress chain
+  return cy.wrap(null);
 }
+
+}
+
+
+
+
 
 
 
