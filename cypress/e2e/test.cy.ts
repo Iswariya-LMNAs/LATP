@@ -33,6 +33,7 @@ Cypress.on("log:added", (options) => {
 
 describe("Automated Test Run", () => {
   let currentScript: any;
+  const storeDocname: { idx: number; docname: string }[] = [];
   testLabData.forEach((script) => {
     it(`should run test script: ${script.test_script}`, () => {
       currentScript = script;
@@ -57,13 +58,25 @@ describe("Automated Test Run", () => {
       })
       cy.visit(`${targetUrl}/app`);
       if (matchedScript && matchedScript.actual_test_data) {
-      clActionFactory.executeAction([matchedScript]);
-      const CaFilteredActions = matchedScript.actual_test_data.filter((row) => row.action);
-      CaFilteredActions.forEach((row) => {
-      const CaActionData = clActionFactory.filterActionData(matchedScript.actual_test_data, row);
-      const loAction = clActionFactory.createAction(row.action, CaActionData);
-      loAction.executeAction();
-  });
+        // Inject document only if script.use_docname is valid
+        if (script.use_docname && script.use_docname !== 0) {
+          const stored = storeDocname.find(item => Number(item.idx) === Number(script.use_docname));
+          if (stored?.docname) {
+            matchedScript.document = stored.docname;
+            cy.log(`✅ Injected matchedScript.document = ${matchedScript.document}`);
+          } else {
+            cy.log(`⚠️ No matching docname found for idx: ${script.use_docname}`);
+          }
+        }
+
+        // Now matchedScript is a valid TtestHeaderData object with .document injected
+        clActionFactory.executeAction([matchedScript]);
+        const CaFilteredActions = matchedScript.actual_test_data.filter((row) => row.action);
+        CaFilteredActions.forEach((row) => {
+        const CaActionData = clActionFactory.filterActionData(matchedScript.actual_test_data, row);
+        const loAction = clActionFactory.createAction(row.action, CaActionData);
+        loAction.executeAction();
+        });
        if (
           currentScript.connection === "Create" &&
           currentScript.connection_doctype
@@ -80,6 +93,15 @@ describe("Automated Test Run", () => {
           });
         }
       }
+      cy.wait(fnGetDelay("medium"));
+      cy.url().then((currentUrl: string) => {
+        const parts = currentUrl.split('/');
+        const docname = parts.pop() || parts.pop(); // handles trailing slash
+        if (docname) {
+          storeDocname.push({ idx: script.idx, docname });
+          cy.log(JSON.stringify(storeDocname));
+        }
+      });
       // Perform logout sequence
       cy.request({
         method: 'GET',
