@@ -42,8 +42,28 @@ describe("Automated Test Run", () => {
       );
       // Load environment variables
       const targetUrl = Cypress.env("TARGET_URL");
-      const loginEmail = Cypress.env("LOGIN_EMAIL");
-      const loginPassword = Cypress.env("LOGIN_PASSWORD");
+      let loginEmail: string;
+      let loginPassword: string;
+
+      if (matchedScript.is_workflow_test_script && matchedScript.workflow_user) {
+        // Normalize to uppercase and underscore format
+        const envPrefix = matchedScript.workflow_user.trim().toUpperCase().replace(/\s+/g, "_");
+        const emailKey = `${envPrefix}_EMAIL`;
+        const passwordKey = `${envPrefix}_PASSWORD`;
+
+        loginEmail = Cypress.env(emailKey);
+        loginPassword = Cypress.env(passwordKey);
+
+        if (!loginEmail || !loginPassword) {
+          throw new Error(`❌ Missing credentials for workflow user "${matchedScript.workflow_user}". Ensure ${emailKey} and ${passwordKey} exist in .env`);
+        }
+
+        cy.log(`Using workflow user: ${matchedScript.workflow_user}`);
+      } else {
+        // Default credentials
+        loginEmail = Cypress.env("LOGIN_EMAIL");
+        loginPassword = Cypress.env("LOGIN_PASSWORD");
+      }
       cy.request({
         method: 'POST',
         url: `${targetUrl}/api/method/login`,

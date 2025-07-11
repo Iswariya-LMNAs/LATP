@@ -7,11 +7,10 @@ export default defineConfig({
       // Set default running mode
       config.env.RUNNING_MODE = config.env.RUNNING_MODE || process.env.RUNNING_MODE || "UI";
       // General environment variables
-      config.env.TARGET_URL = process.env.TARGET_URL;
-      config.env.LOGIN_EMAIL = process.env.LOGIN_EMAIL;
-      config.env.LOGIN_PASSWORD = process.env.LOGIN_PASSWORD;
-      config.env.TARGET_PATH = process.env.TARGET_PATH;
-      config.env.TARGET_KEY = process.env.TARGET_KEY;
+      config.env = {
+        ...config.env,
+        ...process.env, // ✅ pull all keys from .env
+      };
       // Load delay values for CLI and UI modes
       ["UI", "CLI"].forEach(mode => {
         ["SHORT", "MEDIUM", "LONG"].forEach(level => {

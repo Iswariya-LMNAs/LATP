@@ -264,7 +264,8 @@ class clActionActionMenu extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         const actionLabel = this.actionRow.value;
-        cy.contains('button, a', /^Actions$/i)
+        cy.get('button, a')
+          .contains(/^Actions$/i)
           .scrollIntoView()
           .click({ force: true });
         cy.contains('.dropdown-menu li, .dropdown-item, button, a', actionLabel, { matchCase: false })
