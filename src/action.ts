@@ -257,6 +257,7 @@ class clActionClickButton extends clAction{
                       });
                   }
               });
+            cy.wait(fnGetDelay("medium"));
     }
 }
 
@@ -275,6 +276,28 @@ class clActionActionMenu extends clAction {
     }
 }
 
+class clActionOnValidate extends clAction {
+    executeAction(): void {
+        this.actionRow = this.actionData[0];
+        cy.wait(fnGetDelay("medium"));
+
+        if (this.actionRow.message_type === 'Error') {
+            // Wait for the close button to be visible and click it directly
+            cy.get('.btn-modal-close:visible', { timeout: 3000 })
+            .should('be.visible')
+            .click({ force: true });
+            cy.wait(fnGetDelay("short"));
+            
+        }
+    }
+
+
+    constructor(iAction: string, iaActionData: TTactionsData) {
+        super(iAction, iaActionData);
+    }
+}
+
+
 /** @class clActionFactory - Factory for creating action instances */
 export class clActionFactory {
     private static actionsMap: {
@@ -292,6 +315,7 @@ export class clActionFactory {
         "Delete": clActionDelete,
         "Click Button": clActionClickButton,
         "Action Menu": clActionActionMenu,
+        "On Validate": clActionOnValidate,
     };
     static createAction(iAction: string, iaActionData:TTactionsData): ifActionHandler {
         const LAactionClass = this.actionsMap[iAction];       
