@@ -132,6 +132,7 @@ class clDataTypeSelect extends clDataTypeData {
           .wait(fnGetDelay("medium"));
     }
 }
+
 /** @class clDataTypeSelectChild - Handles child select field logic. */
 class clDataTypeSelectChild extends clDataTypeSelect {
     constructor(iDataType: string, ioAction: ifActionHandler) {
@@ -207,6 +208,7 @@ class clDataTypecheck extends clDataTypeData {
         const { value, field_name } = this.action.actionRow;
         const shouldCheck = value === "1";
         cy.get(`input[type="checkbox"][data-fieldname="${field_name}"]`)
+           .wait(fnGetDelay("medium"))
           .first()
           .scrollIntoView()
           .then($checkbox => {
