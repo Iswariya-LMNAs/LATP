@@ -188,7 +188,7 @@ class clActionOnTab extends clAction {
         super(iAction, iaActionData);
     }
 }
-
+/** @class clActionSave Saves the current document/form.*/
 class clActionSave extends clAction{
     executeAction(): void {
         cy.contains('button', 'Save').scrollIntoView().should('exist').click({force:true});
@@ -196,6 +196,7 @@ class clActionSave extends clAction{
         cy.wait(fnGetDelay("short"));
     }
 }
+/** @class clActionSubmit Submits the current document/form and confirms submission via modal. */
 class clActionSubmit extends clAction{
     executeAction(): void {
         cy.contains('button', 'Submit').scrollIntoView().should('exist').click({force:true});
@@ -207,6 +208,7 @@ class clActionSubmit extends clAction{
         cy.wait(fnGetDelay("long"));
     }
 }
+/** @class clActionCancel Cancels the current document/form and confirms via modal.*/
 class clActionCancel extends clAction{
     executeAction(): void {
         cy.contains('button', 'Cancel').scrollIntoView().should('exist').click({ force: true });
@@ -226,7 +228,7 @@ class clActionAmend extends clAction{
         
     }
 }
-
+/** @class clActionDelete Deletes the current document/form with confirmation modal.*/
 class clActionDelete extends clAction{
     executeAction(): void {
         cy.get('.menu-btn-group > .btn').click({ force: true }); 
@@ -239,7 +241,7 @@ class clActionDelete extends clAction{
         cy.wait(fnGetDelay("long"));
     }
 }
-
+/** @class clActionClickButton Clicks a specified button on the form.*/
 class clActionClickButton extends clAction{
     executeAction(): void {
         this.actionRow = this.actionData[0];
@@ -259,7 +261,7 @@ class clActionClickButton extends clAction{
               });
     }
 }
-
+/** @class clActionActionMenuTriggers an item from the "Actions" dropdown menu.*/
 class clActionActionMenu extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
@@ -339,7 +341,12 @@ export class clActionFactory {
         });
     });
   }
-
+ /**
+     * Handles creating or linking documents via connections within the UI.
+     * If the connection type is "Create", it navigates to the connection, clicks 'Add Row', and saves the new document.
+     * @param script - The test script object containing connection information.
+     * @returns The name of the newly created or linked document wrapped in a Cypress Chainable.
+*/
 static handleConnection(script: TtestLabScript): Cypress.Chainable<string | null> {
   const { connection, connection_doctype } = script;
 
@@ -377,14 +384,11 @@ static handleConnection(script: TtestLabScript): Cypress.Chainable<string | null
             const docname = url.split("/").pop() || null;
             cy.log(`Created document: ${docname}`);
             script.linked_document = docname || undefined;
-
             // Wrap the value to avoid Cypress async/sync issue
             return cy.wrap(docname);
           });
       });
   }
-
-  // If not creating a connection, return null wrapped in a Cypress chain
   return cy.wrap(null);
 }
 
