@@ -249,9 +249,11 @@ class clActionClickButton extends clAction{
         cy.contains('button, a', LbuttonLabel, { matchCase: false }).scrollIntoView().click({ force: true });
         cy.log(`Clicked custom button: ${LbuttonLabel}`);
         cy.wait(fnGetDelay("medium"));
+        // Check if clicking the button triggered a visible modal popup.
          cy.get('body').then(($body: JQuery<HTMLElement>) => {
                   const hasModal = $body.find('.modal:visible').length > 0;
                   if (hasModal) {
+                    // If the modal popup is present, click the 'Yes' button inside the modal.
                       cy.get('.modal:visible').within(() => {
                           cy.contains('button', /^Yes$/)
                             .click({ force: true });
