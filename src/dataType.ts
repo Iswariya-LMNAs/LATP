@@ -105,6 +105,56 @@ class clDataTypeDataChild extends clDataTypeData {
     }
 }
 
+/** @class clDataTypeSmallText - Handles validation and input for small text data type. */
+class clDataTypeSmallText extends clDataType {
+    constructor(iDataType: string, ioAction: ifActionHandler) {
+        super(iDataType, ioAction);
+        this.fieldProp = input: visible;
+    }
+
+    validate(): void {
+        if (this.action.actionRow.is_hidden) {
+            return;
+        }
+
+        const normalizeText = (text: string): string =>
+            text.replace(/\\n/g, '')   // remove escaped newlines
+                .replace(/\s+/g, '');  // remove all whitespace including actual \n, space, \t, etc.
+
+        const expectedText = normalizeText(this.action.actionRow.value);
+
+        if (this.action.actionRow.is_read_only) {
+            this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value';
+            cy.get(this.getSelector())
+                .should('exist')
+                .and('be.visible')
+                .invoke('text')
+                .then(normalizeText)
+                .should('eq', expectedText);
+        } else {
+            cy.get(this.getSelector())
+                .should('exist')
+                .and('be.visible')
+                .invoke('val')
+                .then(normalizeText)
+                .should('eq', expectedText);
+        }
+    }
+
+    input(): void {
+        const { value } = this.action.actionRow;
+        cy.get(this.getSelector())
+            .wait(fnGetDelay("short"))
+            .clear()
+            .type(value)
+            .wait(fnGetDelay("medium"))
+            .should('have.value', value)
+            .wait(fnGetDelay("medium"))
+            .type('{enter}', { force: true })
+            .wait(fnGetDelay("short"));
+    }
+}
+
 /** @class clDataTypeLink - Inherits from `clDataTypeData` to handle link-type fields. */
 class clDataTypeLink extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
@@ -230,6 +280,7 @@ class clDataTypecheck extends clDataTypeData {
 export class clDataTypeFactory {
     private static actionsMap: { [key: string]: new (data_type: string, action: ifActionHandler) => clDataType } = {
         "Data": clDataTypeData,
+        "Small Text": clDataTypeSmallText,
         "Select": clDataTypeSelect,
         "Link": clDataTypeLink,
         "Date": clDataTypeDate,
