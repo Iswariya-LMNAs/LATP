@@ -1,7 +1,6 @@
 import { clActionFactory } from "../../src/action";
 import { fnGetDelay } from "../../src/delay";
 
-
 const testLab = require("../fixtures/testlab.json");
 const testLabData = testLab.message.test_lab.test_lab_script;
 const testRunName = Cypress.env("FETCHED_TEST_RUN");
@@ -38,7 +37,6 @@ describe("Automated Test Run", () => {
   testScriptData.forEach((script) => {
     it(`should run test script: ${script.name}`, () => {
       currentScript = script;
-
 
       const targetUrl = Cypress.env("TARGET_URL");
       let loginEmail: string;
