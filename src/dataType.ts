@@ -109,7 +109,7 @@ class clDataTypeDataChild extends clDataTypeData {
 class clDataTypeSmallText extends clDataType {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
-        this.fieldProp = input: visible;
+        this.fieldProp = `input:visible`;
     }
 
     validate(): void {
