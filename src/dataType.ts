@@ -23,18 +23,18 @@ abstract class clDataType implements ifDataType {
         this.childSelector = `[data-fieldname="${this.action.actionRow.child_name}"] .grid-body .grid-row`;
         this.rowSelector = this.action.actionRow.child_index ? this.action.actionRow.child_index - 1 : 0;;
     }
-    abstract validate(): void 
-    abstract input(): void 
-    getSelector(): string{
+    abstract validate(): void
+    abstract input(): void
+    getSelector(): string {
         return `${this.fieldSlector}${this.fieldProp}`
     }
-    getfieldchild(): string{
-        return`${this.fieldSlector}`
+    getfieldchild(): string {
+        return `${this.fieldSlector}`
     }
-    getchildSelector(): string{
+    getchildSelector(): string {
         return `${this.childSelector}`
     }
-    getchildRow(): number{
+    getchildRow(): number {
         return this.rowSelector
     }
 }
@@ -45,21 +45,21 @@ class clDataTypeData extends clDataType {
         this.fieldProp = `input:visible`
     }
     validate(): void {
-    if (this.action.actionRow.is_hidden) {
-        return;
-    }
-    if (this.action.actionRow.is_read_only) {
-        this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value';
-        cy.get(this.getSelector()).should('exist').and('be.visible').and('have.text', this.action.actionRow.value);
-    } else {
-        cy.get(this.getSelector()).should('exist').and('be.visible').and('have.value', this.action.actionRow.value);
-    }
+        if (this.action.actionRow.is_hidden) {
+            return;
+        }
+        if (this.action.actionRow.is_read_only) {
+            this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value';
+            cy.get(this.getSelector()).should('exist').and('be.visible').and('have.text', this.action.actionRow.value);
+        } else {
+            cy.get(this.getSelector()).should('exist').and('be.visible').and('have.value', this.action.actionRow.value);
+        }
     }
     input(): void {
         const { value } = this.action.actionRow;
-            cy.get(this.getSelector()).wait(fnGetDelay("short")).type(value).wait(fnGetDelay("medium")).should('have.value', value).wait(fnGetDelay("medium"))
-            .type('{enter}',{ force: true }) 
-            .wait(fnGetDelay("short"));   
+        cy.get(this.getSelector()).wait(fnGetDelay("short")).clear({ force: true }).wait(fnGetDelay("medium")).type(value).wait(fnGetDelay("medium")).should('have.value', value).wait(fnGetDelay("medium"))
+            .type('{enter}', { force: true })
+            .wait(fnGetDelay("short"));
     }
 }
 
@@ -70,7 +70,7 @@ class clDataTypeDataChild extends clDataTypeData {
     }
 
     input(): void {
-        const { is_child, value, child_name} = this.action.actionRow;
+        const { is_child, value, child_name } = this.action.actionRow;
         if (!is_child || !child_name) return;
         cy.get(this.getchildSelector()).eq(this.getchildRow()).within(() => {
             cy.get(this.getfieldchild()).then($field => {
@@ -78,17 +78,17 @@ class clDataTypeDataChild extends clDataTypeData {
                 const $input = $el.find('input:visible');
                 if ($input.length > 0) {
                     cy.wrap($input).should('be.visible').wait(600).first().clear({ force: true }).type(value, { force: true }).wait(100).blur({ force: true });
-                } 
+                }
                 else {
                     cy.wrap($field).dblclick();
-                    cy.wait(300); 
+                    cy.wait(300);
                     cy.wrap($field).find('input:visible').should('exist').wait(600).clear({ force: true }).type(value, { force: true }).wait(100).blur({ force: true });
                 }
             });
         });
     }
     validate(): void {
-        const { is_child, value,  child_name } = this.action.actionRow;
+        const { is_child, value, child_name } = this.action.actionRow;
         if (is_child && child_name) {
             cy.get(this.getchildSelector()).eq(this.getchildRow()).within(() => {
                 cy.get(this.getfieldchild()).then($field => {
@@ -107,7 +107,7 @@ class clDataTypeDataChild extends clDataTypeData {
 
 /** @class clDataTypeLink - Inherits from `clDataTypeData` to handle link-type fields. */
 class clDataTypeLink extends clDataTypeData {
-    constructor(iDataType: string, ioAction: ifActionHandler) { 
+    constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
     }
 }
@@ -119,9 +119,9 @@ class clDataTypeSelect extends clDataTypeData {
     }
     input(): void {
         cy.get(this.getSelector())
-          .wait(fnGetDelay("medium"))
-          .select(this.action.actionRow.value, { force: true })
-          .wait(fnGetDelay("short"));
+            .wait(fnGetDelay("medium"))
+            .select(this.action.actionRow.value, { force: true })
+            .wait(fnGetDelay("short"));
     }
 }
 /** @class clDataTypeSelectChild - Handles child select field logic. */
@@ -152,7 +152,7 @@ class clDataTypeSelectChild extends clDataTypeSelect {
         });
     }
     validate(): void {
-        const  { value }= this.action.actionRow;
+        const { value } = this.action.actionRow;
         cy.get(this.getchildSelector()).eq(this.getchildRow()).within(() => {
             cy.get(this.getfieldchild()).then($field => {
                 const $el = $field as unknown as JQuery<HTMLElement>;
@@ -172,7 +172,7 @@ class clDataTypeDate extends clDataTypeData {
         super(iDataType, ioAction);
     }
     input(): void {
-        const {value} = this.action.actionRow
+        const { value } = this.action.actionRow
         cy.get(this.getSelector()).clear().wait(fnGetDelay("short")).first().type(value).wait(fnGetDelay("short"))
     }
 }
@@ -186,7 +186,7 @@ class clDataTypeDynamiclink extends clDataTypeData {
 class clDataTypeCurrency extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
-        
+
     }
 }
 
@@ -199,24 +199,24 @@ class clDataTypecheck extends clDataTypeData {
         const { value, field_name } = this.action.actionRow;
         const shouldCheck = value === "1";
         cy.get(`input[type="checkbox"][data-fieldname="${field_name}"]`)
-          .first()
-          .scrollIntoView()
-          .then($checkbox => {
-              const isChecked = ($checkbox[0] as HTMLInputElement).checked;
+            .first()
+            .scrollIntoView()
+            .then($checkbox => {
+                const isChecked = ($checkbox[0] as HTMLInputElement).checked;
 
-              (shouldCheck !== isChecked) &&
-              cy.wrap($checkbox)[shouldCheck ? 'check' : 'uncheck']({ force: true })
-                .then(() => cy.log(`${shouldCheck ? 'Checked' : 'Unchecked'} checkbox: ${field_name}`));
-              cy.wait(fnGetDelay("medium"));
-          });
+                (shouldCheck !== isChecked) &&
+                    cy.wrap($checkbox)[shouldCheck ? 'check' : 'uncheck']({ force: true })
+                        .then(() => cy.log(`${shouldCheck ? 'Checked' : 'Unchecked'} checkbox: ${field_name}`));
+                cy.wait(fnGetDelay("medium"));
+            });
     }
 
     validate(): void {
         const { value, field_name } = this.action.actionRow;
         const shouldBeChecked = value === "1";
         cy.get(`input[type="checkbox"][data-fieldname="${field_name}"]`)
-          .first()
-          .should(shouldBeChecked ? 'be.checked' : 'not.be.checked');
+            .first()
+            .should(shouldBeChecked ? 'be.checked' : 'not.be.checked');
     }
 }
 

@@ -38,7 +38,6 @@ describe("Automated Test Run", () => {
   testScriptData.forEach((script) => {
     it(`should run test script: ${script.name}`, () => {
       currentScript = script;
-      cy.log("master data: " + JSON.stringify(currentScript));
 
 
       const targetUrl = Cypress.env("TARGET_URL");
@@ -56,8 +55,6 @@ describe("Automated Test Run", () => {
         if (!loginEmail || !loginPassword) {
           throw new Error(`❌ Missing credentials for workflow user "${currentScript.workflow_user}". Ensure ${emailKey} and ${passwordKey} exist in .env`);
         }
-
-        cy.log(`Using workflow user: ${currentScript.workflow_user}`);
       } else {
         loginEmail = Cypress.env("LOGIN_EMAIL");
         loginPassword = Cypress.env("LOGIN_PASSWORD");
@@ -81,8 +78,6 @@ describe("Automated Test Run", () => {
       if (currentScript.actual_test_data) {
         // For connected combined master data, `use_docname` logic can be handled if needed, or skip
         // Inject document only if script.use_docname is valid
-        cy.log("Original actual_test_data: " + JSON.stringify(currentScript.actual_test_data));
-
         if (script.use_docname && script.use_docname !== 0) {
           const stored = storeDocname.find(item => Number(item.idx) === Number(script.use_docname));
           if (stored?.docname) {
