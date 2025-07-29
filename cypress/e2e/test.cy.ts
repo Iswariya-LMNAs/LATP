@@ -1,10 +1,11 @@
 import { clActionFactory } from "../../src/action";
 import { fnGetDelay } from "../../src/delay";
 
-const testLab = require("../fixtures/testlab.json");
-const testLabData = testLab.message.test_lab.test_lab_script;
+const targetUrl = Cypress.env("TARGET_URL");
+const authKey = Cypress.env("TARGET_KEY");
+const testLabData = Cypress.env("FETCHED_TEST_LAB");
 const testRunName = Cypress.env("FETCHED_TEST_RUN");
-const testScriptData = Cypress.env("FETCHED_MASTER_DATA");
+const testMasterData = Cypress.env("FETCHED_MASTER_DATA");
 
 let capturedErrors: string[] = [];
 let capturedLogs: string[] = [];
@@ -29,16 +30,13 @@ Cypress.on("log:added", (options) => {
 });
 
 describe("Automated Test Run", () => {
-  let currentScript: any;
   const storeDocname: { idx: number; docname: string }[] = [];
   let createdDocnames: string[] = [];
   let createdDocsByIndex: { [key: number]: string }[] = [];
 
-  testScriptData.forEach((script) => {
-    it(`should run test script: ${script.name}`, () => {
-      currentScript = script;
+  testMasterData.forEach((currentScript) => {
+    it(`should run test script: ${currentScript.name}`, () => {
 
-      const targetUrl = Cypress.env("TARGET_URL");
       let loginEmail: string;
       let loginPassword: string;
 
@@ -76,13 +74,13 @@ describe("Automated Test Run", () => {
       if (currentScript.actual_test_data) {
         // For connected combined master data, `use_docname` logic can be handled if needed, or skip
         // Inject document only if script.use_docname is valid
-        if (script.use_docname && script.use_docname !== 0) {
-          const stored = storeDocname.find(item => Number(item.idx) === Number(script.use_docname));
+        if (currentScript.use_docname && currentScript.use_docname !== 0) {
+          const stored = storeDocname.find(item => Number(item.idx) === Number(currentScript.use_docname));
           if (stored?.docname) {
             currentScript.document = stored.docname;
             cy.log(`✅ Injected matchedScript.document = ${currentScript.document}`);
           } else {
-            cy.log(`⚠️ No matching docname found for idx: ${script.use_docname}`);
+            cy.log(`⚠️ No matching docname found for idx: ${currentScript.use_docname}`);
           }
         }
 
@@ -115,8 +113,7 @@ describe("Automated Test Run", () => {
         const parts = currentUrl.split('/');
         const docname = parts.pop() || parts.pop(); // handles trailing slash
         if (docname) {
-          storeDocname.push({ idx: script.idx, docname });
-          // cy.log(JSON.stringify(storeDocname));
+          storeDocname.push({ idx: currentScript.idx, docname });
         }
       });
 
@@ -135,103 +132,101 @@ describe("Automated Test Run", () => {
       if (!currentScript) return;
 
       const connectionType = currentScript.connection?.toString().trim();
-      let foundEntry: { [key: number]: string } | undefined;
+      let linkedDocumentEntry: { [key: number]: string } | undefined;
 
       if (connectionType === "Read" && currentScript.connection_from != null) {
-        const connectionFromIndex = currentScript.connection_from;
+        const sourceConnectionIndex = currentScript.connection_from;
 
-        foundEntry = createdDocsByIndex.find(
-          (entry) => Number(Object.keys(entry)[0]) === connectionFromIndex
+        linkedDocumentEntry = createdDocsByIndex.find(
+          (entry) => Number(Object.keys(entry)[0]) === sourceConnectionIndex
         );
       }
 
-      const targetUrl = Cypress.env("TARGET_URL");
-      const authKey = Cypress.env("TARGET_KEY");
-      const testResult = isTestPassed ? "Pass" : "Fail";
-
-      const headers = {
+      const requestHeaders = {
         Authorization: `${authKey}`,
         Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
         "Content-Type": "application/json",
       };
 
-      const logEntries = [
+      const combinedLogEntries = [
         ...capturedLogs.map((message) => ({ type: "Log", message })),
         ...capturedErrors.map((message) => ({ type: "Error", message })),
       ];
 
-      let masterDataNames: string[] = [];
+      const testOutcome = isTestPassed ? "Pass" : "Fail";
+
+      let masterDataNamesList: string[] = [];
       if (currentScript.name.includes("$")) {
-        masterDataNames = currentScript.name.split("$").map((name) => name.trim());
+        masterDataNamesList = currentScript.name.split("$").map((name) => name.trim());
       } else {
-        masterDataNames = [currentScript.name];
+        masterDataNamesList = [currentScript.name];
       }
 
-      for (const masterName of masterDataNames) {
-        currentScript.master_data = masterName;
+      for (const masterDataName of masterDataNamesList) {
+        currentScript.master_data = masterDataName;
 
         // Match the master name with test lab to get correct test_script
-        const matchedTestScript = testLabData.find(
-          (script: any) => script.master_data === masterName
+        const matchedTestScript = testLabData.test_lab_script.find(
+          (script: any) => script.master_data === masterDataName
         );
 
         if (!matchedTestScript) {
-          cy.log(`No matching test_lab_script found for master_data: ${masterName}`);
-          continue; // Skip this iteration if no match found
+          cy.log(`No matching test_lab_script found for master_data: ${masterDataName}`);
+          continue;
         }
 
-        currentScript.test_script = matchedTestScript.test_script;
+        const testScriptId = matchedTestScript.test_script;
 
         const runLogPayload = {
-          script_id: currentScript.test_script,
+          script_id: testScriptId,
           master_data_id: currentScript.master_data,
           test_run_id: testRunName,
-          log_entries: logEntries,
+          log_entries: combinedLogEntries,
         };
 
         cy.request({
           method: "POST",
           url: `${targetUrl}/api/resource/Run Log`,
-          headers,
+          headers: requestHeaders,
           body: JSON.stringify(runLogPayload),
-        }).then((logRes: TrunLogResponse) => {
-          const runLogId = logRes.body.data.name;
-          const { test_run_id, script_id, master_data_id } = logRes.body.data;
+        }).then((runLogResponse: TrunLogResponse) => {
+          const runLogId = runLogResponse.body.data.name;
+          const { test_run_id, master_data_id } = runLogResponse.body.data;
 
           cy.request({
             method: "GET",
             url: `${targetUrl}/api/resource/Test Run/${test_run_id}`,
-            headers,
-          }).then((testRunRes: TtestRunResponse) => {
-            const testLogRows = testRunRes.body.data.test_log;
+            headers: requestHeaders,
+          }).then((testRunResponse: TtestRunResponse) => {
+            const testLogEntries = testRunResponse.body.data.test_log;
 
-            const matchingLogRow = testLogRows.find(
-              (row) =>
-                row.test_script === script_id &&
-                row.master_data === master_data_id
+            const matchingTestLogEntry = testLogEntries.find(
+              (entry) =>
+                entry.test_script === testScriptId &&
+                entry.master_data === master_data_id
             );
 
-            if (matchingLogRow) {
-              const testLogRowId = matchingLogRow.name;
+            if (matchingTestLogEntry) {
+              const testLogEntryId = matchingTestLogEntry.name;
 
               const updateLogPayload: any = {
                 run_log: runLogId,
-                result: testResult,
+                result: testOutcome,
               };
 
               if (
                 connectionType === "Read" &&
                 currentScript.connection_from != null &&
-                foundEntry
+                linkedDocumentEntry
               ) {
-                const connectionFromIndex = currentScript.connection_from;
-                updateLogPayload.linked_document = foundEntry[connectionFromIndex];
+                const sourceConnectionIndex = currentScript.connection_from;
+                updateLogPayload.linked_document = linkedDocumentEntry[sourceConnectionIndex];
               }
 
               cy.request({
                 method: "PUT",
-                url: `${targetUrl}/api/resource/Test Log/${testLogRowId}`,
-                headers,
+                url: `${targetUrl}/api/resource/Test Log/${testLogEntryId}`,
+                headers: requestHeaders,
                 body: JSON.stringify(updateLogPayload),
               });
             }

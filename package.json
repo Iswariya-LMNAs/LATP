@@ -9,8 +9,8 @@
     "env": "node envGenerate.js",
     "upload_testdata": "./setup.sh",
     "start": "ts-node src/fetchdata.ts",
-    "ui_test": "node --loader ts-node/esm cypress/scripts/fetchTestData.ts && cypress open",
-    "cli_test": "node --loader ts-node/esm cypress/scripts/fetchTestData.ts && cypress run"
+    "ui_test": "cypress open",
+    "cli_test": "cypress run"
   },
   "keywords": [],
   "author": "",

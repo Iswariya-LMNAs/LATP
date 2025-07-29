@@ -189,14 +189,25 @@ class clActionOnTab extends clAction {
         super(iAction, iaActionData);
     }
 }
+
 /** @class clActionSave Saves the current document/form.*/
 class clActionSave extends clAction {
     executeAction(): void {
-        cy.contains('button', 'Save').scrollIntoView().should('exist').wait(fnGetDelay("medium")).click({ force: true });
-        cy.log("Document Saved sucessfully");
-        cy.wait(fnGetDelay("long"));
+        cy.get('body').then(($body: JQuery<HTMLElement>) => {
+            const $saveBtn = $body.find('.primary-action:visible');
+            if ($saveBtn.length > 0) {
+                cy.wrap($saveBtn)
+                    .scrollIntoView()
+                    .click({ force: true });
+                cy.log(`saved successfully.`);
+                cy.wait(fnGetDelay("short"));
+            } else {
+                throw new Error("No visible Save button (.primary-action) found in DOM.");
+            }
+        });
     }
 }
+
 /** @class clActionSubmit Submits the current document/form and confirms submission via modal. */
 class clActionSubmit extends clAction {
     executeAction(): void {
