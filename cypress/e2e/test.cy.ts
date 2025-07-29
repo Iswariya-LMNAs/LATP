@@ -11,6 +11,42 @@ let capturedErrors: string[] = [];
 let capturedLogs: string[] = [];
 let isTestPassed = true;
 
+const requestHeaders = {
+  Authorization: `${authKey}`,
+  Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
+  "Content-Type": "application/json",
+};
+
+// Helper: Perform login
+const login = (email: string, password: string) => {
+  return cy.request({
+    method: 'POST',
+    url: `${targetUrl}/api/method/login`,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: {
+      usr: email,
+      pwd: password,
+    },
+  });
+};
+
+// Helper: Perform logout
+const logout = () => {
+  cy.request({
+    method: 'GET',
+    url: `${targetUrl}/api/method/logout`,
+    headers: {
+      'Accept': 'application/json',
+    },
+  });
+  cy.wait(3000);
+  cy.clearCookies();
+  cy.clearLocalStorage();
+};
+
 Cypress.on("fail", (error, runnable) => {
   isTestPassed = false;
   capturedErrors.push(`Test Failed: ${runnable.title} — ${error.message}`);
@@ -36,7 +72,6 @@ describe("Automated Test Run", () => {
 
   testMasterData.forEach((currentScript) => {
     it(`should run test script: ${currentScript.name}`, () => {
-
       let loginEmail: string;
       let loginPassword: string;
 
@@ -56,24 +91,11 @@ describe("Automated Test Run", () => {
         loginPassword = Cypress.env("LOGIN_PASSWORD");
       }
 
-      cy.request({
-        method: 'POST',
-        url: `${targetUrl}/api/method/login`,
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: {
-          usr: loginEmail,
-          pwd: loginPassword
-        }
-      });
+      login(loginEmail, loginPassword);
 
       cy.visit(`${targetUrl}/app`);
 
       if (currentScript.actual_test_data) {
-        // For connected combined master data, `use_docname` logic can be handled if needed, or skip
-        // Inject document only if script.use_docname is valid
         if (currentScript.use_docname && currentScript.use_docname !== 0) {
           const stored = storeDocname.find(item => Number(item.idx) === Number(currentScript.use_docname));
           if (stored?.docname) {
@@ -86,17 +108,14 @@ describe("Automated Test Run", () => {
 
         clActionFactory.executeAction([currentScript]);
 
-        const CaFilteredActions = currentScript.actual_test_data.filter((row) => row.action);
-        CaFilteredActions.forEach((row) => {
+        const CaFilteredActions = currentScript.actual_test_data.filter(row => row.action);
+        CaFilteredActions.forEach(row => {
           const CaActionData = clActionFactory.filterActionData(currentScript.actual_test_data, row);
           const loAction = clActionFactory.createAction(row.action, CaActionData);
           loAction.executeAction();
         });
 
-        if (
-          currentScript.connection === "Create" &&
-          currentScript.connection_doctype
-        ) {
+        if (currentScript.connection === "Create" && currentScript.connection_doctype) {
           clActionFactory.handleConnection(currentScript).then((createdDocname) => {
             if (typeof createdDocname === "string") {
               createdDocnames.push(createdDocname);
@@ -111,21 +130,13 @@ describe("Automated Test Run", () => {
 
       cy.url().then((currentUrl: string) => {
         const parts = currentUrl.split('/');
-        const docname = parts.pop() || parts.pop(); // handles trailing slash
+        const docname = parts.pop() || parts.pop();
         if (docname) {
           storeDocname.push({ idx: currentScript.idx, docname });
         }
       });
 
-      cy.request({
-        method: 'GET',
-        url: `${targetUrl}/api/method/logout`,
-        headers: { 'Accept': 'application/json' }
-      });
-
-      cy.wait(3000);
-      cy.clearCookies();
-      cy.clearLocalStorage();
+      logout();
     });
 
     afterEach(() => {
@@ -142,12 +153,6 @@ describe("Automated Test Run", () => {
         );
       }
 
-      const requestHeaders = {
-        Authorization: `${authKey}`,
-        Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
-        "Content-Type": "application/json",
-      };
-
       const combinedLogEntries = [
         ...capturedLogs.map((message) => ({ type: "Log", message })),
         ...capturedErrors.map((message) => ({ type: "Error", message })),
@@ -155,23 +160,20 @@ describe("Automated Test Run", () => {
 
       const testOutcome = isTestPassed ? "Pass" : "Fail";
 
-      let masterDataNamesList: string[] = [];
-      if (currentScript.name.includes("$")) {
-        masterDataNamesList = currentScript.name.split("$").map((name) => name.trim());
-      } else {
-        masterDataNamesList = [currentScript.name];
-      }
+      const masterDataNamesList = currentScript.name.includes("$")
+        ? currentScript.name.split("$").map((name) => name.trim())
+        : [currentScript.name];
 
       for (const masterDataName of masterDataNamesList) {
-        currentScript.master_data = masterDataName;
 
-        // Match the master name with test lab to get correct test_script
+        const masterDataID = masterDataName;
+
         const matchedTestScript = testLabData.test_lab_script.find(
-          (script: any) => script.master_data === masterDataName
+          (script: any) => script.master_data === masterDataID
         );
 
         if (!matchedTestScript) {
-          cy.log(`No matching test_lab_script found for master_data: ${masterDataName}`);
+          cy.log(`No matching test_lab_script found for master_data: ${masterDataID}`);
           continue;
         }
 
@@ -179,7 +181,7 @@ describe("Automated Test Run", () => {
 
         const runLogPayload = {
           script_id: testScriptId,
-          master_data_id: currentScript.master_data,
+          master_data_id: masterDataID,
           test_run_id: testRunName,
           log_entries: combinedLogEntries,
         };
@@ -195,7 +197,7 @@ describe("Automated Test Run", () => {
 
           cy.request({
             method: "GET",
-            url: `${targetUrl}/api/resource/Test Run/${test_run_id}`,
+            url: `${targetUrl}/api/resource/Test Run/${testRunName}`,
             headers: requestHeaders,
           }).then((testRunResponse: TtestRunResponse) => {
             const testLogEntries = testRunResponse.body.data.test_log;
