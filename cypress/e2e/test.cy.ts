@@ -66,12 +66,16 @@ Cypress.on("log:added", (options) => {
 });
 
 describe("Automated Test Run", () => {
+  let currentScript: any;
   const storeDocname: { idx: number; docname: string }[] = [];
   let createdDocnames: string[] = [];
   let createdDocsByIndex: { [key: number]: string }[] = [];
 
-  testMasterData.forEach((currentScript) => {
-    it(`should run test script: ${currentScript.name}`, () => {
+  testMasterData.forEach((script) => {
+    it(`should run test script: ${script.name}`, () => {
+      currentScript = script;
+
+      const targetUrl = Cypress.env("TARGET_URL");
       let loginEmail: string;
       let loginPassword: string;
 
@@ -96,26 +100,29 @@ describe("Automated Test Run", () => {
       cy.visit(`${targetUrl}/app`);
 
       if (currentScript.actual_test_data) {
-        if (currentScript.use_docname && currentScript.use_docname !== 0) {
-          const stored = storeDocname.find(item => Number(item.idx) === Number(currentScript.use_docname));
+        if (script.use_docname && script.use_docname !== 0) {
+          const stored = storeDocname.find(item => Number(item.idx) === Number(script.use_docname));
           if (stored?.docname) {
             currentScript.document = stored.docname;
             cy.log(`✅ Injected matchedScript.document = ${currentScript.document}`);
           } else {
-            cy.log(`⚠️ No matching docname found for idx: ${currentScript.use_docname}`);
+            cy.log(`⚠️ No matching docname found for idx: ${script.use_docname}`);
           }
         }
 
         clActionFactory.executeAction([currentScript]);
 
-        const CaFilteredActions = currentScript.actual_test_data.filter(row => row.action);
-        CaFilteredActions.forEach(row => {
+        const CaFilteredActions = currentScript.actual_test_data.filter((row) => row.action);
+        CaFilteredActions.forEach((row) => {
           const CaActionData = clActionFactory.filterActionData(currentScript.actual_test_data, row);
           const loAction = clActionFactory.createAction(row.action, CaActionData);
           loAction.executeAction();
         });
 
-        if (currentScript.connection === "Create" && currentScript.connection_doctype) {
+        if (
+          currentScript.connection === "Create" &&
+          currentScript.connection_doctype
+        ) {
           clActionFactory.handleConnection(currentScript).then((createdDocname) => {
             if (typeof createdDocname === "string") {
               createdDocnames.push(createdDocname);
@@ -132,11 +139,11 @@ describe("Automated Test Run", () => {
         const parts = currentUrl.split('/');
         const docname = parts.pop() || parts.pop();
         if (docname) {
-          storeDocname.push({ idx: currentScript.idx, docname });
+          storeDocname.push({ idx: script.idx, docname });
         }
       });
 
-      logout();
+      logout()
     });
 
     afterEach(() => {
@@ -193,7 +200,6 @@ describe("Automated Test Run", () => {
           body: JSON.stringify(runLogPayload),
         }).then((runLogResponse: TrunLogResponse) => {
           const runLogId = runLogResponse.body.data.name;
-          const { test_run_id, master_data_id } = runLogResponse.body.data;
 
           cy.request({
             method: "GET",
@@ -205,7 +211,7 @@ describe("Automated Test Run", () => {
             const matchingTestLogEntry = testLogEntries.find(
               (entry) =>
                 entry.test_script === testScriptId &&
-                entry.master_data === master_data_id
+                entry.master_data === masterDataID
             );
 
             if (matchingTestLogEntry) {
