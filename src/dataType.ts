@@ -270,7 +270,35 @@ class clDataTypecheck extends clDataTypeData {
     }
 }
 
-
+/** @class clDataTypeHTML - Handles HTML fields. */
+class clDataTypeHTML extends clDataType {
+    constructor(iDataType: string, ioAction: ifActionHandler) {
+        super(iDataType, ioAction);
+        this.fieldProp = '';
+    }
+    validate(): void {
+        if (this.action.actionRow.is_hidden) return;
+        const expectedText = this.action.actionRow.value;
+        cy.get(this.getfieldchild())
+            .should('exist')
+            .and('be.visible')
+            .within(() => {
+                cy.get('.address-box, .control-html, .html-field-content')
+                    .filter(':visible')
+                    .first()
+                    .should('exist')
+                    .invoke('text')
+                    .then((text: string) => {
+                        const actual = text.replace(/\s+/g, '').replace(/[·.,]/g, '');
+                        const expected = expectedText.replace(/\\n/g, '').replace(/\s+/g, '').replace(/[·.,]/g, '');
+                        expect(actual).to.equal(expected);
+                    });
+            });
+    }
+    input(): void {
+        // No input logic needed for HTML fields
+    }
+}
 
 /**
  * 
@@ -287,6 +315,7 @@ export class clDataTypeFactory {
         "Dynamic Link": clDataTypeDynamiclink,
         "Currency": clDataTypeCurrency,
         "Check": clDataTypecheck,
+        "HTML": clDataTypeHTML
     };
     static createDataType(data_type: string, actiondata: ifActionHandler, row?: TactionData): clDataType {
         let lActualRow = row || actiondata.actionData[0];
