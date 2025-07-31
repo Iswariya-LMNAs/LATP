@@ -79,6 +79,7 @@ type TactionData = {
     section: string;
     tab: string;
     row_index: 1;
+    message_type: string;
 
 };
 /**@type TTactionsData - Represents an array of action data. */

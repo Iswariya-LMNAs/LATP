@@ -52,14 +52,14 @@ class clDataTypeData extends clDataType {
             this.fieldProp = ' > .form-group > .control-input-wrapper > .control-value';
             cy.get(this.getSelector()).should('exist').and('be.visible').and('have.text', this.action.actionRow.value);
         } else {
-            cy.get(this.getSelector()).should('exist').and('be.visible').and('have.value', this.action.actionRow.value);
+            cy.get(this.getSelector()).wait(fnGetDelay("medium")).should('exist').and('be.visible').and('have.value', this.action.actionRow.value);
         }
     }
     input(): void {
         const { value } = this.action.actionRow;
         cy.get(this.getSelector()).wait(fnGetDelay("short")).clear({ force: true }).wait(fnGetDelay("medium")).type(value).wait(fnGetDelay("medium")).should('have.value', value).wait(fnGetDelay("medium"))
             .type('{enter}', { force: true })
-            .wait(fnGetDelay("short"));
+            .wait(fnGetDelay("medium"));
     }
 }
 
@@ -160,6 +160,14 @@ class clDataTypeLink extends clDataTypeData {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
     }
+    input(): void {
+        cy.get(this.getSelector())
+        .clear({ force: true })
+        .wait(fnGetDelay("medium"))
+        .clear({ force: true }).wait(fnGetDelay("medium"))
+        .type(this.action.actionRow.value).wait(fnGetDelay("medium"))
+        .should('have.value', this.action.actionRow.value).wait(fnGetDelay("long"))
+    }
 }
 /** @class clDataTypeSelect - Handles select dropdown fields. */
 class clDataTypeSelect extends clDataTypeData {
@@ -171,7 +179,7 @@ class clDataTypeSelect extends clDataTypeData {
         cy.get(this.getSelector())
             .wait(fnGetDelay("medium"))
             .select(this.action.actionRow.value, { force: true })
-            .wait(fnGetDelay("short"));
+            .wait(fnGetDelay("medium"));
     }
 }
 /** @class clDataTypeSelectChild - Handles child select field logic. */
