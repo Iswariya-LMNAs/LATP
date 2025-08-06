@@ -3,6 +3,8 @@ import { fnGetDelay } from "../../src/delay";
 
 const targetUrl = Cypress.env("TARGET_URL");
 const authKey = Cypress.env("TARGET_KEY");
+const hostUrl = Cypress.env("HOST_URL");
+const hostKey = Cypress.env("HOST_KEY");
 const testLabData = Cypress.env("FETCHED_TEST_LAB");
 const testRunName = Cypress.env("FETCHED_TEST_RUN");
 const testMasterData = Cypress.env("FETCHED_MASTER_DATA");
@@ -13,6 +15,12 @@ let isTestPassed = true;
 
 const requestHeaders = {
   Authorization: `${authKey}`,
+  Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
+  "Content-Type": "application/json",
+};
+
+const requestHeaders2 = {
+  Authorization: `${hostKey}`,
   Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
   "Content-Type": "application/json",
 };
@@ -195,16 +203,16 @@ describe("Automated Test Run", () => {
 
         cy.request({
           method: "POST",
-          url: `${targetUrl}/api/resource/Run Log`,
-          headers: requestHeaders,
+          url: `${hostUrl}/api/resource/Run Log`,
+          headers: requestHeaders2,
           body: JSON.stringify(runLogPayload),
         }).then((runLogResponse: TrunLogResponse) => {
           const runLogId = runLogResponse.body.data.name;
 
           cy.request({
             method: "GET",
-            url: `${targetUrl}/api/resource/Test Run/${testRunName}`,
-            headers: requestHeaders,
+            url: `${hostUrl}/api/resource/Test Run/${testRunName}`,
+            headers: requestHeaders2,
           }).then((testRunResponse: TtestRunResponse) => {
             const testLogEntries = testRunResponse.body.data.test_log;
 
@@ -233,8 +241,8 @@ describe("Automated Test Run", () => {
 
               cy.request({
                 method: "PUT",
-                url: `${targetUrl}/api/resource/Test Log/${testLogEntryId}`,
-                headers: requestHeaders,
+                url: `${hostUrl}/api/resource/Test Log/${testLogEntryId}`,
+                headers: requestHeaders2,
                 body: JSON.stringify(updateLogPayload),
               });
             }
