@@ -64,7 +64,7 @@ Cypress.on("fail", (error, runnable) => {
 Cypress.on("uncaught:exception", (err) => {
   isTestPassed = false;
   capturedErrors.push(`Uncaught Exception: ${err.message}`);
-  return false;
+  throw err;
 });
 
 Cypress.on("log:added", (options) => {
