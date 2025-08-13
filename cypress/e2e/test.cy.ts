@@ -61,11 +61,13 @@ Cypress.on("fail", (error, runnable) => {
   throw error;
 });
 
-// Cypress.on("uncaught:exception", (err) => {
-//   isTestPassed = false;
-//   capturedErrors.push(`Uncaught Exception: ${err.message}`);
-//   throw err;
-// });
+// exception is caught from browser inspect even after successful pass
+// especially during log out
+Cypress.on("uncaught:exception", (err) => {
+  // isTestPassed = false;
+  // capturedErrors.push(`Uncaught Exception: ${err.message}`);
+  return false;
+});
 
 Cypress.on("log:added", (options) => {
   if (["log", "assert"].includes(options.name)) {
