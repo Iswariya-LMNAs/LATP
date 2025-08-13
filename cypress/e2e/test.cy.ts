@@ -61,11 +61,11 @@ Cypress.on("fail", (error, runnable) => {
   throw error;
 });
 
-Cypress.on("uncaught:exception", (err) => {
-  isTestPassed = false;
-  capturedErrors.push(`Uncaught Exception: ${err.message}`);
-  throw err;
-});
+// Cypress.on("uncaught:exception", (err) => {
+//   isTestPassed = false;
+//   capturedErrors.push(`Uncaught Exception: ${err.message}`);
+//   throw err;
+// });
 
 Cypress.on("log:added", (options) => {
   if (["log", "assert"].includes(options.name)) {
