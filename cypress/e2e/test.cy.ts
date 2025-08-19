@@ -61,8 +61,6 @@ Cypress.on("fail", (error, runnable) => {
   throw error;
 });
 
-// exception is caught from browser inspect even after successful pass
-// especially during log out
 Cypress.on("uncaught:exception", (err) => {
   // isTestPassed = false;
   // capturedErrors.push(`Uncaught Exception: ${err.message}`);
@@ -79,7 +77,7 @@ describe("Automated Test Run", () => {
   let currentScript: any;
   const storeDocname: { idx: number; docname: string }[] = [];
   let createdDocnames: string[] = [];
-  let createdDocsByIndex: { [key: number]: string }[] = [];
+  let createdDocsByIndex: { idx: number; docname: string }[] = [];
 
   testMasterData.forEach((script) => {
     it(`should run test script: ${script.name}`, () => {
@@ -110,13 +108,21 @@ describe("Automated Test Run", () => {
       cy.visit(`${targetUrl}/app`);
 
       if (currentScript.actual_test_data) {
-        if (script.use_docname && script.use_docname !== 0) {
-          const stored = storeDocname.find(item => Number(item.idx) === Number(script.use_docname));
+
+        const masterLabScript = testLabData.test_lab_script.find(
+          (labScript: any) => labScript.master_data === currentScript.name
+        );
+
+        cy.log("masterLabScript", JSON.stringify(masterLabScript));
+
+        if (masterLabScript.use_docname && masterLabScript.use_docname != 0) {
+          const stored = createdDocsByIndex.find(item => Number(item.idx) === Number(masterLabScript.use_docname));
+          cy.log("stored", stored)
           if (stored?.docname) {
             currentScript.document = stored.docname;
             cy.log(`✅ Injected matchedScript.document = ${currentScript.document}`);
           } else {
-            cy.log(`⚠️ No matching docname found for idx: ${script.use_docname}`);
+            cy.log(`⚠️ No matching docname found for idx: ${masterLabScript.use_docname}`);
           }
         }
 
@@ -130,14 +136,18 @@ describe("Automated Test Run", () => {
         });
 
         if (
-          currentScript.connection === "Create" &&
-          currentScript.connection_doctype
+          masterLabScript.connection === "Create" &&
+          masterLabScript.connection_doctype
         ) {
-          clActionFactory.handleConnection(currentScript).then((createdDocname) => {
+          clActionFactory.handleConnection(masterLabScript).then((createdDocname) => {
             if (typeof createdDocname === "string") {
+              cy.log("IN")
               createdDocnames.push(createdDocname);
-              currentScript.linked_docname = createdDocname;
-              createdDocsByIndex.push({ [currentScript.idx]: createdDocname });
+              masterLabScript.linked_docname = createdDocname;
+              createdDocsByIndex.push({
+                idx: masterLabScript.idx,
+                docname: createdDocname
+              });
             }
           });
         }
@@ -145,13 +155,13 @@ describe("Automated Test Run", () => {
 
       cy.wait(fnGetDelay("medium"));
 
-      cy.url().then((currentUrl: string) => {
-        const parts = currentUrl.split('/');
-        const docname = parts.pop() || parts.pop();
-        if (docname) {
-          storeDocname.push({ idx: script.idx, docname });
-        }
-      });
+      // cy.url().then((currentUrl: string) => {
+      //   const parts = currentUrl.split('/');
+      //   const docname = parts.pop() || parts.pop();
+      //   if (docname) {
+      //     storeDocname.push({ idx: script.idx, docname });
+      //   }
+      // });
 
       logout()
     });

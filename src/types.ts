@@ -25,6 +25,15 @@ interface ifProperties {
     fieldProp: string;
     getSelector(): string;
 }
+interface ifTestLab {
+    store_docname: boolean;
+    use_docname: string;
+    connection: string;
+    connection_doctype: string;
+    linked_document: string;
+    connection_from: string;
+}
+
 /**@type TtestHeaderData - Represents test header data structure.
  *  Contains details about the doctype_to_be_tested and relevant test field data. */
 type TtestHeaderData = {
