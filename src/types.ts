@@ -25,6 +25,7 @@ interface ifProperties {
     fieldProp: string;
     getSelector(): string;
 }
+/**@interface ifTestLab - Define Properties that needs to be implemented in the class */
 interface ifTestLab {
     store_docname: boolean;
     use_docname: string;
@@ -32,6 +33,7 @@ interface ifTestLab {
     connection_doctype: string;
     linked_document: string;
     connection_from: string;
+    execute(script: any): Cypress.Chainable<any>;
 }
 
 /**@type TtestHeaderData - Represents test header data structure.
@@ -145,4 +147,5 @@ type TtestLabScript = {
   parentfield: string;
   parenttype: string;
   doctype: string;
+  use_docname: number;
 };
