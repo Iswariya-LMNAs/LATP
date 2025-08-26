@@ -85,7 +85,7 @@ class clCreateConnection extends clTestLab {
                             });
                     });
                 })
-                .wait(30000)
+                // .wait(30000)
                 .then(() => {
                     return cy.contains("button", "Save")
                         .scrollIntoView()

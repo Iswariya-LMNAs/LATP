@@ -75,13 +75,10 @@ Cypress.on("log:added", (options) => {
 });
 
 describe("Automated Test Run", () => {
-  // it(`First`, () => {
-  //   cy.log(JSON.stringify(testMasterData));
-  // })
   let currentScript: any;
-  // const storeDocname: { idx: number; docname: string }[] = [];
-  // let createdDocnames: string[] = [];
-  // let createdDocsByIndex: { idx: number; docname: string }[] = [];
+  const storeDocname: { idx: number; docname: string }[] = [];
+  let createdDocnames: string[] = [];
+  let createdDocsByIndex: { idx: number; docname: string }[] = [];
 
   testMasterData.forEach((script) => {
     it(`should run test script: ${script.name}`, () => {
@@ -152,12 +149,12 @@ describe("Automated Test Run", () => {
 
         // clActionFactory.executeAction([currentScript]);
 
-        // const CaFilteredActions = currentScript.actual_test_data.filter((row) => row.action);
-        // CaFilteredActions.forEach((row) => {
-        //   const CaActionData = clActionFactory.filterActionData(currentScript.actual_test_data, row);
-        //   const loAction = clActionFactory.createAction(row.action, CaActionData);
-        //   loAction.executeAction();
-        // });
+        const CaFilteredActions = currentScript.actual_test_data.filter((row) => row.action);
+        CaFilteredActions.forEach((row) => {
+          const CaActionData = clActionFactory.filterActionData(currentScript.actual_test_data, row);
+          const loAction = clActionFactory.createAction(row.action, CaActionData);
+          loAction.executeAction();
+        });
 
         // if (
         //   masterLabScript.connection === "Create" &&
@@ -208,106 +205,106 @@ describe("Automated Test Run", () => {
       logout()
     });
 
-    // afterEach(() => {
-    //   if (!currentScript) return;
+    afterEach(() => {
+      if (!currentScript) return;
 
-    //   const connectionType = currentScript.connection?.toString().trim();
-    //   let linkedDocumentEntry: { [key: number]: string } | undefined;
+      const connectionType = currentScript.connection?.toString().trim();
+      let linkedDocumentEntry: { [key: number]: string } | undefined;
 
-    //   if (connectionType === "Read" && currentScript.connection_from != null) {
-    //     const sourceConnectionIndex = currentScript.connection_from;
+      if (connectionType === "Read" && currentScript.connection_from != null) {
+        const sourceConnectionIndex = currentScript.connection_from;
 
-    //     linkedDocumentEntry = createdDocsByIndex.find(
-    //       (entry) => Number(Object.keys(entry)[0]) === sourceConnectionIndex
-    //     );
-    //   }
+        linkedDocumentEntry = createdDocsByIndex.find(
+          (entry) => Number(Object.keys(entry)[0]) === sourceConnectionIndex
+        );
+      }
 
-    //   const combinedLogEntries = [
-    //     ...capturedLogs.map((message) => ({ type: "Log", message })),
-    //     ...capturedErrors.map((message) => ({ type: "Error", message })),
-    //   ];
+      const combinedLogEntries = [
+        ...capturedLogs.map((message) => ({ type: "Log", message })),
+        ...capturedErrors.map((message) => ({ type: "Error", message })),
+      ];
 
-    //   const testOutcome = isTestPassed ? "Pass" : "Fail";
+      const testOutcome = isTestPassed ? "Pass" : "Fail";
 
-    //   const masterDataNamesList = currentScript.name.includes("$")
-    //     ? currentScript.name.split("$").map((name) => name.trim())
-    //     : [currentScript.name];
+      const masterDataNamesList = currentScript.name.includes("$")
+        ? currentScript.name.split("$").map((name) => name.trim())
+        : [currentScript.name];
 
-    //   for (const masterDataName of masterDataNamesList) {
+      for (const masterDataName of masterDataNamesList) {
 
-    //     const masterDataID = masterDataName;
+        const masterDataID = masterDataName;
 
-    //     const matchedTestScript = testLabData.test_lab_script.find(
-    //       (script: any) => script.master_data === masterDataID
-    //     );
+        const matchedTestScript = testLabData.test_lab_script.find(
+          (script: any) => script.master_data === masterDataID
+        );
 
-    //     if (!matchedTestScript) {
-    //       cy.log(`No matching test_lab_script found for master_data: ${masterDataID}`);
-    //       continue;
-    //     }
+        if (!matchedTestScript) {
+          cy.log(`No matching test_lab_script found for master_data: ${masterDataID}`);
+          continue;
+        }
 
-    //     const testScriptId = matchedTestScript.test_script;
+        const testScriptId = matchedTestScript.test_script;
 
-    //     const runLogPayload = {
-    //       script_id: testScriptId,
-    //       master_data_id: masterDataID,
-    //       test_run_id: testRunName,
-    //       log_entries: combinedLogEntries,
-    //     };
+        const runLogPayload = {
+          script_id: testScriptId,
+          master_data_id: masterDataID,
+          test_run_id: testRunName,
+          log_entries: combinedLogEntries,
+        };
 
-    //     cy.request({
-    //       method: "POST",
-    //       url: `${hostUrl}/api/resource/Run Log`,
-    //       headers: requestHeaders2,
-    //       body: JSON.stringify(runLogPayload),
-    //     }).then((runLogResponse: TrunLogResponse) => {
-    //       const runLogId = runLogResponse.body.data.name;
+        cy.request({
+          method: "POST",
+          url: `${hostUrl}/api/resource/Run Log`,
+          headers: requestHeaders2,
+          body: JSON.stringify(runLogPayload),
+        }).then((runLogResponse: TrunLogResponse) => {
+          const runLogId = runLogResponse.body.data.name;
 
-    //       cy.request({
-    //         method: "GET",
-    //         url: `${hostUrl}/api/resource/Test Run/${testRunName}`,
-    //         headers: requestHeaders2,
-    //       }).then((testRunResponse: TtestRunResponse) => {
-    //         const testLogEntries = testRunResponse.body.data.test_log;
+          cy.request({
+            method: "GET",
+            url: `${hostUrl}/api/resource/Test Run/${testRunName}`,
+            headers: requestHeaders2,
+          }).then((testRunResponse: TtestRunResponse) => {
+            const testLogEntries = testRunResponse.body.data.test_log;
 
-    //         const matchingTestLogEntry = testLogEntries.find(
-    //           (entry) =>
-    //             entry.test_script === testScriptId &&
-    //             entry.master_data === masterDataID
-    //         );
+            const matchingTestLogEntry = testLogEntries.find(
+              (entry) =>
+                entry.test_script === testScriptId &&
+                entry.master_data === masterDataID
+            );
 
-    //         if (matchingTestLogEntry) {
-    //           const testLogEntryId = matchingTestLogEntry.name;
+            if (matchingTestLogEntry) {
+              const testLogEntryId = matchingTestLogEntry.name;
 
-    //           const updateLogPayload: any = {
-    //             run_log: runLogId,
-    //             result: testOutcome,
-    //           };
+              const updateLogPayload: any = {
+                run_log: runLogId,
+                result: testOutcome,
+              };
 
-    //           if (
-    //             connectionType === "Read" &&
-    //             currentScript.connection_from != null &&
-    //             linkedDocumentEntry
-    //           ) {
-    //             const sourceConnectionIndex = currentScript.connection_from;
-    //             updateLogPayload.linked_document = linkedDocumentEntry[sourceConnectionIndex];
-    //           }
+              if (
+                connectionType === "Read" &&
+                currentScript.connection_from != null &&
+                linkedDocumentEntry
+              ) {
+                const sourceConnectionIndex = currentScript.connection_from;
+                updateLogPayload.linked_document = linkedDocumentEntry[sourceConnectionIndex];
+              }
 
-    //           cy.request({
-    //             method: "PUT",
-    //             url: `${hostUrl}/api/resource/Test Log/${testLogEntryId}`,
-    //             headers: requestHeaders2,
-    //             body: JSON.stringify(updateLogPayload),
-    //           });
-    //         }
-    //       });
-    //     });
-    //   }
+              cy.request({
+                method: "PUT",
+                url: `${hostUrl}/api/resource/Test Log/${testLogEntryId}`,
+                headers: requestHeaders2,
+                body: JSON.stringify(updateLogPayload),
+              });
+            }
+          });
+        });
+      }
 
-    //   isTestPassed = true;
-    //   capturedErrors = [];
-    //   capturedLogs = [];
-    //   currentScript = null;
-    // });
+      isTestPassed = true;
+      capturedErrors = [];
+      capturedLogs = [];
+      currentScript = null;
+    });
   });
 });
