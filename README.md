@@ -145,14 +145,14 @@ In Codespace Terminal, do the below command
     ```bash
     npm run env
     ```
-    > ⚠️  This command will prompt for API Key and Secret.  
+  > ⚠️  This command will prompt for API Key and Secret.  
 After it runs, open the `.env` file in your `lens_ai_test_pilot` folder and update **HOST_URL** and **TARGET_URL** with your local LENS instance domain.
     
     ```bash
     npm run setup
     ```
     
-    ✅ After setup, check that the following Doctypes exist in your in the *Host site → Doctype List*:
+  ✅ After setup, check that the following Doctypes exist in your in the *Host site → Doctype List*:
     
     -   Test Case Configurator
     -   Master Data   
