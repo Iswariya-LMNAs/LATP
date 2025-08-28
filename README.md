@@ -14,7 +14,7 @@ It simplifies the testing process by automating repetitive tasks, allowing both 
 
 -  **Centralized Test Management:** Store all your test data in one place, making it easy to manage and update tests for your application.
 
-# Lens AI Test Pilot - Setup and Testing Guide
+# Setup and Testing Guide
 
 This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
 
@@ -75,18 +75,13 @@ This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
 	npm run setup
 	```
 	    
-	✅ After setup, check that the following Doctypes exist in your in the *Host site → Doctype List*:
-	
-	-   Test Case Configurator
-	-   Master Data   
-	-   Site Details
-	-   Test Plan  
-	-   Test Lab
-	-   Test Run
+	✅ After setup, check whether you can access the Test Pilot documents througn **LENS AI Test Pilot** workspace.
 	    
-	 ✅ Check "TL-001-Sample Test Lab" is created in Test Lab list
+	✅ Check "TL-001-Sample Test Lab" is created in Test Lab list
 
 4.  **Clone the Repository Locally and install dependency**
+
+   In the terminal do :
 
     ```bash
     git clone https://github.com/lmnaslimited/lens_ai_test_pilot.git
@@ -100,19 +95,21 @@ This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
     npm install
     ```
 
-5.  **Copy Environment File from Codespace**
+6.  **Copy Environment File from Codespace**
     
     -   Locate the `.env` file inside your Codespace.
-        
-    -   Copy it into your locally cloned repository folder.
+    -   Copy it into your locally cloned lens_ai_test_pilot repository folder.
+    -   Change the **LOGIN_EMAIL** and **LOGIN_PASSWORD** with your actual credentials.
 
-6.  **Run Cypress Tests**
+7.  **Run Cypress Tests**
+
+In the Terminal run the below command inside the lens_ai_test_pilot folder
 
     ```bash
     npm run ui_test 
     ```
 
-    This will open the Cypress Test Runner and execute the sample **Customer Creation test** against your target site. You can verify whether the Customer "LMNAs" is created in the Customer List.
+    This will open the Cypress Test Runner and execute the sample **Customer Creation test** against your target site. You can verify whether the Customer "LMNAs Cloud Solutions" is created in the Customer List.
 
 ----------
 
@@ -131,6 +128,9 @@ This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
         -   Copy both **API Key** and **API Secret**.
 
 2.  **Clone the Repository Locally and install dependency**
+
+In the terminal do :
+
     ```bash
     git clone https://github.com/lmnaslimited/lens_ai_test_pilot
     ```
@@ -141,36 +141,33 @@ This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
     npm install
     ```
             
-3.  **Configure Environment**
+4.  **Configure Environment**
 
     ```bash
     npm run env
     ```
 	> ⚠️  This command will prompt for API Key and Secret.  
-	After it runs, open the `.env` file in your `lens_ai_test_pilot` folder and update **HOST_URL** and **TARGET_URL** with your local LENS instance domain.
+	After it runs, open the `.env` file in your `lens_ai_test_pilot` folder and update **HOST_URL** and **TARGET_URL** with your local LENS instance domain.Change the **LOGIN_EMAIL** and **LOGIN_PASSWORD** with your actual credentials.
+ 
     
     ```bash
     npm run setup
     ```
     
-	✅ After setup, check that the following Doctypes exist in your in the *Host site → Doctype List*:
-	
-	-   Test Case Configurator
-	-   Master Data   
-	-   Site Details
-	-   Test Plan  
-	-   Test Lab
-	-   Test Run
+	✅ After setup, check whether you can access the Test Pilot documents througn **LENS AI Test Pilot** workspace.
 	    
 	✅ Check "TL-001-Sample Test Lab" is created in Test Lab list
         
-4.  **Run Cypress Tests**
+5.  **Run Cypress Tests**
+
+In the Terminal run the below command inside the lens_ai_test_pilot folder
+
     ```bash
     npm run ui_test 
     ```
     
-    This will open the Cypress Test Runner and execute the sample **Customer Creation test** against your target site. You can verify whether the Customer "LMNAs" is created in the Customer List.
----
+    This will open the Cypress Test Runner and execute the sample **Customer Creation test** against your target site. You can verify whether the Customer "LMNAs Cloud Solutions" is created in the Customer List.
+
 ## To view the Result and Log
 
 - Go to the respective Test Lab (TL-001-Sample Test Lab) in the Test Lab list.
