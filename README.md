@@ -59,31 +59,32 @@ This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
 
 3.  **Install Project Dependencies & Configure Environment**
 
-In Codespace Terminal, do the below command
-
-    ```bash
-    npm install
-    ```
-    ```bash
-    npm run env
-    ```
-    > ⚠️ The above command will ask for API Key and Secret.
-
-    ```bash
-    npm run setup
-    ```
-    
+	In Codespace Terminal, do the below command
+	
+	```bash
+	npm install
+	```
+	
+	```bash
+	npm run env
+	```
+	> ⚠️ The above command will ask for API Key and Secret.
+	
+	```bash
+	npm run setup
+	```
+	    
 	✅ After setup, check that the following Doctypes exist in your in the *Host site → Doctype List*:
-    
-    -   Test Case Configurator
-    -   Master Data   
-    -   Site Details  
-    -   Test Fields  
-    -   Test Plan  
-    -   Test Lab
-    -   Test Run
-    
-	✅ Check "TL-001-Sample Test Lab" is created in Test Lab list
+	
+	-   Test Case Configurator
+	-   Master Data   
+	-   Site Details  
+	-   Test Fields  
+	-   Test Plan  
+	-   Test Lab
+	-   Test Run
+	    
+	 ✅ Check "TL-001-Sample Test Lab" is created in Test Lab list
 
 4.  **Clone the Repository Locally and install dependency**
 
@@ -140,28 +141,28 @@ In Codespace Terminal, do the below command
     npm install
     ```
             
-3.  **Install Project Dependencies & Configure Environment**
+3.  **Configure Environment**
 
     ```bash
     npm run env
     ```
-  > ⚠️  This command will prompt for API Key and Secret.  
-After it runs, open the `.env` file in your `lens_ai_test_pilot` folder and update **HOST_URL** and **TARGET_URL** with your local LENS instance domain.
+	> ⚠️  This command will prompt for API Key and Secret.  
+	After it runs, open the `.env` file in your `lens_ai_test_pilot` folder and update **HOST_URL** and **TARGET_URL** with your local LENS instance domain.
     
     ```bash
     npm run setup
     ```
     
-  ✅ After setup, check that the following Doctypes exist in your in the *Host site → Doctype List*:
-    
-    -   Test Case Configurator
-    -   Master Data   
-    -   Site Details  
-    -   Test Fields  
-    -   Test Plan  
-    -   Test Lab
-    -   Test Run
-    
+	✅ After setup, check that the following Doctypes exist in your in the *Host site → Doctype List*:
+	
+	-   Test Case Configurator
+	-   Master Data   
+	-   Site Details  
+	-   Test Fields  
+	-   Test Plan  
+	-   Test Lab
+	-   Test Run
+	    
 	✅ Check "TL-001-Sample Test Lab" is created in Test Lab list
         
 4.  **Run Cypress Tests**
