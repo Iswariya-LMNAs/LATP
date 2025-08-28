@@ -21,7 +21,8 @@ This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
 -   **Scenario A – Using Codespace** (if you do not have a local instance).  [Using Codespace](#-scenario-a-set-up-host-system-with-codespace)
     
 -   **Scenario B – Using Local Instance** (if you already have one).  [Using Local LENS Instance](#-scenario-b-if-you-already-have-a-local-lens-instance)
-----
+
+---
 
 ### 🔹 Scenario A: Set Up Host System with Codespace
 
@@ -78,8 +79,7 @@ This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
 	
 	-   Test Case Configurator
 	-   Master Data   
-	-   Site Details  
-	-   Test Fields  
+	-   Site Details
 	-   Test Plan  
 	-   Test Lab
 	-   Test Run
@@ -112,13 +112,13 @@ This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
     npm run ui_test 
     ```
 
-    This will open the Cypress Test Runner and execute the sample **Quotation module test** against your target site.
+    This will open the Cypress Test Runner and execute the sample **Customer Creation test** against your target site. You can verify whether the Customer "LMNAs" is created in the Customer List.
 
 ----------
 
 ### 🔹 Scenario B: If You Already Have a Local LENS Instance
 
-> ⚠️  Make sure your local LENS instance has server script enabled. [document](https://lmnaslimited.github.io/lens-docs/04-developer-cheat-sheet/01-infrastructure/03-bench-commands/#enabling-server-script-in-version-15-bench)
+> ⚠️  Make sure your local LENS instance has **Server Script** enabled. [document](https://lmnaslimited.github.io/lens-docs/04-developer-cheat-sheet/01-infrastructure/03-bench-commands/#enabling-server-script-in-version-15-bench)
 
 1.  **Generate Access Keys**
     
@@ -157,8 +157,7 @@ This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
 	
 	-   Test Case Configurator
 	-   Master Data   
-	-   Site Details  
-	-   Test Fields  
+	-   Site Details
 	-   Test Plan  
 	-   Test Lab
 	-   Test Run
@@ -170,11 +169,16 @@ This guide explains how to set up **Lens AI Test Pilot** in two scenarios:
     npm run ui_test 
     ```
     
-    This will open the Cypress Test Runner and execute the sample **Quotation module test** against your target site.
+    This will open the Cypress Test Runner and execute the sample **Customer Creation test** against your target site. You can verify whether the Customer "LMNAs" is created in the Customer List.
+---
+## To view the Result and Log
+
+- Go to the respective Test Lab (TL-001-Sample Test Lab) in the Test Lab list.
+- There you will find the Test Run linked to it
+- Open the latest Test Run Document
+- You will have the Result of each Test Script along with the link to their Run Log in each entry of Test Log table.
 
 ## 📖 Documentation & Help
 
 For deeper insights, troubleshooting, and advanced configurations, check out our official documentation:  
 👉 [Lens AI Test Pilot Docs](https://lmnaslimited.github.io/lens-docs/03-lens-ai-test-pilot/01-introduction/01-lens_ai_test_pilot)
-
-----------
