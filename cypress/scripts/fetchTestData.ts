@@ -17,7 +17,7 @@ type ApiResponse = {
 
 async function fetchAndSaveTestData() {
     try {
-        const url = `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=${process.env.TEST_LAB}&i_action=get_test_data`;
+        const url = `${process.env.HOST_URL}/api/method/ai_test_pilot_handle_request?i_test_lab=${process.env.TEST_LAB}&i_action=get_test_lab`;
 
         const response = await fetch(url, {
             headers: {
@@ -41,7 +41,7 @@ async function fetchAndSaveTestData() {
             fs.mkdirSync(fixturesDir, { recursive: true });
         }
 
-        const filePath = path.join(fixturesDir, "testdata.json");
+        const filePath = path.join(fixturesDir, "testlab.json");
 
         fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8");
 

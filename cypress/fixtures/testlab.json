@@ -1,0 +1,68 @@
+{
+  "message": {
+    "test_lab": {
+      "name": "TL-0003-Create Address V2",
+      "owner": "krishnagovarthini.thirumurugan@lmnas.com",
+      "creation": "2025-07-25 16:15:16.023458",
+      "modified": "2025-07-25 16:27:21.431839",
+      "modified_by": "krishnagovarthini.thirumurugan@lmnas.com",
+      "docstatus": 0,
+      "idx": 0,
+      "title": "Create Address V2",
+      "status": "Not Started",
+      "naming_series": "TL.-.####.-.{title}",
+      "doctype": "Test Lab",
+      "reference_by": [],
+      "test_lab_script": [
+        {
+          "name": "3ki57fq8vc",
+          "owner": "krishnagovarthini.thirumurugan@lmnas.com",
+          "creation": "2025-07-25 16:15:16.023458",
+          "modified": "2025-07-25 16:27:21.431839",
+          "modified_by": "krishnagovarthini.thirumurugan@lmnas.com",
+          "docstatus": 0,
+          "idx": 1,
+          "task_id": null,
+          "test_plan": null,
+          "test_script": "Create Customer and Address",
+          "master_data": "customer - 10",
+          "store_docname": 0,
+          "use_docname": null,
+          "connection": "",
+          "connection_doctype": null,
+          "linked_document": null,
+          "connection_from": 0,
+          "is_connection": 1,
+          "parent": "TL-0003-Create Address V2",
+          "parentfield": "test_lab_script",
+          "parenttype": "Test Lab",
+          "doctype": "Test Lab Script"
+        },
+        {
+          "name": "3gio92i0sp",
+          "owner": "krishnagovarthini.thirumurugan@lmnas.com",
+          "creation": "2025-07-25 16:15:16.023458",
+          "modified": "2025-07-25 16:27:21.431839",
+          "modified_by": "krishnagovarthini.thirumurugan@lmnas.com",
+          "docstatus": 0,
+          "idx": 2,
+          "task_id": null,
+          "test_plan": null,
+          "test_script": "Create Address - V2",
+          "master_data": "Address - create V2",
+          "store_docname": 0,
+          "use_docname": null,
+          "connection": "",
+          "connection_doctype": null,
+          "linked_document": null,
+          "connection_from": 0,
+          "is_connection": 1,
+          "parent": "TL-0003-Create Address V2",
+          "parentfield": "test_lab_script",
+          "parenttype": "Test Lab",
+          "doctype": "Test Lab Script"
+        }
+      ]
+    }
+  }
+}
