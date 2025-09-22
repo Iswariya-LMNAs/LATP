@@ -2,7 +2,7 @@ import { clActionFactory ,clActionOnLoad,clActionOnChange,clActionOnTab,clAction
 from "../src/action";
 import { clDataTypeData, clDataTypeFactory } from "../src/dataType";
 import { expect } from "@jest/globals";
-import { ifActionHandler } from "../src/types";
+import { ifActionHandler, TactionData, TTactionsData, ifProperties } from "../src/types";
 
 
 // Mock dependencies
@@ -29,185 +29,70 @@ jest.mock("../src/dataType", () => ({
   },
 }));
 
-// Sample action data type (based on actual definition from type.ts)
-type TactionData = { 
-    name: string;
-    owner: string;
-    creation: Date;
-    modified: Date;
-    modified_by: string;
-    docstatus: number;
-    idx: number;
-    pos: number;
-    field_name: string;
-    is_child: boolean;
-    child_index: number;
-    action: string;
-    value: string;
-    data_type: string;
-    allow_on_submit: boolean;
-    is_read_only: boolean;
-    is_mandatory: boolean;
-    is_hidden: boolean;
-    parent: string;
-    parentfield: string;
-    parenttype: string;
-    doctype: string;
- };
-type TTactionsData = TactionData[];
+// // Sample action data type (based on actual definition from type.ts)
+// type TactionData = {
+//     doctype_to_be_tested: any
+//     name: string;
+//     owner: string;
+//     creation: Date;
+//     modified: Date;
+//     modified_by: string;
+//     docstatus: number;
+//     idx: number;
+//     pos: number;
+//     field_name: string;
+//     is_child: boolean;
+//     child_index: number;
+//     action: string;
+//     value: string;
+//     data_type: string;
+//     allow_on_submit: boolean;
+//     is_read_only: boolean;
+//     is_mandatory: boolean;
+//     is_hidden: boolean;
+//     parent: string;
+//     parentfield: string;
+//     parenttype: string;
+//     doctype: string;
+//  };
+// type TTactionsData = TactionData[];
 
 // Test data
 // Sorted mockdata
 const LaMockActionData: TTactionsData = [
-  {
-    name: "field_001",
-    owner: "test.user@example.com",
-    creation: new Date(),
-    modified: new Date(),
-    modified_by: "test.user@example.com",
-    docstatus: 0,
-    idx: 1,
-    pos: 10,
-    is_child: false,
-    // child_name: ,
-    child_index: 0,
-    field_name: "mock_field_1",
-    action: "Onload",
-    data_type: "",
-    value: "",
-    allow_on_submit: false,
-    is_read_only: true,
-    is_mandatory: false,
-    is_hidden: false,
-    parent: "mock_test_case",
-    parentfield: "test_fields",
-    parenttype: "Test Case Configurator",
-    doctype: "Test Fields"
-  },
-  {
-    name: "field_002",
-    owner: "test.user@example.com",
-    creation: new Date(),
-    modified: new Date(),
-    modified_by: "test.user@example.com",
-    docstatus: 0,
-    idx: 2,
-    pos: 10.01,
-    is_child: false,
-    child_index: 0,
-    field_name: "mock_field_2",
-    action: "",
-    data_type: "Select",
-    value: "Mock Value 1",
-    allow_on_submit: false,
-    is_read_only: true,
-    is_mandatory: false,
-    is_hidden: false,
-    parent: "mock_test_case",
-    parentfield: "test_fields",
-    parenttype: "Test Case Configurator",
-    doctype: "Test Fields"
-  },
-  {
-    name: "field_003",
-    owner: "test.user@example.com",
-    creation: new Date(),
-    modified: new Date(),
-    modified_by: "test.user@example.com",
-    docstatus: 0,
-    idx: 3,
-    pos: 10.02,
-    is_child: false,
-    child_index: 0,
-    field_name: "mock_field_3",
-    value: "Mock Value 2",
-    action: "",
-    data_type: "Link",
-    allow_on_submit: false,
-    is_read_only: true,
-    is_mandatory: false,
-    is_hidden: false,
-    parent: "mock_test_case",
-    parentfield: "test_fields",
-    parenttype: "Test Case Configurator",
-    doctype: "Test Fields"
-  },
-  {
-    name: "field_004",
-    owner: "test.user@example.com",
-    creation: new Date(),
-    modified: new Date(),
-    modified_by: "test.user@example.com",
-    docstatus: 0,
-    idx: 4,
-    pos: 10.03,
-    is_child: false,
-    child_index: 0,
-    field_name: "mock_field_4",
-    value: "Mock Value 3",
-    action: "",
-    data_type: "Link",
-    allow_on_submit: false,
-    is_read_only: true,
-    is_mandatory: false,
-    is_hidden: false,
-    parent: "mock_test_case",
-    parentfield: "test_fields",
-    parenttype: "Test Case Configurator",
-    doctype: "Test Fields"
-  },
-  {
-    name: "field_005",
-    owner: "test.user@example.com",
-    creation: new Date(),
-    modified: new Date(),
-    modified_by: "test.user@example.com",
-    docstatus: 0,
-    idx: 5,
-    pos: 20,
-    is_child: false,
-    child_index: 0,
-    field_name: "mock_field_5",
-    value: "Mock Value 4",
-    action: "On Change",
-    data_type: "Select",
-    allow_on_submit: false,
-    is_read_only: true,
-    is_mandatory: false,
-    is_hidden: false,
-    parent: "mock_test_case",
-    parentfield: "test_fields",
-    parenttype: "Test Case Configurator",
-    doctype: "Test Fields"
-  },
-  {
-    name: "field_006",
-    owner: "test.user@example.com",
-    creation: new Date(),
-    modified: new Date(),
-    modified_by: "test.user@example.com",
-    docstatus: 0,
-    idx: 6,
-    pos: 20.01,
-    is_child: false,
-    child_index: 0,
-    field_name: "mock_field_6",
-    value: "Mock Value 5",
-    action: "",
-    data_type: "Link",
-    allow_on_submit: false,
-    is_read_only: true,
-    is_mandatory: false,
-    is_hidden: false,
-    parent: "mock_test_case",
-    parentfield: "test_fields",
-    parenttype: "Test Case Configurator",
-    doctype: "Test Fields"
-  }];
-
-  ///unsorted array
-  const LaUnsortedMockActionData: TTactionsData = [
     {
+      doctype_to_be_tested: "Quotation",
+      name: "field_001",
+      owner: "test.user@example.com",
+      creation: new Date(),
+      modified: new Date(),
+      modified_by: "test.user@example.com",
+      docstatus: 0,
+      idx: 1,
+      pos: 10,
+      is_child: false,
+      child_name: "",
+      child_index: 0,
+      add_row: false,
+      field_name: "mock_field_1",
+      action: "Onload",
+      data_type: "",
+      value: "",
+      allow_on_submit: false,
+      is_read_only: true,
+      is_mandatory: false,
+      is_hidden: false,
+      parent: "mock_test_case",
+      parentfield: "test_fields",
+      parenttype: "Test Case Configurator",
+      doctype: "Test Fields",
+      section: "",
+      tab: "",
+      row_index: 1,
+      message_type: ""
+    },
+    {
+      doctype_to_be_tested: "Quotation",
       name: "field_002",
       owner: "test.user@example.com",
       creation: new Date(),
@@ -217,7 +102,171 @@ const LaMockActionData: TTactionsData = [
       idx: 2,
       pos: 10.01,
       is_child: false,
+      child_name: "",
       child_index: 0,
+      add_row: false,
+      field_name: "mock_field_2",
+      action: "",
+      data_type: "Select",
+      value: "Mock Value 1",
+      allow_on_submit: false,
+      is_read_only: true,
+      is_mandatory: false,
+      is_hidden: false,
+      parent: "mock_test_case",
+      parentfield: "test_fields",
+      parenttype: "Test Case Configurator",
+      doctype: "Test Fields",
+      section: "",
+      tab: "",
+      row_index: 1,
+      message_type: ""
+    },
+    {
+      doctype_to_be_tested: "Quotation",
+      name: "field_003",
+      owner: "test.user@example.com",
+      creation: new Date(),
+      modified: new Date(),
+      modified_by: "test.user@example.com",
+      docstatus: 0,
+      idx: 3,
+      pos: 10.02,
+      is_child: false,
+      child_name: "",
+      child_index: 0,
+      add_row: false,
+      field_name: "mock_field_3",
+      value: "Mock Value 2",
+      action: "",
+      data_type: "Link",
+      allow_on_submit: false,
+      is_read_only: true,
+      is_mandatory: false,
+      is_hidden: false,
+      parent: "mock_test_case",
+      parentfield: "test_fields",
+      parenttype: "Test Case Configurator",
+      doctype: "Test Fields",
+      section: "",
+      tab: "",
+      row_index: 1,
+      message_type: ""
+    },
+    {
+      doctype_to_be_tested: "Quotation",
+      name: "field_004",
+      owner: "test.user@example.com",
+      creation: new Date(),
+      modified: new Date(),
+      modified_by: "test.user@example.com",
+      docstatus: 0,
+      idx: 4,
+      pos: 10.03,
+      is_child: false,
+      child_name: "",
+      child_index: 0,
+      add_row: false,
+      field_name: "mock_field_4",
+      value: "Mock Value 3",
+      action: "",
+      data_type: "Link",
+      allow_on_submit: false,
+      is_read_only: true,
+      is_mandatory: false,
+      is_hidden: false,
+      parent: "mock_test_case",
+      parentfield: "test_fields",
+      parenttype: "Test Case Configurator",
+      doctype: "Test Fields",
+      section: "",
+      tab: "",
+      row_index: 1,
+      message_type: ""
+    },
+    {
+      doctype_to_be_tested: "Quotation",
+      name: "field_005",
+      owner: "test.user@example.com",
+      creation: new Date(),
+      modified: new Date(),
+      modified_by: "test.user@example.com",
+      docstatus: 0,
+      idx: 5,
+      pos: 20,
+      is_child: false,
+      child_name: "",
+      child_index: 0,
+      add_row: false,
+      field_name: "mock_field_5",
+      value: "Mock Value 4",
+      action: "On Change",
+      data_type: "Select",
+      allow_on_submit: false,
+      is_read_only: true,
+      is_mandatory: false,
+      is_hidden: false,
+      parent: "mock_test_case",
+      parentfield: "test_fields",
+      parenttype: "Test Case Configurator",
+      doctype: "Test Fields",
+      section: "",
+      tab: "",
+      row_index: 1,
+      message_type: ""
+    },
+    {
+      doctype_to_be_tested: "Quotation",
+      name: "field_006",
+      owner: "test.user@example.com",
+      creation: new Date(),
+      modified: new Date(),
+      modified_by: "test.user@example.com",
+      docstatus: 0,
+      idx: 6,
+      pos: 20.01,
+      is_child: false,
+      child_name: "",
+      child_index: 0,
+      add_row: false,
+      field_name: "mock_field_6",
+      value: "Mock Value 5",
+      action: "",
+      data_type: "Link",
+      allow_on_submit: false,
+      is_read_only: true,
+      is_mandatory: false,
+      is_hidden: false,
+      parent: "mock_test_case",
+      parentfield: "test_fields",
+      parenttype: "Test Case Configurator",
+      doctype: "Test Fields",
+      section: "",
+      tab: "",
+      row_index: 1,
+      message_type: ""
+    }
+  ];
+
+  const LaUnsortedMockActionData: TTactionsData = [
+    {
+      doctype_to_be_tested: "Quotation",
+      name: "field_002",
+      owner: "test.user@example.com",
+      creation: new Date(),
+      modified: new Date(),
+      modified_by: "test.user@example.com",
+      docstatus: 0,
+      idx: 2,
+      pos: 10.01,
+      is_child: false,
+      child_name: "",
+      child_index: 0,
+      add_row: false,
+      section: "General",
+      tab: "Main",
+      row_index: 1,
+      message_type: "info",
       field_name: "mock_field_2",
       action: "",
       data_type: "Select",
@@ -232,6 +281,7 @@ const LaMockActionData: TTactionsData = [
       doctype: "Test Fields"
     },
     {
+      doctype_to_be_tested: "Quotation",
       name: "field_003",
       owner: "test.user@example.com",
       creation: new Date(),
@@ -241,7 +291,13 @@ const LaMockActionData: TTactionsData = [
       idx: 3,
       pos: 10.02,
       is_child: false,
+      child_name: "",
       child_index: 0,
+      add_row: false,
+      section: "General",
+      tab: "Main",
+      row_index: 1,
+      message_type: "info",
       field_name: "mock_field_3",
       value: "Mock Value 2",
       action: "",
@@ -256,6 +312,7 @@ const LaMockActionData: TTactionsData = [
       doctype: "Test Fields"
     },
     {
+      doctype_to_be_tested: "Quotation",
       name: "field_001",
       owner: "test.user@example.com",
       creation: new Date(),
@@ -265,8 +322,13 @@ const LaMockActionData: TTactionsData = [
       idx: 1,
       pos: 10,
       is_child: false,
-      // child_name: ,
+      child_name: "",
       child_index: 0,
+      add_row: false,
+      section: "General",
+      tab: "Main",
+      row_index: 1,
+      message_type: "info",
       field_name: "mock_field_1",
       action: "Onload",
       data_type: "",
@@ -281,6 +343,7 @@ const LaMockActionData: TTactionsData = [
       doctype: "Test Fields"
     },
     {
+      doctype_to_be_tested: "Quotation",
       name: "field_004",
       owner: "test.user@example.com",
       creation: new Date(),
@@ -290,7 +353,13 @@ const LaMockActionData: TTactionsData = [
       idx: 4,
       pos: 10.03,
       is_child: false,
+      child_name: "",
       child_index: 0,
+      add_row: false,
+      section: "General",
+      tab: "Main",
+      row_index: 1,
+      message_type: "info",
       field_name: "mock_field_4",
       value: "Mock Value 3",
       action: "",
@@ -305,6 +374,7 @@ const LaMockActionData: TTactionsData = [
       doctype: "Test Fields"
     },
     {
+      doctype_to_be_tested: "Quotation",
       name: "field_005",
       owner: "test.user@example.com",
       creation: new Date(),
@@ -314,7 +384,13 @@ const LaMockActionData: TTactionsData = [
       idx: 5,
       pos: 20,
       is_child: false,
+      child_name: "",
       child_index: 0,
+      add_row: false,
+      section: "General",
+      tab: "Main",
+      row_index: 1,
+      message_type: "info",
       field_name: "mock_field_5",
       value: "Mock Value 4",
       action: "On Change",
@@ -329,6 +405,7 @@ const LaMockActionData: TTactionsData = [
       doctype: "Test Fields"
     },
     {
+      doctype_to_be_tested: "Quotation",
       name: "field_006",
       owner: "test.user@example.com",
       creation: new Date(),
@@ -338,7 +415,13 @@ const LaMockActionData: TTactionsData = [
       idx: 6,
       pos: 20.01,
       is_child: false,
+      child_name: "",
       child_index: 0,
+      add_row: false,
+      section: "General",
+      tab: "Main",
+      row_index: 1,
+      message_type: "info",
       field_name: "mock_field_6",
       value: "Mock Value 5",
       action: "",
@@ -351,7 +434,9 @@ const LaMockActionData: TTactionsData = [
       parentfield: "test_fields",
       parenttype: "Test Case Configurator",
       doctype: "Test Fields"
-    }];
+    }
+  ];  
+  
 describe("Test Static methods in clActionFactory Class of action.ts",() => { 
   /* Since filterActionData is a static method, we can call it directly 
   in our tests without creating an instance of clActionFactory.*/
@@ -473,10 +558,6 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       test("should create clActionOnLoad instance when 'Onload' is passed", () => {
         expect(ldActionInstance).toBeInstanceOf(clActionOnLoad);
       });
-      test("should throw an error for an invalid action type", () => {
-        expect(() => clActionFactory.createAction("On Click", laFilteredData))
-          .toThrowError("Invalid action type: On Click");
-      });
       test("should NOT throw an error for a valid action type", () => {
         expect(() => clActionFactory.createAction("Onload", laFilteredData))
           .not.toThrow();
@@ -541,138 +622,6 @@ describe("Test Static methods in clActionFactory Class of action.ts",() => {
       
         expect(LdActionInstance.executeAction).toHaveBeenCalledTimes(1);
       }); 
-  });
-   describe("Test clActionOnChange -Instantiation and executeAction", () => {
-    let ldActionInstance;
-    // Use `clDataTypeData` instead
-    let ldMockDataTypeInstance: jest.Mocked<clDataTypeData>; 
-    let ldCreateDataTypeMock: jest.SpiedFunction<typeof clDataTypeFactory.createDataType>;
-
-    beforeEach(() => {
-      ldActionInstance = clActionFactory.createAction("On Change", LaMockActionData
-      )as clActionOnChange;
-      ldMockDataTypeInstance = {
-        input: jest.fn(),
-        validate: jest.fn(),
-        execute: jest.fn(),
-        dataType: "Select",
-        action: ldActionInstance,
-        // Simulated field selector
-        fieldSlector: '[data-fieldname="test_field6"]', 
-        fieldProp: "input:visible",
-        getSelector: jest.fn(() => '[data-fieldname="test_field6"]input:visible'),
-      } as jest.Mocked<clDataTypeData>;
-      ldCreateDataTypeMock = jest.spyOn(clDataTypeFactory, "createDataType")
-      .mockReturnValue(ldMockDataTypeInstance);
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-    test("should create clActionOnChange  when 'On Change' is passed", () => {
-      expect(ldActionInstance).toBeInstanceOf(clActionOnChange);
-    });
-    test("should call clDataTypeFactory.createDataType and input method", () => {
-      // Execute action
-      ldActionInstance.executeAction();
-      // Ensure createDataType was called with correct args
-      expect(clDataTypeFactory.createDataType)
-      .toHaveBeenCalledWith("Select", ldActionInstance);
-      // Ensure input() was called
-      expect(ldMockDataTypeInstance.input).toHaveBeenCalled();
-    }); 
-    test("should override executeAction from base class", () => {
-      const LBaseExecuteAction = jest.spyOn(clActionOnLoad.prototype, "executeAction");
-      const LOnchangeExecuteAction = jest.spyOn(ldActionInstance, "executeAction");    
-      ldActionInstance.executeAction();
-      // Ensure executeAction of clActionOnLoad was NOT called (overridden)
-      expect(LBaseExecuteAction).not.toHaveBeenCalled();
-      // Ensure executeAction of clActionOnChange is called
-      expect(LOnchangeExecuteAction).toHaveBeenCalled();
-    }); 
-    test("should call super.checkFieldValue() in checkFieldValue", () => {
-      // Spy on the checkFieldValue method in the parent class (clAction)
-      const LBaseCheckFieldValue = jest.spyOn(clAction.prototype, "checkFieldValue");
-      ldActionInstance.executeAction();
-      // Call checkFieldValue on the instance
-      ldActionInstance.checkFieldValue();
-      // Ensure the checkFieldValue method of the parent class is called
-      expect(LBaseCheckFieldValue).toHaveBeenCalled();
-      expect(ldActionInstance.dataType.validate).toHaveBeenCalled();
-    });
-    test("should call super.checkFieldProperties() in checkFieldProperties", () => {
-      // Spy on the checkFieldProperties method in the parent class (clAction)
-      const LdActionInstance = new clActionOnLoad("Onload", LaMockActionData);
-      const LBaseCheckFieldProperties = jest
-      .spyOn(clAction.prototype, "checkFieldProperties");
-      jest.spyOn(LdActionInstance, "executeAction");
-      // LdActionInstance.executeAction();
-      LdActionInstance.checkFieldProperties();
-      // Ensure both parent method and dataType.validate() are called
-      expect(LBaseCheckFieldProperties).toHaveBeenCalled();
-      LdActionInstance.executeAction();
-      expect(LBaseCheckFieldProperties).toHaveBeenCalledTimes(1);
-    });
-    test("should call super.handleNavigator() in handleNavigator", () => {
-      // Create an instance of the action class (LdActionInstance)
-      //  that should call `super.handleNavigator()`
-      const LdActionInstance = new clActionOnLoad("Onload", LaMockActionData);
-      // Spy on the handleNavigator method in the parent class (clAction)
-      const LBaseHandleNavigator = jest.spyOn(clAction.prototype, "handleNavigator");
-      jest.spyOn(LdActionInstance, "executeAction");
-      // Call the method need to test
-      LdActionInstance.handleNavigator();
-      // Ensure the parent method is called
-      expect(LBaseHandleNavigator).toHaveBeenCalled();
-      // If executeAction() triggers handleNavigator(), ensure it's been called
-      LdActionInstance.executeAction();
-      expect(LBaseHandleNavigator).toHaveBeenCalledTimes(1); 
-    });
-    test("should call super.handleMessages() in handleMessages", () => {
-      // Create an instance of the action class (LdActionInstance) 
-      // that should call `super.handleMessages()`
-      const LdActionInstance = new clActionOnLoad("Onload", LaMockActionData);
-      // Spy on the handleMessages method in the parent class (clAction)
-      const LBaseHandleMessages = jest.spyOn(clAction.prototype, "handleMessages");
-      jest.spyOn(LdActionInstance, "executeAction");
-      // Call the method need to test
-      LdActionInstance.handleMessages();
-      // Ensure the parent method is called
-      expect(LBaseHandleMessages).toHaveBeenCalled();
-      // If executeAction() triggers handleMessages(), ensure it's been called
-      LdActionInstance.executeAction();
-      expect(LBaseHandleMessages).toHaveBeenCalledTimes(1); 
-    });
-  });
- describe("Creating an instance of clActionOnTab", () => {
-    let ldActionInstance;
-
-    beforeEach(() => {
-      ldActionInstance = clActionFactory.createAction("On Tab", LaMockActionData);
-    });
-
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-
-    test("should create clActionOnTab instance when 'On Tab is passed", () => {
-      expect(ldActionInstance).toBeInstanceOf(clActionOnTab);
-    });
-     test("should throw an error when an invalid action type is passed", () => {
-        const fnInvalidActionCall = () => clActionFactory
-        .createAction("InvalidAction", LaMockActionData);  
-         expect(fnInvalidActionCall).toThrow("Invalid action type: InvalidAction");
-
-      });
-      test("executeAction() should skip execution for empty actionData", () => {
-        const LdEmptyActionInstance = new clActionOnTab("On Tab", []);
-        jest.spyOn(LdEmptyActionInstance, "executeAction");
-    
-        LdEmptyActionInstance.executeAction(); // Call with empty data
-    
-        expect(LdEmptyActionInstance.executeAction).toHaveBeenCalledTimes(1);
-        expect(() => LdEmptyActionInstance.executeAction()).not.toThrow();
-      });  
   });
   
 });

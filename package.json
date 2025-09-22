@@ -4,7 +4,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "setup": "node replace.js && ./setup.sh",
     "env": "node envGenerate.js",
     "upload_testdata": "./setup.sh",
@@ -27,6 +27,10 @@
     "ts-jest": "^29.4.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   },
   "dependencies": {
     "child-process": "^1.0.2",

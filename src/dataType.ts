@@ -1,6 +1,7 @@
 import { property } from "cypress/types/lodash";
 import { fnGetDelay } from "../src/delay";
 import { clPropertiesFactory } from "./properties";
+import {ifDataType, ifActionHandler, TactionData} from "./types"
 
 /**
  * @class clDataType -Abstract base class for handling different data types.  

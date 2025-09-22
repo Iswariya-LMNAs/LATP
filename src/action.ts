@@ -1,6 +1,7 @@
 import { clDataTypeFactory } from "./dataType";
 import { clPropertiesFactory } from "./properties";
 import { fnGetDelay } from "../src/delay";
+import { ifActionHandler, TTactionsData, ifDataType, TactionData, TtestHeaderData, TtestLabScript } from "./types";
 
 /** @class clAction - Base abstract class for executing actions on data fields. */
 //clAction base class which implements the ifHandler interface

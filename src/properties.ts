@@ -1,4 +1,5 @@
 import { fnGetDelay } from "./delay";
+import { ifActionHandler, ifProperties } from "./types";
 
 abstract class clProperties implements ifProperties {
     is_read_only: boolean;

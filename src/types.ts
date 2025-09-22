@@ -9,13 +9,13 @@ export interface ifActionHandler {
     dataType: ifDataType
 }
 /**@interface ifDataType - Defines for handling different data types. */
-interface ifDataType {
+export interface ifDataType {
     dataType: string
     action: ifActionHandler
     validate(): void
     input(): void
 }
-interface ifProperties {
+export interface ifProperties {
     is_read_only: boolean;
     is_mandatory: boolean;
     is_hidden: boolean;
@@ -27,7 +27,7 @@ interface ifProperties {
 }
 /**@type TtestHeaderData - Represents test header data structure.
  *  Contains details about the doctype_to_be_tested and relevant test field data. */
-type TtestHeaderData = {
+export type TtestHeaderData = {
     name: string;
     owner: string;
     creation: Date;
@@ -50,7 +50,7 @@ type TtestHeaderData = {
 /**@type TactionData - Represents the action data.
  * Stores information about an action performed on a field, 
  */
-type TactionData = {
+export type TactionData = {
     doctype_to_be_tested: any
     name: string;
     owner: string;
@@ -83,7 +83,7 @@ type TactionData = {
 
 };
 /**@type TTactionsData - Represents an array of action data. */
-type TTactionsData = TactionData[]
+export type TTactionsData = TactionData[]
 
 // type TcreateRow = {
 //   doctype_to_be_tested: string;
@@ -92,7 +92,7 @@ type TTactionsData = TactionData[]
 // };
 
 
-type TrunLogResponse = {
+export type TrunLogResponse = {
     body: {
         data: {
             name: string;
@@ -103,7 +103,7 @@ type TrunLogResponse = {
     };
 };
 
-type TtestRunResponse = {
+export type TtestRunResponse = {
     body: {
         data: {
             test_log: {
@@ -117,7 +117,7 @@ type TtestRunResponse = {
 };
 
 /** @type TtestLabScript - Represents a single Test Lab Script item */
-type TtestLabScript = {
+export type TtestLabScript = {
   name: string;
   owner: string;
   creation: string;
