@@ -39,7 +39,7 @@ abstract class clDataType implements ifDataType {
     }
 }
 /** @class clDataTypeData - Handles validation and input actions for generic data types. */
-class clDataTypeData extends clDataType {
+export class clDataTypeData extends clDataType {
     constructor(iDataType: string, ioAction: ifActionHandler) {
         super(iDataType, ioAction);
         this.fieldProp = `input:visible`

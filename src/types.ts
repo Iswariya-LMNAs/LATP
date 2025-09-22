@@ -1,5 +1,5 @@
 /** @interface ifActionHandler - Represents a handler for performing various actions with associated data.*/
-interface ifActionHandler {
+export interface ifActionHandler {
     action: string
     actionData: TTactionsData
     actionRow: TactionData

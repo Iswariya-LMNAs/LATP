@@ -4,7 +4,7 @@ import { fnGetDelay } from "../src/delay";
 
 /** @class clAction - Base abstract class for executing actions on data fields. */
 //clAction base class which implements the ifHandler interface
-abstract class clAction implements ifActionHandler {
+export abstract class clAction implements ifActionHandler {
     action: string;
     actionData: TTactionsData;
     dataType: ifDataType;
@@ -47,7 +47,7 @@ abstract class clAction implements ifActionHandler {
 /** @class clActionExpandSection is extended class from the clAction*/
 /* Expand Section class is used to expand the section mentioned in the configurator
 */
-class clActionExpandSection extends clAction {
+export class clActionExpandSection extends clAction {
     constructor(iAction: string, iaActionData: TTactionsData) {
         super(iAction, iaActionData);
     }
@@ -82,7 +82,7 @@ class clActionExpandSection extends clAction {
 }
 
 /** @class clActionOnLoad - Handles actions on page load. */
-class clActionOnLoad extends clAction {
+export class clActionOnLoad extends clAction {
     executeAction(): void { super.executeAction() }
     checkFieldValue(): void { super.checkFieldValue(); }
     checkFieldProperties(): void { super.checkFieldProperties(); }
@@ -91,7 +91,7 @@ class clActionOnLoad extends clAction {
     }
 }
 /** @class clActionOnChange - Handles actions like On Change */
-class clActionOnChange extends clAction {
+export class clActionOnChange extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         if (this.actionRow.tab) {
@@ -111,7 +111,7 @@ class clActionOnChange extends clAction {
         super(iAction, iaActionData);
     }
 }
-class clActionOnChangeChild extends clActionOnChange {
+export class clActionOnChangeChild extends clActionOnChange {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         if (this.actionRow.tab) {
@@ -129,7 +129,7 @@ class clActionOnChangeChild extends clActionOnChange {
         });
     }
 }
-class clActionAddRow extends clAction {
+export class clActionAddRow extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         if (this.actionRow.tab) {
@@ -152,7 +152,7 @@ class clActionAddRow extends clAction {
         });
     }
 }
-class clActionEditDetails extends clAction {
+export class clActionEditDetails extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         if (this.actionRow.tab) {
@@ -177,7 +177,7 @@ class clActionEditDetails extends clAction {
     }
 }
 /** @class clActionOnTab - Handles tab switching. */
-class clActionOnTab extends clAction {
+export class clActionOnTab extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         const Ltab = this.actionRow.tab;
@@ -191,7 +191,7 @@ class clActionOnTab extends clAction {
 }
 
 /** @class clActionSave Saves the current document/form.*/
-class clActionSave extends clAction {
+export class clActionSave extends clAction {
     executeAction(): void {
         cy.get('body').then(($body: JQuery<HTMLElement>) => {
             const $saveBtn = $body.find('.primary-action:visible');
@@ -209,7 +209,7 @@ class clActionSave extends clAction {
 }
 
 /** @class clActionSubmit Submits the current document/form and confirms submission via modal. */
-class clActionSubmit extends clAction {
+export class clActionSubmit extends clAction {
     executeAction(): void {
         cy.contains('button', 'Submit').scrollIntoView().should('exist').click({ force: true });
         cy.wait(fnGetDelay("short"));
@@ -221,7 +221,7 @@ class clActionSubmit extends clAction {
     }
 }
 /** @class clActionCancel Cancels the current document/form and confirms via modal.*/
-class clActionCancel extends clAction {
+export class clActionCancel extends clAction {
     executeAction(): void {
         cy.contains('button', 'Cancel').scrollIntoView().should('exist').click({ force: true });
         cy.wait(fnGetDelay("medium"));
@@ -236,13 +236,13 @@ class clActionCancel extends clAction {
         cy.log("Document Cancelled Successfully");
     }
 }
-class clActionAmend extends clAction {
+export class clActionAmend extends clAction {
     executeAction(): void {
 
     }
 }
 /** @class clActionDelete Deletes the current document/form with confirmation modal.*/
-class clActionDelete extends clAction {
+export class clActionDelete extends clAction {
     executeAction(): void {
         cy.get('.menu-btn-group > .btn').click({ force: true });
         cy.contains('a.dropdown-item', 'Delete').should('be.visible').click({ force: true });
@@ -255,7 +255,7 @@ class clActionDelete extends clAction {
     }
 }
 /** @class clActionClickButton Clicks a specified button on the form.*/
-class clActionClickButton extends clAction {
+export class clActionClickButton extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         const LbuttonLabel = this.actionRow.value;
@@ -277,7 +277,7 @@ class clActionClickButton extends clAction {
     }
 }
 /** @class clActionActionMenuTriggers an item from the "Actions" dropdown menu.*/
-class clActionActionMenu extends clAction {
+export class clActionActionMenu extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         const actionLabel = this.actionRow.value;
@@ -294,7 +294,7 @@ class clActionActionMenu extends clAction {
 }
 
 /** @class clActionOnValidate validate the error message*/
-class clActionOnValidate extends clAction {
+export class clActionOnValidate extends clAction {
     executeAction(): void {
         this.actionRow = this.actionData[0];
         cy.wait(fnGetDelay("medium"));
