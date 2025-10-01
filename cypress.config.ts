@@ -6,7 +6,8 @@ export default defineConfig({
   e2e: {
     async setupNodeEvents(on, config) {
       // Set default running mode
-      config.env.RUNNING_MODE = config.env.RUNNING_MODE || process.env.RUNNING_MODE || "UI";
+      config.env.RUNNING_MODE =
+        config.env.RUNNING_MODE || process.env.RUNNING_MODE || "UI";
 
       // General environment variables
       config.env = {
@@ -15,8 +16,8 @@ export default defineConfig({
       };
 
       // Load delay values for CLI and UI modes
-      ["UI", "CLI"].forEach(mode => {
-        ["SHORT", "MEDIUM", "LONG"].forEach(level => {
+      ["UI", "CLI"].forEach((mode) => {
+        ["SHORT", "MEDIUM", "LONG"].forEach((level) => {
           const L_key = `DELAY_${mode}_${level}`;
           config.env[L_key] = process.env[L_key];
         });
@@ -36,6 +37,7 @@ export default defineConfig({
 
       config.env.FETCHED_TEST_RUN = testData.message.test_run.name;
       config.env.FETCHED_MASTER_DATA = testData.message.master_data;
+      config.env.FETCHED_LOGIN_DATA = testData.message.login_data;
 
       // Second fetch: Get test lab details
       const getTestLab = await fetch(
@@ -52,6 +54,6 @@ export default defineConfig({
       config.env.FETCHED_TEST_LAB = testLabData.message.test_lab;
 
       return config;
-    }
-  }
+    },
+  },
 });
