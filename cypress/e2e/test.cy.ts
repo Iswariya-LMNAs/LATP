@@ -90,8 +90,6 @@ describe("Automated Test Run", () => {
     it(`should run test script: ${script.name}`, () => {
       currentScript = script;
 
-      cy.log(JSON.stringify(loginData));
-
       if (loginData[currentScript.name]) {
         loginEmail = loginData[currentScript.name].email;
         loginPassword = loginData[currentScript.name].password;
