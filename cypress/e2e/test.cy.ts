@@ -101,10 +101,20 @@ describe("Automated Test Run", () => {
 
       cy.visit(`${targetUrl}/app`);
 
+      let testLabRow: any;
+
       if (currentScript.actual_test_data) {
-        if (script.use_docname && script.use_docname !== 0) {
+        testLabRow = testLabData.test_lab_script.find(
+          (row: any) => row.master_data === currentScript.name
+        );
+
+        if (
+          testLabRow &&
+          testLabRow.use_docname &&
+          testLabRow.use_docname !== 0
+        ) {
           const stored = storeDocname.find(
-            (item) => Number(item.idx) === Number(script.use_docname)
+            (item) => Number(item.idx) === Number(testLabRow.use_docname)
           );
           if (stored?.docname) {
             currentScript.document = stored.docname;
@@ -155,13 +165,15 @@ describe("Automated Test Run", () => {
 
       cy.wait(fnGetDelay("medium"));
 
-      cy.url().then((currentUrl: string) => {
-        const parts = currentUrl.split("/");
-        const docname = parts.pop() || parts.pop();
-        if (docname) {
-          storeDocname.push({ idx: script.idx, docname });
-        }
-      });
+      if (testLabRow) {
+        cy.url().then((currentUrl: string) => {
+          const parts = currentUrl.split("/");
+          const docname = parts.pop() || parts.pop();
+          if (docname) {
+            storeDocname.push({ idx: testLabRow.idx, docname });
+          }
+        });
+      }
 
       logout();
     });
