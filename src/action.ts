@@ -285,10 +285,13 @@ class clActionActionMenu extends clAction {
             .contains(/^Actions$/i)
             .scrollIntoView()
             .click({ force: true });
-        cy.contains('.dropdown-menu li, .dropdown-item, button, a', actionLabel, { matchCase: false })
-            .should('be.visible')
-            .click({ force: true });
-        cy.log(`Clicked Action menu item: ${actionLabel}`);
+        cy.get(".actions-btn-group")
+          .contains(".dropdown-menu li, .dropdown-item, .grey-link", actionLabel, {
+            matchCase: false,
+          })
+          .should("be.visible")
+          .click({ force: true });
+        // cy.log(`Clicked Action menu item: ${actionLabel}`);
         cy.wait(fnGetDelay("medium"));
     }
 }
@@ -432,11 +435,3 @@ export class clActionFactory {
     }
 
 }
-
-
-
-
-
-
-
-
